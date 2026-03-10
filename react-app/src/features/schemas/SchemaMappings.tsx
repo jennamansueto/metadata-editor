@@ -368,7 +368,7 @@ export default function SchemaMappings() {
         formData
       );
       showAlert(t('schema_mappings_updated'), { color: 'success' });
-      navigate(-1 as unknown as string);
+      navigate(-1);
     } catch (error) {
       const message = extractErrorMessage(
         error,
@@ -406,7 +406,7 @@ export default function SchemaMappings() {
               size="small"
               color="primary"
               startIcon={<ArrowBackIcon />}
-              onClick={() => navigate(-1 as unknown as string)}
+              onClick={() => navigate(-1)}
             >
               {t('back_to_schemas')}
             </Button>
@@ -598,7 +598,7 @@ export default function SchemaMappings() {
         <CardActions sx={{ justifyContent: 'flex-end', px: 2, pb: 2 }}>
           <Button
             color="primary"
-            onClick={() => navigate(-1 as unknown as string)}
+            onClick={() => navigate(-1)}
           >
             {t('cancel')}
           </Button>

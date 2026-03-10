@@ -116,6 +116,7 @@ export default function SchemaList() {
   const baseApiUrl = ci.site_url.replace(/\/?$/, '/') + 'api/schemas';
 
   const loadSchemas = useCallback(() => {
+    setLoading(true);
     setRefreshKey((k) => k + 1);
   }, []);
 
