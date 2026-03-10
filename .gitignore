@@ -22,3 +22,5 @@ files
 sample
 userdata
 docs
+react-app/node_modules
+vue-app/react-assets
