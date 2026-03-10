@@ -13,9 +13,10 @@
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
@@ -414,7 +415,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -429,7 +431,8 @@
       name: 'home'
     }]
 
-    const router = new VueRouter({
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
       routes
     })
 

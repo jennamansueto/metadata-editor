@@ -4,7 +4,8 @@
     default: JSON.parse(atob(translationsJsonBase64))
   };
 
-  const i18n = new VueI18n({
+  const i18n = VueI18n.createI18n({
+    legacy: true,
     locale: 'default',
     messages: translation_messages
   });
@@ -1234,8 +1235,8 @@
     { path: '/mappings/:uid', name: 'schema-mappings', component: SchemaMappings, props: route => ({ schemaUid: route.params.uid }) }
   ];
 
-  const router = new VueRouter({
-    mode: 'hash',
+  const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes
   });
 

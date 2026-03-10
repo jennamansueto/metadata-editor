@@ -101,6 +101,7 @@
 </style>
 
 <script src="<?php echo base_url(); ?>vue-app/assets/vue.min.js"></script>
+<script src="<?php echo base_url(); ?>vue-app/assets/vue-compat-config.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/vuetify.min.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.min.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
@@ -154,7 +155,8 @@
         }
     };
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+        legacy: true,
         locale: 'default',
         messages: translation_messages,
     });

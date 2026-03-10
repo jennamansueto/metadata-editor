@@ -145,8 +145,9 @@
     </v-app>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
 
@@ -163,7 +164,7 @@
   <script>
     (function() {
       const translations = <?php echo json_encode(isset($translations) ? $translations : array(), JSON_UNESCAPED_UNICODE); ?>;
-      const i18n = new VueI18n({ locale: 'default', messages: { default: translations } });
+      const i18n = VueI18n.createI18n({ legacy: true, locale: 'default', messages: { default: translations } });
       const vuetify = new Vuetify({
         theme: {
           themes: {

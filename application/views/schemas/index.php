@@ -752,8 +752,9 @@
   </script>
 
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>

@@ -14,7 +14,6 @@
 
     <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -163,7 +162,9 @@
     </div>
 
     <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+    <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
+    <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
     <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
@@ -208,7 +209,7 @@
             { path: '/edit/:id', component: EditCollection, name:"edit" },
             { path: '/manage-users/:id', component: ManageAccess, name:"manage-access" },
             {
-                path: '*',
+                path: '/:pathMatch(.*)*',
                 component: Home,
                 name:"home"
             }
@@ -217,15 +218,17 @@
         // 3. Create the router instance and pass the `routes` option
         // You can pass in additional options here, but let's
         // keep it simple for now.
-        const router = new VueRouter({
-            routes // short for `routes: routes`
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes
         })
 
         const translation_messages = {
             default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
         }
 
-        const i18n = new VueI18n({
+        const i18n = VueI18n.createI18n({
+            legacy: true,
             locale: 'default', // set locale
             messages: translation_messages, // set locale messages
         })

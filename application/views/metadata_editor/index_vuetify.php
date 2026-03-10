@@ -86,6 +86,7 @@
   </div>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
@@ -127,7 +128,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default',
       messages: translation_messages,
       //show warnings in console
