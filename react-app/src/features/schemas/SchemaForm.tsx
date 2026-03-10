@@ -610,7 +610,6 @@ export default function SchemaForm({ mode }: SchemaFormProps) {
 
         setMainFile(null);
         setAssociatedFiles([]);
-        await loadFiles(targetUid, currentSchema);
       }
 
       navigate('/');
