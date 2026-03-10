@@ -710,7 +710,7 @@
               item.props.forEach((prop, propIdx) => {
                 const propKey = prop.prop_key || prop.key;
                 if (propKey === item_key) {
-                  delete item.props[propIdx];
+                  item.props.splice(propIdx, 1);
                 }
                 // Recursively check nested props
                 if (prop.props) {
@@ -719,7 +719,7 @@
               });
             }
             if (item.key == item_key || (item.prop_key && item.prop_key == item_key)) {
-              delete tree[idx];
+              tree.splice(idx, 1);
             }
           });
         },
@@ -786,7 +786,7 @@
               }
               
               if (propIndex !== -1) {
-                delete propsArray[propIndex];
+                propsArray.splice(propIndex, 1);
                 vm.ActiveNode = {};
                 vm.tree_active_items = [];
                 return true;

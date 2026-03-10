@@ -1369,7 +1369,7 @@
         methods: window.VueFilters
     });
 
-    Vue.component('VueJsonPretty', VueJsonPretty.default);
+    app.component('VueJsonPretty', VueJsonPretty.default);
 
     vue_app = app.mount('#app');
   </script>

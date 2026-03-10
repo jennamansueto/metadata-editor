@@ -1501,7 +1501,7 @@
           this.loadProjects();
         },
         removeFilter: function(filter_type, value_idx) {
-         delete this.search_filters[filter_type][value_idx];
+         this.search_filters[filter_type].splice(value_idx, 1);
         },
         getFilterChipColor: function(filter_type) {
           const colorMap = {

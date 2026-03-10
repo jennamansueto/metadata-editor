@@ -209,7 +209,7 @@
             { path: '/edit/:id', component: EditCollection, name:"edit" },
             { path: '/manage-users/:id', component: ManageAccess, name:"manage-access" },
             {
-                path: '*',
+                path: '/:pathMatch(.*)*',
                 component: Home,
                 name:"home"
             }
