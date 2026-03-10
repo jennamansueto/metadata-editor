@@ -114,8 +114,12 @@ export function fieldDisplayType(field: {
     return field.display_type;
   }
 
-  if (['text', 'string', 'integer', 'boolean', 'number'].includes(field.type || '')) {
+  if (['text', 'string', 'boolean'].includes(field.type || '')) {
     return 'text';
+  }
+
+  if (['integer', 'number'].includes(field.type || '')) {
+    return 'number';
   }
 
   return field.type || 'text';
@@ -125,6 +129,36 @@ export function fieldDisplayType(field: {
  * Find a template item by key in a nested items array
  * Port from Vuex getter getTemplateItemByKey
  */
+/**
+ * Recursively remove empty values from an object before saving.
+ * Port of removeEmpty from index_vuetify.php lines 1340-1358.
+ * Strips: empty strings, null, empty arrays, [{}}], [[]]
+ */
+export function removeEmpty(obj: unknown): void {
+  try {
+    if (typeof obj === 'string') return;
+    if (!obj || typeof obj !== 'object') return;
+
+    const record = obj as Record<string, unknown>;
+    for (const key of Object.keys(record)) {
+      const value = record[key];
+      if (value === '' || value === null || value === undefined) {
+        delete record[key];
+      } else if (Array.isArray(value) && value.length === 0) {
+        delete record[key];
+      } else if (JSON.stringify(value) === '[{}]' || JSON.stringify(value) === '[[]]') {
+        delete record[key];
+      } else if (Object.prototype.toString.call(value) === '[object Object]') {
+        removeEmpty(value);
+      } else if (Array.isArray(value)) {
+        value.forEach((v) => removeEmpty(v));
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export function findTemplateItemByKey(
   items: Array<{ key?: string; items?: unknown[] }>,
   key: string

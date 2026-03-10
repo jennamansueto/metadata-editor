@@ -18,6 +18,7 @@ import { useTreeData } from '../hooks/useTreeData';
 import { useProjectStore } from '../store/useProjectStore';
 import apiClient from '../api/client';
 import { eventBus } from '../utils/eventBus';
+import { removeEmpty } from '../utils/helpers';
 
 /**
  * Main editor layout - port of layout.php
@@ -68,7 +69,10 @@ const EditorLayout: React.FC = () => {
   const saveProject = async () => {
     try {
       const url = `/api/editor/update/${projectType}/${projectId}`;
-      await apiClient.post(url, formData);
+      // Deep-clone and strip empty values before posting (matches Vue version's removeEmpty)
+      const cleanedData = JSON.parse(JSON.stringify(formData));
+      removeEmpty(cleanedData);
+      await apiClient.post(url, cleanedData);
       setIsDirty(false);
       eventBus.emit('onSuccess', t('Save') + ' - OK');
     } catch (error) {
