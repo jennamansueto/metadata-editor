@@ -25,8 +25,8 @@ export function useTranslation() {
     let value = translations[key] || key;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
-        value = value.replace(`{${k}}`, v);
-        value = value.replace(`%{${k}}`, v);
+        value = value.replaceAll(`{${k}}`, v);
+        value = value.replaceAll(`%{${k}}`, v);
       });
     }
     return value;

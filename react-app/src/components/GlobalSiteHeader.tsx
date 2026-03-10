@@ -39,7 +39,7 @@ export default function GlobalSiteHeader() {
 
   useEffect(() => {
     axios
-      .get(ci.site_url + '/api/languages')
+      .get(ci.site_url.replace(/\/?$/, '/') + 'api/languages')
       .then((response) => {
         if (response.data?.languages) {
           setLanguages(response.data.languages);
@@ -54,7 +54,7 @@ export default function GlobalSiteHeader() {
   }, [ci.site_url]);
 
   function pageLink(page: string) {
-    window.location.href = ci.site_url + '/' + page;
+    window.location.href = ci.site_url.replace(/\/?$/, '/') + page;
   }
 
   function switchLanguage(langName: string) {
@@ -62,7 +62,7 @@ export default function GlobalSiteHeader() {
     params.append('language', langName);
 
     axios
-      .post(ci.site_url + '/api/languages/switch', params, {
+      .post(ci.site_url.replace(/\/?$/, '/') + 'api/languages/switch', params, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
       .then((response) => {
