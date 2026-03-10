@@ -8,8 +8,8 @@ Vue.component('geospatial-gallery', {
             previewDialog: false,
             previewImage: null,
             previewIndex: 0,
-            _isDestroyed: false,
-            _mapInitRetries: 0
+            isComponentDestroyed: false,
+            mapInitRetries: 0
         }
     },
     created: async function(){
@@ -24,13 +24,13 @@ Vue.component('geospatial-gallery', {
         });
     },
     beforeDestroy: function() {
-        this._isDestroyed = true;
+        this.isComponentDestroyed = true;
         this.destroyMap();
     },
     watch: {
         hasBoundingBox: function(newVal) {
             if (newVal) {
-                this._mapInitRetries = 0;
+                this.mapInitRetries = 0;
                 this.$nextTick(() => {
                     setTimeout(() => {
                         this.initializeMap();
@@ -118,13 +118,13 @@ Vue.component('geospatial-gallery', {
     },
     methods:{
         initializeMap: function() {
-            if (this._isDestroyed) return;
+            if (this.isComponentDestroyed) return;
             if (!this.hasBoundingBox) return;
 
             var mapContainer = document.getElementById(this.mapContainerId);
             if (!mapContainer) {
-                if (this._mapInitRetries < 10) {
-                    this._mapInitRetries++;
+                if (this.mapInitRetries < 10) {
+                    this.mapInitRetries++;
                     setTimeout(() => this.initializeMap(), 100);
                 }
                 return;
@@ -136,8 +136,8 @@ Vue.component('geospatial-gallery', {
             }
 
             if (typeof L === 'undefined') {
-                if (this._mapInitRetries < 10) {
-                    this._mapInitRetries++;
+                if (this.mapInitRetries < 10) {
+                    this.mapInitRetries++;
                     setTimeout(() => this.initializeMap(), 200);
                 }
                 return;
@@ -249,6 +249,7 @@ Vue.component('geospatial-gallery', {
 
             axios.post(url)
                 .then(function(response) {
+                    vm.closePreview();
                     vm.$store.dispatch('loadExternalResources', {dataset_id: vm.ProjectID});
                 })
                 .catch(function(error) {
