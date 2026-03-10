@@ -126,7 +126,7 @@ export default {
             this.$store.dispatch('loadVariableGroups',{dataset_id:this.ProjectID}); 
         },
         pingDataService: async function() {
-            vm = this;
+            let vm = this;
             let url = CI.base_url + '/api/data/status/';
 
             let resp = await axios.get(url,{

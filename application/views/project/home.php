@@ -1367,7 +1367,7 @@
         },
         ShareProject: async function(id) { 
           try {
-            vm = this;
+            let vm = this;
             let hasPermissionsToShare = await this.hasProjectAdminAccess(id);
 
             if (!hasPermissionsToShare){
@@ -1549,7 +1549,7 @@
           return response.data;
         },
         getProjectSharedUsers: async function(project_id) {
-          vm = this;
+          let vm = this;
           let url = CI.site_url + '/api/share/list/' + project_id;
 
           let response = await axios.get(url);
@@ -1561,7 +1561,7 @@
           throw new Error(response);
         },
         hasProjectAdminAccess: async function(project_id) {
-          vm = this;
+          let vm = this;
           let url = CI.site_url + '/api/editor/has_admin_access/' + project_id;
 
           try{
@@ -1577,7 +1577,7 @@
 
         },
         getProjectAccessPermissions: async function(project_id) {
-          vm = this;
+          let vm = this;
           let url = CI.site_url + '/api/editor/access_permissions/' + project_id;
 
           let response = await axios.get(url);
@@ -1693,7 +1693,7 @@
         },
         OnAddProjectsToCollection: async function(obj) {
           try {
-            vm = this;
+            let vm = this;
 
             let form_data = obj;
             let url = CI.site_url + '/api/collections/add_projects';
@@ -1719,7 +1719,7 @@
           }
 
           try {
-            vm = this;
+            let vm = this;
 
             let form_data = {
               'projects': project_id,

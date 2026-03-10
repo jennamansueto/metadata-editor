@@ -43,7 +43,7 @@ export default {
             });            
         },
         getCollectionsList: async function() {
-            vm = this;
+            let vm = this;
             let url = CI.base_url + '/api/collections/tree';
             let response = await axios.get(url);
   

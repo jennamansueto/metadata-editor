@@ -35,7 +35,7 @@ export default {
     },
     methods: {
         loadGeospatialFeatures: function() {
-            vm = this;
+            let vm = this;
             let url = CI.base_url + '/api/geospatial-features/' + this.ProjectID;
             
             axios.get(url)
@@ -63,7 +63,7 @@ export default {
                 return;
             }
             
-            vm = this;
+            let vm = this;
             let feature = this.geospatialFeatures[index];
             let url = CI.base_url + '/api/geospatial-features/' + feature.id;
             
@@ -184,7 +184,7 @@ export default {
                 return;
             }
             
-            vm = this;
+            let vm = this;
             let deleted_count = 0;
             let errors = [];
             

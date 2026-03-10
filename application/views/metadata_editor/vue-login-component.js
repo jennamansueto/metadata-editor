@@ -41,7 +41,7 @@ export default {
 
             this.is_loading = true;
             let url = CI.site_url + '/api/editor/is_connected';
-            vm = this;
+            let vm = this;
             console.log("checking isLoggedIn");
             axios.get(url)
                 .then(function(response) {

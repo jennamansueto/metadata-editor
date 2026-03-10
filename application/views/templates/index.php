@@ -914,7 +914,7 @@
           this.readFile(this.templateFile); //results are stored in this.importJSON
         },
         readFile(file) {
-          vm = this;
+          let vm = this;
           let reader = new FileReader();
           reader.onload = e => {
             console.log(e.target.result);

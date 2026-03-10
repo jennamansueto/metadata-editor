@@ -70,7 +70,6 @@ export default {
         },
         addAccess: async function() {
             let vm = this;
-            vm = this;
             let form_data = {
                 'permissions': this.user_access,
                 'users': this.getSelectedUsersList()
