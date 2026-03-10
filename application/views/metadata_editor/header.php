@@ -196,6 +196,14 @@
                                     {{$t('Change log')}}
                                 </v-list-item-title>
                             </v-list-item>
+                            <v-list-item @click="onRouterLinkClick('/diagnostic')">
+                                <v-list-item-icon>
+                                    <v-icon>mdi-stethoscope</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-title>
+                                    {{$t('Project Diagnostic')}}
+                                </v-list-item-title>
+                            </v-list-item>
                         </v-list-item-group>
                     </v-list>
                 </v-col>
