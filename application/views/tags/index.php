@@ -304,6 +304,7 @@
       });
       tagsApp.use(i18n);
       tagsApp.use(vuetify);
+      tagsApp.config.globalProperties.CI = window.CI;
       tagsApp.mount('#app');
     })();
   </script>

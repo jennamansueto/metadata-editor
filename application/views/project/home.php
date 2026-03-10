@@ -1847,6 +1847,7 @@
     app.config.globalProperties.$confirm = $confirm;
     app.config.globalProperties.$alert = $alert;
     app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
+    app.config.globalProperties.CI = window.CI;
 
     vue_app = app.mount('#app');
   </script>

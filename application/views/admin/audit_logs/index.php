@@ -188,5 +188,6 @@
     });
     auditApp.use(i18n);
     auditApp.use(vuetify);
+    auditApp.config.globalProperties.CI = window.CI;
     auditApp.mount('#app');
 </script>

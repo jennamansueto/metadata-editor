@@ -1362,6 +1362,7 @@
     app.config.globalProperties.$confirm = $confirm;
     app.config.globalProperties.$alert = $alert;
     app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
+    app.config.globalProperties.CI = window.CI;
 
     // Register filter functions as global mixin methods
     app.mixin({

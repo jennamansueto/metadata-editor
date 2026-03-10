@@ -1277,5 +1277,6 @@
   schemasApp.use(i18n);
   schemasApp.use(vuetify);
   schemasApp.use(router);
+  schemasApp.config.globalProperties.CI = window.CI;
   schemasApp.mount('#app');
 })();

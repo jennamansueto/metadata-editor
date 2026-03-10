@@ -954,6 +954,7 @@
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
     Vue.component('VueJsonPretty', VueJsonPretty.default)
 
+    app.config.globalProperties.CI = window.CI;
     vue_app = app.mount('#app');
   </script>
 </body>

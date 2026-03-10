@@ -1993,6 +1993,7 @@
     tmApp.use(i18n);
     tmApp.use(store);
     tmApp.use(vuetify);
+    tmApp.config.globalProperties.CI = window.CI;
     tmApp.mount('#app');
   </script>
 

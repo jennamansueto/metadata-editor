@@ -263,6 +263,7 @@
             app.use(GlobalLoginPlugin);
         }
 
+        app.config.globalProperties.CI = window.CI;
         vue_app = app.mount('#app');
     </script>
 

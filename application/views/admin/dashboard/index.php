@@ -1959,5 +1959,6 @@ const vuetify = Vuetify.createVuetify({
 const dashboardApp = Vue.createApp({});
 dashboardApp.use(vuetify);
 dashboardApp.use(router);
+dashboardApp.config.globalProperties.CI = window.CI;
 dashboardApp.mount('#dashboard-app');
 </script>
