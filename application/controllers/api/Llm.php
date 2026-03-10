@@ -64,7 +64,15 @@ class Llm extends MY_REST_Controller
 		}
 
 		// Check if user has permission to view this project
-		$this->editor_acl->user_has_project_access($project_id, $permission='view');
+		try {
+			$this->editor_acl->user_has_project_access($project_id, $permission='view');
+		} catch (Exception $e) {
+			$this->response(array(
+				'status'  => 'error',
+				'message' => $e->getMessage()
+			), REST_Controller::HTTP_FORBIDDEN);
+			return;
+		}
 
 		// Load project metadata
 		$project = $this->Editor_model->get_row($project_id);
