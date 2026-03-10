@@ -35,11 +35,16 @@ Vue.component('version-history', {
         },
         momentDate(date) {
             if (!date) return '';
-            // version_created may be ISO string or unix timestamp
-            let m = moment(date);
-            if (!m.isValid()) {
-                m = moment.unix(date);
+            // version_created is a unix timestamp in seconds from PHP time()
+            // but the API may format it as an ISO string via date()
+            let numDate = typeof date === 'string' ? parseInt(date, 10) : date;
+            // If it looks like a pure numeric timestamp, use moment.unix
+            if (!isNaN(numDate) && String(numDate) === String(date).trim()) {
+                let m = moment.unix(numDate);
+                return m.isValid() ? m.format("YYYY-MM-DD HH:mm:ss") : '';
             }
+            // Otherwise treat as ISO date string
+            let m = moment(date);
             return m.isValid() ? m.format("YYYY-MM-DD HH:mm:ss") : '';
         },
         openVersion(version) {
