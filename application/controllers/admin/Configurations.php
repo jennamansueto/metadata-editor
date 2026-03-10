@@ -269,15 +269,6 @@ class Configurations extends MY_Controller {
 			mkdir($upload_dir, 0755, true);
 		}
 
-		// Remove old logo if one exists
-		$old_logo = $this->Configurations_model->get_config_item('pdf_cover_logo');
-		if (!empty($old_logo)) {
-			$old_path = FCPATH . ltrim($old_logo, '/');
-			if (file_exists($old_path)) {
-				@unlink($old_path);
-			}
-		}
-
 		$config = array(
 			'upload_path'   => $upload_dir,
 			'allowed_types' => 'gif|jpg|jpeg|png',
@@ -288,6 +279,15 @@ class Configurations extends MY_Controller {
 		$this->load->library('upload', $config);
 
 		if ($this->upload->do_upload('logo_file')) {
+			// Remove old logo only after successful upload
+			$old_logo = $this->Configurations_model->get_config_item('pdf_cover_logo');
+			if (!empty($old_logo)) {
+				$old_path = FCPATH . ltrim($old_logo, '/');
+				if (file_exists($old_path)) {
+					@unlink($old_path);
+				}
+			}
+
 			$upload_data = $this->upload->data();
 			$relative_path = 'files/pdf_cover/' . $upload_data['file_name'];
 			$this->Configurations_model->upsert('pdf_cover_logo', $relative_path);
