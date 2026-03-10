@@ -13,9 +13,9 @@
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>

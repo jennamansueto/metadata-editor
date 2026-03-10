@@ -145,8 +145,8 @@
     </v-app>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
