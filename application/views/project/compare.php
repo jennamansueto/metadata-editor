@@ -728,7 +728,7 @@
         variables_diff: null,
         variables_diff_error: null,
         variables_diff_filter: 'changed'
-      }; },
+      },
       mounted() {
         if (this.project1_id && this.project2_id) {
           this.loadProjects();
