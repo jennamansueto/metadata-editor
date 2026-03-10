@@ -77,11 +77,11 @@ class Projects extends MY_Controller {
 			$options['post_url']=site_url('api/editor/update/'.$project['type'].'/'.$project['id']);
 			$options['user_has_edit_access']=$this->user_has_edit_access($project['id']);
 
-				// Support ?react=1 URL parameter to load React app instead of Vue
-				$use_react = $this->input->get('react') === '1';
-				$view_name = $use_react ? 'metadata_editor/index_react' : 'metadata_editor/index_vuetify';
-				$content= $this->load->view($view_name,$options,true);
-				echo $content;
+			// Support ?react=1 URL parameter to load React app instead of Vue
+			$use_react = $this->input->get('react') === '1';
+			$view_name = $use_react ? 'metadata_editor/index_react' : 'metadata_editor/index_vuetify';
+			$content= $this->load->view($view_name,$options,true);
+			echo $content;
 		}
 		catch(Exception $e){
 			show_error($e->getMessage());
