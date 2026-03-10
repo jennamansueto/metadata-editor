@@ -117,6 +117,10 @@ Vue.component('geospatial-gallery', {
         }
     },
     methods:{
+        tl: function(key, fallback) {
+            var translated = this.$t(key);
+            return (translated && translated !== key) ? translated : fallback;
+        },
         initializeMap: function() {
             if (this.isComponentDestroyed) return;
             if (!this.hasBoundingBox) return;
@@ -267,7 +271,7 @@ Vue.component('geospatial-gallery', {
                 <v-card v-if="hasBoundingBox" outlined class="mb-4">
                     <v-card-title>
                         <v-icon class="mr-2">mdi-map</v-icon>
-                        {{$t('geographic_extent') || 'Geographic Extent'}}
+                        {{tl('geographic_extent', 'Geographic Extent')}}
                     </v-card-title>
                     <v-card-text>
                         <div 
@@ -276,7 +280,7 @@ Vue.component('geospatial-gallery', {
                         >
                             <div v-if="!map" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #666;">
                                 <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
-                                <div class="mt-2">{{$t('loading_map') || 'Loading map...'}}</div>
+                                <div class="mt-2">{{tl('loading_map', 'Loading map...')}}</div>
                             </div>
                         </div>
                         
@@ -286,36 +290,36 @@ Vue.component('geospatial-gallery', {
                                 <template v-slot:default>
                                     <thead>
                                         <tr>
-                                            <th>{{$t('direction') || 'Direction'}}</th>
-                                            <th>{{$t('coordinate') || 'Coordinate'}}</th>
+                                            <th>{{tl('direction', 'Direction')}}</th>
+                                            <th>{{tl('coordinate', 'Coordinate')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td class="font-weight-medium">
                                                 <v-icon small class="mr-1">mdi-arrow-up</v-icon>
-                                                {{$t('north_latitude') || 'North Latitude'}}
+                                                {{tl('north_latitude', 'North Latitude')}}
                                             </td>
                                             <td>{{boundingBoxData.north.toFixed(6)}}&deg;</td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-medium">
                                                 <v-icon small class="mr-1">mdi-arrow-down</v-icon>
-                                                {{$t('south_latitude') || 'South Latitude'}}
+                                                {{tl('south_latitude', 'South Latitude')}}
                                             </td>
                                             <td>{{boundingBoxData.south.toFixed(6)}}&deg;</td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-medium">
                                                 <v-icon small class="mr-1">mdi-arrow-right</v-icon>
-                                                {{$t('east_longitude') || 'East Longitude'}}
+                                                {{tl('east_longitude', 'East Longitude')}}
                                             </td>
                                             <td>{{boundingBoxData.east.toFixed(6)}}&deg;</td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-medium">
                                                 <v-icon small class="mr-1">mdi-arrow-left</v-icon>
-                                                {{$t('west_longitude') || 'West Longitude'}}
+                                                {{tl('west_longitude', 'West Longitude')}}
                                             </td>
                                             <td>{{boundingBoxData.west.toFixed(6)}}&deg;</td>
                                         </tr>
@@ -330,10 +334,10 @@ Vue.component('geospatial-gallery', {
                     <v-card-text class="text-center py-6">
                         <v-icon size="48" color="grey lighten-1">mdi-map-marker-off</v-icon>
                         <div class="text-body-1 mt-2 grey--text">
-                            {{$t('no_bounding_box') || 'No bounding box coordinates defined for this project.'}}
+                            {{tl('no_bounding_box', 'No bounding box coordinates defined for this project.')}}
                         </div>
                         <div class="text-body-2 grey--text text--lighten-1 mt-1">
-                            {{$t('bounding_box_hint') || 'Set bounding box coordinates in the Geographic Extent section of the metadata form.'}}
+                            {{tl('bounding_box_hint', 'Set bounding box coordinates in the Geographic Extent section of the metadata form.')}}
                         </div>
                     </v-card-text>
                 </v-card>
@@ -345,7 +349,7 @@ Vue.component('geospatial-gallery', {
                     <v-card-title class="d-flex justify-space-between align-center">
                         <div>
                             <v-icon class="mr-2">mdi-image-multiple</v-icon>
-                            {{$t('image_gallery') || 'Image Gallery'}}
+                            {{tl('image_gallery', 'Image Gallery')}}
                             <v-chip small color="primary" class="ml-2" v-if="ExternalResourcesImages.length > 0">
                                 {{ExternalResourcesImages.length}}
                             </v-chip>
@@ -358,7 +362,7 @@ Vue.component('geospatial-gallery', {
                             @click="navigateToUpload"
                         >
                             <v-icon left small>mdi-upload</v-icon>
-                            {{$t('upload_image') || 'Upload Image'}}
+                            {{tl('upload_image', 'Upload Image')}}
                         </v-btn>
                     </v-card-title>
 
@@ -397,7 +401,7 @@ Vue.component('geospatial-gallery', {
                                         </div>
                                         <v-card-text class="pa-2">
                                             <div class="text-subtitle-2 text-truncate" :title="image.title">
-                                                {{image.title || $t('untitled') || 'Untitled'}}
+                                                {{image.title || tl('untitled', 'Untitled')}}
                                             </div>
                                             <div v-if="image.description" class="text-caption grey--text text-truncate" :title="image.description">
                                                 {{image.description}}
@@ -406,12 +410,12 @@ Vue.component('geospatial-gallery', {
                                         <v-card-actions v-if="isProjectEditable" class="pa-2 pt-0">
                                             <v-btn x-small text color="primary" @click.stop="editImage(image)">
                                                 <v-icon x-small left>mdi-pencil</v-icon>
-                                                {{$t('edit') || 'Edit'}}
+                                                {{tl('edit', 'Edit')}}
                                             </v-btn>
                                             <v-spacer></v-spacer>
                                             <v-btn x-small text color="error" @click.stop="deleteImage(image)">
                                                 <v-icon x-small left>mdi-delete</v-icon>
-                                                {{$t('delete') || 'Delete'}}
+                                                {{tl('delete', 'Delete')}}
                                             </v-btn>
                                         </v-card-actions>
                                     </v-card>
@@ -423,10 +427,10 @@ Vue.component('geospatial-gallery', {
                         <div v-else class="text-center py-8">
                             <v-icon size="64" color="grey lighten-1">mdi-image-off</v-icon>
                             <div class="text-h6 mt-4 grey--text">
-                                {{$t('no_images') || 'No images in gallery'}}
+                                {{tl('no_images', 'No images in gallery')}}
                             </div>
                             <div class="text-body-2 grey--text text--lighten-1 mt-1">
-                                {{$t('no_images_hint') || 'Upload images by creating external resources with type "Photo [pic]".'}}
+                                {{tl('no_images_hint', 'Upload images by creating external resources with type "Photo [pic]".')}}
                             </div>
                             <v-btn 
                                 v-if="isProjectEditable"
@@ -436,7 +440,7 @@ Vue.component('geospatial-gallery', {
                                 @click="navigateToUpload"
                             >
                                 <v-icon left>mdi-upload</v-icon>
-                                {{$t('upload_first_image') || 'Upload First Image'}}
+                                {{tl('upload_first_image', 'Upload First Image')}}
                             </v-btn>
                         </div>
                     </v-card-text>
@@ -448,7 +452,7 @@ Vue.component('geospatial-gallery', {
                 <v-card v-if="previewImage" style="background-color: #1e1e1e;">
                     <v-card-title class="d-flex justify-space-between align-center white--text py-2">
                         <div class="text-truncate" style="max-width: 70%;">
-                            {{previewImage.title || $t('image_preview') || 'Image Preview'}}
+                            {{previewImage.title || tl('image_preview', 'Image Preview')}}
                         </div>
                         <div>
                             <v-btn icon dark small @click="prevImage" :disabled="previewIndex === 0" class="mr-1">
@@ -479,7 +483,7 @@ Vue.component('geospatial-gallery', {
                         <v-spacer></v-spacer>
                         <v-btn small text dark @click="editImage(previewImage)">
                             <v-icon small left>mdi-pencil</v-icon>
-                            {{$t('edit') || 'Edit'}}
+                            {{tl('edit', 'Edit')}}
                         </v-btn>
                     </v-card-actions>
                 </v-card>
