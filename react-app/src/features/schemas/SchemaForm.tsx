@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -175,6 +175,7 @@ export default function SchemaForm({ mode }: SchemaFormProps) {
 
   const isCreate = mode !== 'edit';
   const baseApiUrl = ci.site_url.replace(/\/?$/, '/') + 'api/schemas';
+  const submittingRef = useRef(false);
 
   const [form, setForm] = useState<SchemaFormData>(createDefaultForm());
   const [uploading, setUploading] = useState(false);
@@ -491,21 +492,26 @@ export default function SchemaForm({ mode }: SchemaFormProps) {
   }
 
   async function handleSubmit() {
-    if (initializing) return;
+    if (submittingRef.current || initializing) return;
     setFormErrorMessage('');
 
     if (!validate()) return;
 
-    if (isCreate) {
-      if (!mainFile) {
-        const msg = t('main_schema_required');
-        setFormErrorMessage(msg);
-        showAlert(msg, { color: 'error' });
-        return;
+    submittingRef.current = true;
+    try {
+      if (isCreate) {
+        if (!mainFile) {
+          const msg = t('main_schema_required');
+          setFormErrorMessage(msg);
+          showAlert(msg, { color: 'error' });
+          return;
+        }
+        await createSchema();
+      } else {
+        await updateSchema();
       }
-      await createSchema();
-    } else {
-      await updateSchema();
+    } finally {
+      submittingRef.current = false;
     }
   }
 

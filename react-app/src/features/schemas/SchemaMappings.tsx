@@ -116,6 +116,7 @@ export default function SchemaMappings() {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const submittingRef = useRef(false);
   const [formErrorMessage, setFormErrorMessage] = useState('');
   const [currentSchema, setCurrentSchema] = useState<SchemaDetail | null>(null);
   const [metadataOptions, setMetadataOptions] = useState<MetadataOptions>({});
@@ -322,7 +323,8 @@ export default function SchemaMappings() {
   }
 
   async function handleSubmit() {
-    if (loading || saving) return;
+    if (submittingRef.current || loading || saving) return;
+    submittingRef.current = true;
     setFormErrorMessage('');
     setSaving(true);
 
@@ -407,6 +409,7 @@ export default function SchemaMappings() {
       setFormErrorMessage(message);
     } finally {
       setSaving(false);
+      submittingRef.current = false;
     }
   }
 
