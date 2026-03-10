@@ -97,6 +97,24 @@ $lang['update_check_failed']="Could not check for updates (network error or API 
 $lang['support']="Support";
 $lang['github_releases']="GitHub releases &amp; changelog";
 
+$lang['pdf_cover_page_settings']="PDF Cover Page";
+$lang['pdf_cover_primary_color']="Banner background color";
+$lang['pdf_cover_text_color']="Banner text color";
+$lang['pdf_cover_secondary_color']="Accent color";
+$lang['pdf_cover_design']="Cover page design";
+$lang['pdf_cover_design_default']="Default (full-width banner)";
+$lang['pdf_cover_design_minimal']="Minimal (thin accent line)";
+$lang['pdf_cover_design_modern']="Modern (side stripe)";
+$lang['pdf_cover_logo']="Organization logo";
+$lang['pdf_cover_logo_note']="Upload a logo (PNG, JPG, or GIF, max 2 MB) to display on the PDF cover page";
+$lang['pdf_cover_upload_logo']="Upload logo";
+$lang['pdf_cover_remove_logo']="Remove logo";
+$lang['pdf_cover_preview']="Preview";
+$lang['pdf_cover_preview_note']="This is an approximate preview. The actual PDF rendering may differ slightly.";
+$lang['pdf_cover_logo_upload_success']="Logo uploaded successfully";
+$lang['pdf_cover_logo_upload_error']="Logo upload failed";
+$lang['pdf_cover_logo_removed']="Logo removed";
+
 
 /* End of file configurations_lang.php */
 /* Location: ./application/language/english/configurations_lang.php */

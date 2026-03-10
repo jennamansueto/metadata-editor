@@ -241,6 +241,180 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 <?php echo form_close();?>
 
 <fieldset class="field-expanded">
+	<legend><i class="fas fa-file-pdf mr-3" style="color:#007bff;"></i><?php echo t('pdf_cover_page_settings');?></legend>
+
+	<?php
+		$_pc_primary   = isset($pdf_cover_primary_color)   ? $pdf_cover_primary_color   : '#0969da';
+		$_pc_text      = isset($pdf_cover_text_color)      ? $pdf_cover_text_color      : '#ffffff';
+		$_pc_secondary = isset($pdf_cover_secondary_color) ? $pdf_cover_secondary_color : '#0969da';
+		$_pc_design    = isset($pdf_cover_design)          ? $pdf_cover_design          : 'default';
+		$_pc_logo      = isset($pdf_cover_logo)            ? $pdf_cover_logo            : '';
+	?>
+
+	<!-- Color pickers and design selector form -->
+	<?php echo form_open('admin/configurations', 'id="form_pdf_cover"'); ?>
+
+	<div class="field">
+		<label for="pdf_cover_primary_color"><?php echo t('pdf_cover_primary_color');?></label>
+		<input type="color" name="pdf_cover_primary_color" id="pdf_cover_primary_color"
+			value="<?php echo htmlspecialchars($_pc_primary); ?>"
+			style="width:60px;height:34px;padding:2px;cursor:pointer;" />
+		<input type="text" class="form-control" id="pdf_cover_primary_color_text"
+			value="<?php echo htmlspecialchars($_pc_primary); ?>"
+			style="width:100px;display:inline;margin-left:5px;" maxlength="7" />
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_text_color"><?php echo t('pdf_cover_text_color');?></label>
+		<input type="color" name="pdf_cover_text_color" id="pdf_cover_text_color"
+			value="<?php echo htmlspecialchars($_pc_text); ?>"
+			style="width:60px;height:34px;padding:2px;cursor:pointer;" />
+		<input type="text" class="form-control" id="pdf_cover_text_color_text"
+			value="<?php echo htmlspecialchars($_pc_text); ?>"
+			style="width:100px;display:inline;margin-left:5px;" maxlength="7" />
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_secondary_color"><?php echo t('pdf_cover_secondary_color');?></label>
+		<input type="color" name="pdf_cover_secondary_color" id="pdf_cover_secondary_color"
+			value="<?php echo htmlspecialchars($_pc_secondary); ?>"
+			style="width:60px;height:34px;padding:2px;cursor:pointer;" />
+		<input type="text" class="form-control" id="pdf_cover_secondary_color_text"
+			value="<?php echo htmlspecialchars($_pc_secondary); ?>"
+			style="width:100px;display:inline;margin-left:5px;" maxlength="7" />
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_design"><?php echo t('pdf_cover_design');?></label>
+		<select name="pdf_cover_design" id="pdf_cover_design" class="form-control">
+			<option value="default" <?php echo $_pc_design === 'default' ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_default');?></option>
+			<option value="minimal" <?php echo $_pc_design === 'minimal' ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_minimal');?></option>
+			<option value="modern"  <?php echo $_pc_design === 'modern'  ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_modern');?></option>
+		</select>
+	</div>
+
+	<div style="text-align:right;margin-top:10px;">
+		<input class="btn btn-primary" type="submit" value="<?php echo t('update');?>" name="submit"/>
+	</div>
+
+	<?php echo form_close();?>
+
+	<!-- Logo upload (separate form with enctype) -->
+	<div class="field" style="margin-top:15px;border-top:1px solid #eee;padding-top:15px;">
+		<label><?php echo t('pdf_cover_logo');?></label>
+		<div>
+			<?php if (!empty($_pc_logo)): ?>
+				<div style="margin-bottom:10px;">
+					<img src="<?php echo site_url($_pc_logo); ?>" style="max-height:80px;max-width:250px;border:1px solid #ddd;padding:4px;" />
+					<br/>
+					<a href="<?php echo site_url('admin/configurations/remove_cover_logo'); ?>" class="btn btn-sm btn-outline-danger mt-2"
+						onclick="return confirm('Remove the logo?');">
+						<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_remove_logo');?>
+					</a>
+				</div>
+			<?php endif; ?>
+
+			<?php echo form_open_multipart('admin/configurations/upload_cover_logo', 'id="form_logo_upload"'); ?>
+				<input type="file" name="logo_file" accept="image/png,image/jpeg,image/gif" />
+				<span class="field-note"><?php echo t('pdf_cover_logo_note');?></span>
+				<br/>
+				<input class="btn btn-sm btn-outline-primary mt-2" type="submit" value="<?php echo t('pdf_cover_upload_logo');?>" />
+			<?php echo form_close();?>
+		</div>
+	</div>
+
+	<!-- Live preview -->
+	<div class="field" style="margin-top:15px;border-top:1px solid #eee;padding-top:15px;">
+		<label><?php echo t('pdf_cover_preview');?></label>
+		<span class="field-note"><?php echo t('pdf_cover_preview_note');?></span>
+		<div id="pdf-cover-preview" style="width:400px;height:520px;border:1px solid #ccc;margin-top:10px;position:relative;overflow:hidden;background:#fff;font-family:Arial,Verdana,sans-serif;">
+		</div>
+	</div>
+
+	<script>
+	(function() {
+		var logoUrl = <?php echo json_encode(!empty($_pc_logo) ? site_url($_pc_logo) : ''); ?>;
+
+		function updatePreview() {
+			var primary   = $('#pdf_cover_primary_color').val();
+			var textColor = $('#pdf_cover_text_color').val();
+			var secondary = $('#pdf_cover_secondary_color').val();
+			var design    = $('#pdf_cover_design').val();
+			var $box      = $('#pdf-cover-preview');
+
+			var logoHtml = logoUrl ? '<img src="' + logoUrl + '" style="max-height:50px;max-width:160px;" />' : '';
+			var sampleTitle = 'Sample Project Title';
+			var sampleIdno  = 'PROJECT-2025-001';
+			var sampleDate  = 'Report generated on: <?php echo date("F j, Y"); ?>';
+			var sampleType  = 'Project type: Microdata';
+			var html = '';
+
+			if (design === 'minimal') {
+				html += logoHtml ? '<div style="padding:8px 12px;">' + logoHtml + '</div>' : '';
+				html += '<div style="border-top:3px solid ' + primary + ';margin:6px 12px 0 12px;"></div>';
+				html += '<div style="padding:12px;padding-top:200px;text-align:left;">';
+				html += '<div style="font-size:1.6em;font-weight:bold;color:#333;">' + sampleTitle + '</div>';
+				html += '</div>';
+				html += '<div style="padding:0 12px;">';
+				html += '<div style="margin-top:6px;font-size:9pt;color:' + secondary + ';font-weight:bold;">' + sampleIdno + '</div>';
+				html += '<div style="margin-top:4px;font-size:8pt;color:gray;">' + sampleDate + '</div>';
+				html += '<div style="margin-top:4px;font-size:8pt;color:gray;">' + sampleType + '</div>';
+				html += '</div>';
+			} else if (design === 'modern') {
+				html += '<div style="display:flex;height:100%;">';
+				html += '<div style="width:30px;background-color:' + primary + ';flex-shrink:0;"></div>';
+				html += '<div style="flex:1;padding:12px;">';
+				html += logoHtml ? '<div style="margin-bottom:10px;">' + logoHtml + '</div>' : '';
+				html += '<div style="padding-top:180px;text-align:center;">';
+				html += '<div style="font-size:1.6em;font-weight:bold;color:#333;">' + sampleTitle + '</div>';
+				html += '<div style="margin-top:8px;font-size:9pt;color:' + secondary + ';font-weight:bold;">' + sampleIdno + '</div>';
+				html += '<div style="margin-top:6px;font-size:8pt;color:gray;">' + sampleDate + '</div>';
+				html += '<div style="margin-top:4px;font-size:8pt;color:gray;">' + sampleType + '</div>';
+				html += '</div></div></div>';
+			} else {
+				html += '<div style="width:100%;background-color:' + primary + ';">';
+				html += logoHtml ? '<div style="padding:8px;">' + logoHtml + '</div>' : '';
+				html += '<div style="padding:8px;padding-top:200px;text-align:right;font-size:1.6em;color:' + textColor + ';">' + sampleTitle + '</div>';
+				html += '</div>';
+				html += '<div style="text-align:right;padding:0 8px;">';
+				html += '<div style="margin-top:12px;font-size:9pt;color:' + secondary + ';font-weight:bold;">' + sampleIdno + '</div>';
+				html += '<div style="margin-top:4px;font-size:8pt;color:gray;">' + sampleDate + '</div>';
+				html += '<div style="margin-top:8px;font-size:8pt;color:gray;">' + sampleType + '</div>';
+				html += '</div>';
+			}
+
+			$box.html(html);
+		}
+
+		// Sync color picker <-> text input
+		function syncColorInputs(pickerId, textId) {
+			$('#' + pickerId).on('input change', function() {
+				$('#' + textId).val($(this).val());
+				updatePreview();
+			});
+			$('#' + textId).on('input change', function() {
+				var v = $(this).val();
+				if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+					$('#' + pickerId).val(v);
+				}
+				updatePreview();
+			});
+		}
+
+		syncColorInputs('pdf_cover_primary_color',   'pdf_cover_primary_color_text');
+		syncColorInputs('pdf_cover_text_color',      'pdf_cover_text_color_text');
+		syncColorInputs('pdf_cover_secondary_color', 'pdf_cover_secondary_color_text');
+
+		$('#pdf_cover_design').on('change', updatePreview);
+
+		// Initial preview render
+		updatePreview();
+	})();
+	</script>
+
+</fieldset>
+
+<fieldset class="field-expanded">
 	<legend><i class="fas fa-life-ring mr-3" style="color:#007bff;"></i><?php echo t('support_and_updates');?></legend>
 
 	<div class="field">

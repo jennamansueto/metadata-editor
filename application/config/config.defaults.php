@@ -31,5 +31,12 @@ $config['supported_languages'] = json_encode(array(
     array('folder' => 'uzbek',   'code' => 'uz', 'display' => 'Uzbek',    'direction' => 'ltr'),
 ));
 
+//PDF cover page settings
+$config['pdf_cover_primary_color'] = '#0969da';
+$config['pdf_cover_text_color'] = '#ffffff';
+$config['pdf_cover_secondary_color'] = '#0969da';
+$config['pdf_cover_design'] = 'default';
+$config['pdf_cover_logo'] = '';
+
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */
