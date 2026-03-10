@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, type ReactNode } from 'react';
 
 type Translations = Record<string, string>;
 
@@ -21,7 +21,7 @@ export function TranslationProvider({
 export function useTranslation() {
   const translations = useContext(TranslationContext);
 
-  function t(key: string, params?: Record<string, string>): string {
+  const t = useCallback((key: string, params?: Record<string, string>): string => {
     let value = translations[key] || key;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
@@ -30,7 +30,7 @@ export function useTranslation() {
       });
     }
     return value;
-  }
+  }, [translations]);
 
   return { t };
 }
