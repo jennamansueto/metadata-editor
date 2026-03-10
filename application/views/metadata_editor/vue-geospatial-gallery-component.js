@@ -193,11 +193,11 @@ Vue.component('geospatial-gallery', {
 
             // Add popup with bounding box info
             var popupContent = '<div>' +
-                '<strong>' + (this.$t('geographic_bounding_box') || 'Geographic Bounding Box') + '</strong><br>' +
-                (this.$t('north') || 'North') + ': ' + bbox.north.toFixed(6) + '&deg;<br>' +
-                (this.$t('south') || 'South') + ': ' + bbox.south.toFixed(6) + '&deg;<br>' +
-                (this.$t('east') || 'East') + ': ' + bbox.east.toFixed(6) + '&deg;<br>' +
-                (this.$t('west') || 'West') + ': ' + bbox.west.toFixed(6) + '&deg;' +
+                '<strong>' + this.tl('geographic_bounding_box', 'Geographic Bounding Box') + '</strong><br>' +
+                this.tl('north', 'North') + ': ' + bbox.north.toFixed(6) + '&deg;<br>' +
+                this.tl('south', 'South') + ': ' + bbox.south.toFixed(6) + '&deg;<br>' +
+                this.tl('east', 'East') + ': ' + bbox.east.toFixed(6) + '&deg;<br>' +
+                this.tl('west', 'West') + ': ' + bbox.west.toFixed(6) + '&deg;' +
                 '</div>';
             rectangle.bindPopup(popupContent);
 
