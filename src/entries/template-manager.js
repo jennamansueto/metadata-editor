@@ -19,6 +19,8 @@ window.draggable = draggable;
 
 // Install plugins
 Vue.use(Vuex);
+Vue.use(Vuetify);
+Vue.use(VueI18n);
 
 // Import template_manager components
 import FieldKey from '@views/template_manager/vue-field-key-component.js';

@@ -9,6 +9,10 @@ window.Vuetify = Vuetify;
 window.VueI18n = VueI18n;
 window.moment = moment;
 
+// Install plugins
+Vue.use(Vuetify);
+Vue.use(VueI18n);
+
 // Import the audit logs component
 import AuditLogsComponent from '@views/admin/audit_logs/vue-audit-logs-component.js';
 

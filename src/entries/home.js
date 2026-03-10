@@ -23,6 +23,8 @@ window.$ = jQuery;
 // Install plugins
 Vue.use(Vuex);
 Vue.use(VueRouter);
+Vue.use(Vuetify);
+Vue.use(VueI18n);
 
 // Import and install EventBus + global methods
 import { EventBus, installGlobalMethods } from '@views/vue/vue-global-eventbus.js';

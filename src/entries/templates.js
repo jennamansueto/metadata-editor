@@ -32,6 +32,8 @@ window.$ = jQuery;
 Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(VueDeepSet);
+Vue.use(Vuetify);
+Vue.use(VueI18n);
 
 // Import components
 import LoginComponent from '@views/metadata_editor/vue-login-component.js';

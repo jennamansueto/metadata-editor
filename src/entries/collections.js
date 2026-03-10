@@ -20,6 +20,8 @@ window.$ = jQuery;
 
 // Install plugins
 Vue.use(VueRouter);
+Vue.use(Vuetify);
+Vue.use(VueI18n);
 
 // Import components
 import LoginComponent from '@views/metadata_editor/vue-login-component.js';

@@ -14,3 +14,7 @@ window.axios = axios;
 window.moment = moment;
 window.Vuetify = Vuetify;
 window.VueI18n = VueI18n;
+
+// Install plugins
+Vue.use(Vuetify);
+Vue.use(VueI18n);

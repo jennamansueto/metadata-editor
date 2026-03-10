@@ -16,3 +16,5 @@ window.moment = moment;
 window.Chart = Chart;
 
 Vue.use(VueRouter);
+Vue.use(Vuetify);
+Vue.use(VueI18n);

@@ -8,8 +8,6 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Vite bundle -->
-  <script src="<?php echo base_url();?>vue-app/assets/dist/schemas.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -754,6 +752,9 @@
   <script>
     window.__SCHEMA_TRANSLATIONS__ = JSON.parse(atob('<?php echo base64_encode(json_encode($translations)); ?>'));
   </script>
+
+  <!-- Vite bundle (after DOM and translations are ready) -->
+  <script src="<?php echo base_url();?>vue-app/assets/dist/schemas.js"></script>
 
 </body>
 </html>
