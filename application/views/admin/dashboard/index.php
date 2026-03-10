@@ -1040,7 +1040,7 @@
 </div>
 
 <!-- Vite bundle -->
-<script type="module" src="<?php echo base_url('vue-app/assets/dist/dashboard.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/dist/dashboard.js'); ?>"></script>
 <script>
 window.DashboardI18n = {
     PAGE_VIEWS: '<?php echo t('Page Views'); ?>',
@@ -1058,7 +1058,7 @@ window.DashboardI18n = {
 </script>
 <script src="<?php echo base_url('javascript/dashboard-components.js'); ?>"></script>
 
-<script type="module">
+<script>
 const formattingMixin = {
     methods: {
         formatNumber(value) {

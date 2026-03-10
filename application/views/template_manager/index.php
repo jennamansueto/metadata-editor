@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/template-manager.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/template-manager.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
@@ -325,7 +325,7 @@
     </v-app>
   </div>
 
-  <script type="module">
+  <script>
     //global js functions
     function getTreeKeys(tree_items, output) {
       tree_items.forEach(item => {
@@ -1501,7 +1501,7 @@
             return;
           }
           
-          let vm = this;
+          vm = this;
           let url = CI.base_url + '/api/templates/update/' + this.user_template_info.uid;
 
           // Sync UserTreeItems back to UserTemplate.items before saving

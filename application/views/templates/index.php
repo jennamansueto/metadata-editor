@@ -16,7 +16,7 @@
   <link href="<?php echo base_url();?>vue-app/assets/vue-json-pretty.min.css" rel="stylesheet">
 
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/templates.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/templates.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 
@@ -383,7 +383,7 @@
 
   </div>
 
-  <script type="module">
+  <script>
   
     
     <?php
@@ -914,7 +914,7 @@
           this.readFile(this.templateFile); //results are stored in this.importJSON
         },
         readFile(file) {
-          let vm = this;
+          vm = this;
           let reader = new FileReader();
           reader.onload = e => {
             console.log(e.target.result);
@@ -927,7 +927,7 @@
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    // VueJsonPretty is already registered by the Vite bundle (templates.js)
 
   </script>
 </body>

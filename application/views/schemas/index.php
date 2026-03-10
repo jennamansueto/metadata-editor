@@ -9,7 +9,7 @@
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet">
 
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/schemas.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/schemas.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 

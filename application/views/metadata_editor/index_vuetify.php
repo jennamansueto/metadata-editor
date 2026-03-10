@@ -92,9 +92,9 @@
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
 
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/metadata-editor.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/metadata-editor.js"></script>
 
-  <script type="module">
+  <script>
   <?php echo $this->load->view("metadata_editor/index_vuetify_main_app",null,true);?>
     
     const translation_messages = {
@@ -1334,7 +1334,7 @@
     }
     })
 
-    Vue.component('VueJsonPretty', VueJsonPretty.default);
+    // VueJsonPretty is already registered by the Vite bundle (metadata-editor.js)
   </script>
 
   <script>

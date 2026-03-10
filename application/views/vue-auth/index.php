@@ -19,8 +19,8 @@
     </div>
 
     <!-- Vite bundle -->
-    <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/auth.js"></script>
-    <script type="module">
+    <script src="<?php echo base_url();?>vue-app/assets/dist/auth.js"></script>
+    <script>
         var CI = {
       'base_url': '<?php echo site_url(); ?>'
     };
@@ -33,10 +33,10 @@
         },
         methods:{
             login: function() {
-                let vm = this;
+                vm = this;
                 let url = CI.base_url + '/auth/login?isajax=1';
 
-                let formData =new FormData();
+                formData =new FormData();
                 formData.append('email',this.email);
                 formData.append('password',this.password);
 

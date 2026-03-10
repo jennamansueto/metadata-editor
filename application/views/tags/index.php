@@ -8,7 +8,7 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet">
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/tags.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/tags.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <style>
@@ -145,7 +145,7 @@
     </v-app>
   </div>
 
-  <script type="module">
+  <script>
     (function() {
       const translations = <?php echo json_encode(isset($translations) ? $translations : array(), JSON_UNESCAPED_UNICODE); ?>;
       const i18n = new VueI18n({ locale: 'default', messages: { default: translations } });

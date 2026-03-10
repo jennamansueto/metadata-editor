@@ -256,7 +256,7 @@ export default {
                     background-color="#FFFFFF"                    
                 ></v-combobox>
 
-                /*<select  
+                <!-- <select  
                     v-model="formData[item.key]" 
                     class="form-control form-field-dropdown"
                     :id="'field-' + normalizeClassID(item.key)" 
@@ -265,8 +265,7 @@ export default {
                     <option v-for="(option_key,option_value) in item.enum" v-bind:value="option_value">
                         {{ option_key }}
                     </option>
-                </select>
-                */
+                </select> -->
                 
                 <small class="help-text form-text text-muted">{{item.help_text}}</small>
             </div>
@@ -281,3 +280,5 @@ export default {
         </div>
     `
 };
+
+

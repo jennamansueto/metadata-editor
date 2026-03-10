@@ -101,7 +101,7 @@
 </style>
 
 <!-- Vite bundle -->
-<script type="module" src="<?php echo base_url();?>vue-app/assets/dist/audit-logs.js"></script>
+<script src="<?php echo base_url();?>vue-app/assets/dist/audit-logs.js"></script>
 
 <div id="app" data-app>
     <div class="audit-logs-admin">
@@ -109,7 +109,7 @@
     </div>
 </div>
 
-<script type="module">
+<script>
     // Set up CI base URL
     var CI = {
         'base_url': '<?php echo site_url(); ?>',

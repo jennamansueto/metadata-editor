@@ -162,10 +162,10 @@
     <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
 
     <!-- Vite bundle -->
-    <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/collections.js"></script>
+    <script src="<?php echo base_url();?>vue-app/assets/dist/collections.js"></script>
   
 
-    <script type="module">
+    <script>
         <?php
             // All component JS files are now imported via the Vite bundle (collections.js)
         ?>

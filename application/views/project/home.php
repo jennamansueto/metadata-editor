@@ -680,7 +680,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
 
   <!-- Vite bundle -->
-  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/home.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/dist/home.js"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />
 
@@ -690,7 +690,7 @@
     }
   </style>
 
-  <script type="module">
+  <script>
 
     <?php
     // All component JS files are now imported via the Vite bundle (home.js)
@@ -1367,7 +1367,7 @@
         },
         ShareProject: async function(id) { 
           try {
-            let vm = this;
+            vm = this;
             let hasPermissionsToShare = await this.hasProjectAdminAccess(id);
 
             if (!hasPermissionsToShare){
@@ -1549,7 +1549,7 @@
           return response.data;
         },
         getProjectSharedUsers: async function(project_id) {
-          let vm = this;
+          vm = this;
           let url = CI.site_url + '/api/share/list/' + project_id;
 
           let response = await axios.get(url);
@@ -1561,7 +1561,7 @@
           throw new Error(response);
         },
         hasProjectAdminAccess: async function(project_id) {
-          let vm = this;
+          vm = this;
           let url = CI.site_url + '/api/editor/has_admin_access/' + project_id;
 
           try{
@@ -1577,7 +1577,7 @@
 
         },
         getProjectAccessPermissions: async function(project_id) {
-          let vm = this;
+          vm = this;
           let url = CI.site_url + '/api/editor/access_permissions/' + project_id;
 
           let response = await axios.get(url);
@@ -1681,7 +1681,7 @@
           }
         },
         getCollectionsList: async function() {
-          let vm = this;
+          vm = this;
           let url = CI.site_url + '/api/collections/tree';
           let response = await axios.get(url);
 
@@ -1693,7 +1693,7 @@
         },
         OnAddProjectsToCollection: async function(obj) {
           try {
-            let vm = this;
+            vm = this;
 
             let form_data = obj;
             let url = CI.site_url + '/api/collections/add_projects';
@@ -1719,7 +1719,7 @@
           }
 
           try {
-            let vm = this;
+            vm = this;
 
             let form_data = {
               'projects': project_id,
