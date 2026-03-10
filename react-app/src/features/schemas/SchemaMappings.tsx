@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -29,7 +29,13 @@ import { useTranslation } from '../../i18n/TranslationContext';
 import { useAlert } from '../../hooks/useAlert';
 import { extractErrorMessage } from '../../utils/api';
 
-interface CoreFields {
+interface AttributeEntry {
+  id: string;
+  key: string;
+  value: string;
+}
+
+interface ApiCoreFields {
   idno: string[];
   title: string[];
   country: string[];
@@ -38,8 +44,17 @@ interface CoreFields {
   attributes: Record<string, string>;
 }
 
+interface CoreFieldsState {
+  idno: string[];
+  title: string[];
+  country: string[];
+  year_start: string[];
+  year_end: string[];
+  attributes: AttributeEntry[];
+}
+
 interface MetadataOptions {
-  core_fields?: Partial<CoreFields>;
+  core_fields?: Partial<ApiCoreFields>;
   [key: string]: unknown;
 }
 
@@ -68,20 +83,20 @@ function normalizeMetadataOptions(options: MetadataOptions | null | undefined): 
 
   const normalized = { ...defaults, ...options };
   if (!normalized.core_fields || typeof normalized.core_fields !== 'object') {
-    normalized.core_fields = { ...(defaults.core_fields as CoreFields) };
+    normalized.core_fields = { ...(defaults.core_fields as ApiCoreFields) };
   } else {
-    normalized.core_fields = { ...(defaults.core_fields as CoreFields), ...normalized.core_fields };
+    normalized.core_fields = { ...(defaults.core_fields as ApiCoreFields), ...normalized.core_fields };
     const arrayFields = ['idno', 'title', 'country', 'year_start', 'year_end'] as const;
     arrayFields.forEach((field) => {
       const value = normalized.core_fields![field];
       if (Array.isArray(value)) {
-        (normalized.core_fields as CoreFields)[field] = value.filter(
+        (normalized.core_fields as ApiCoreFields)[field] = value.filter(
           (v: string) => v && v !== ''
         );
       } else if (value && typeof value === 'string' && value !== '') {
-        (normalized.core_fields as CoreFields)[field] = [value];
+        (normalized.core_fields as ApiCoreFields)[field] = [value];
       } else {
-        (normalized.core_fields as CoreFields)[field] = [];
+        (normalized.core_fields as ApiCoreFields)[field] = [];
       }
     });
   }
@@ -108,13 +123,38 @@ export default function SchemaMappings() {
   const [fieldOptions, setFieldOptions] = useState<string[]>([]);
   const [fieldsLoading, setFieldsLoading] = useState(false);
 
-  const [coreFields, setCoreFields] = useState<CoreFields>({
+  const attrIdCounter = useRef(0);
+
+  function nextAttrId(): string {
+    attrIdCounter.current += 1;
+    return 'attr-' + attrIdCounter.current;
+  }
+
+  function recordToEntries(record: Record<string, string>): AttributeEntry[] {
+    return Object.entries(record).map(([key, value]) => ({
+      id: nextAttrId(),
+      key,
+      value,
+    }));
+  }
+
+  function entriesToRecord(entries: AttributeEntry[]): Record<string, string> {
+    const result: Record<string, string> = {};
+    entries.forEach((entry) => {
+      if (entry.key && entry.key !== '') {
+        result[entry.key] = entry.value;
+      }
+    });
+    return result;
+  }
+
+  const [coreFields, setCoreFields] = useState<CoreFieldsState>({
     idno: [],
     title: [],
     country: [],
     year_start: [],
     year_end: [],
-    attributes: {},
+    attributes: [],
   });
 
   const fetchSchema = useCallback(async () => {
@@ -137,14 +177,14 @@ export default function SchemaMappings() {
     setMetadataOptions(schema.metadata_options || {});
 
     const normalized = normalizeMetadataOptions(schema.metadata_options || null);
-    const cf = normalized.core_fields as CoreFields;
+    const cf = normalized.core_fields as ApiCoreFields;
     setCoreFields({
       idno: cf.idno || [],
       title: cf.title || [],
       country: cf.country || [],
       year_start: cf.year_start || [],
       year_end: cf.year_end || [],
-      attributes: cf.attributes || {},
+      attributes: recordToEntries(cf.attributes || {}),
     });
   }, [schemaUid, baseApiUrl, navigate]);
 
@@ -232,47 +272,42 @@ export default function SchemaMappings() {
     initialize();
   }, [initialize]);
 
-  function updateCoreField(field: keyof Omit<CoreFields, 'attributes'>, value: string[]) {
+  function updateCoreField(field: keyof Omit<CoreFieldsState, 'attributes'>, value: string[]) {
     setCoreFields((prev) => ({ ...prev, [field]: value }));
   }
 
   function addAttribute() {
-    let counter = Object.keys(coreFields.attributes).length + 1;
+    const existingKeys = new Set(coreFields.attributes.map((a) => a.key));
+    let counter = coreFields.attributes.length + 1;
     let newKey = 'attribute_' + counter;
-    while (coreFields.attributes[newKey] !== undefined) {
+    while (existingKeys.has(newKey)) {
       counter++;
       newKey = 'attribute_' + counter;
     }
+    const id = nextAttrId();
     setCoreFields((prev) => ({
       ...prev,
-      attributes: { ...prev.attributes, [newKey]: '' },
+      attributes: [...prev.attributes, { id, key: newKey, value: '' }],
     }));
   }
 
-  function removeAttribute(key: string) {
-    setCoreFields((prev) => {
-      const newAttrs = { ...prev.attributes };
-      delete newAttrs[key];
-      return { ...prev, attributes: newAttrs };
-    });
+  function removeAttribute(id: string) {
+    setCoreFields((prev) => ({
+      ...prev,
+      attributes: prev.attributes.filter((a) => a.id !== id),
+    }));
   }
 
-  function updateAttributeKey(oldKey: string, newKey: string) {
-    if (!newKey || newKey === '' || newKey === oldKey) return;
-    if (coreFields.attributes[newKey] !== undefined) {
-      showAlert(t('attribute_key_exists'), { color: 'error' });
-      return;
-    }
-    setCoreFields((prev) => {
-      const value = prev.attributes[oldKey];
-      const newAttrs = { ...prev.attributes };
-      delete newAttrs[oldKey];
-      newAttrs[newKey] = value;
-      return { ...prev, attributes: newAttrs };
-    });
+  function updateAttributeKey(id: string, newKey: string) {
+    setCoreFields((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((a) =>
+        a.id === id ? { ...a, key: newKey } : a
+      ),
+    }));
   }
 
-  function updateAttributeValue(key: string, value: string | string[] | null) {
+  function updateAttributeValue(id: string, value: string | string[] | null) {
     const fieldValue = Array.isArray(value)
       ? value.length > 0
         ? value[0]
@@ -280,7 +315,9 @@ export default function SchemaMappings() {
       : value || '';
     setCoreFields((prev) => ({
       ...prev,
-      attributes: { ...prev.attributes, [key]: fieldValue },
+      attributes: prev.attributes.map((a) =>
+        a.id === id ? { ...a, value: fieldValue } : a
+      ),
     }));
   }
 
@@ -337,22 +374,15 @@ export default function SchemaMappings() {
     }
 
     // Normalize attributes
-    if (
-      coreFields.attributes &&
-      typeof coreFields.attributes === 'object' &&
-      !Array.isArray(coreFields.attributes)
-    ) {
-      const attrs: Record<string, string> = {};
-      Object.entries(coreFields.attributes).forEach(([key, val]) => {
-        if (key && key !== '' && val && typeof val === 'string' && val !== '') {
-          attrs[key] = val;
-        }
-      });
-      updatedMetadataOptions.core_fields.attributes =
-        Object.keys(attrs).length > 0 ? attrs : {};
-    } else {
-      updatedMetadataOptions.core_fields.attributes = {};
-    }
+    const attrsRecord = entriesToRecord(coreFields.attributes);
+    const cleanAttrs: Record<string, string> = {};
+    Object.entries(attrsRecord).forEach(([key, val]) => {
+      if (key && key !== '' && val && typeof val === 'string' && val !== '') {
+        cleanAttrs[key] = val;
+      }
+    });
+    updatedMetadataOptions.core_fields.attributes =
+      Object.keys(cleanAttrs).length > 0 ? cleanAttrs : {};
 
     const formData = new FormData();
     formData.append('title', existingTitle);
@@ -382,7 +412,7 @@ export default function SchemaMappings() {
 
   const mappingFields: {
     label: string;
-    key: keyof Omit<CoreFields, 'attributes'>;
+    key: keyof Omit<CoreFieldsState, 'attributes'>;
     required: boolean;
   }[] = [
     { label: 'IDNO', key: 'idno', required: true },
@@ -492,7 +522,7 @@ export default function SchemaMappings() {
                       <Typography fontWeight={500}>Attributes</Typography>
                     </TableCell>
                     <TableCell>
-                      {Object.keys(coreFields.attributes).length > 0 && (
+                      {coreFields.attributes.length > 0 && (
                         <Table size="small" sx={{ mb: 1 }}>
                           <TableHead>
                             <TableRow>
@@ -506,15 +536,14 @@ export default function SchemaMappings() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {Object.entries(coreFields.attributes).map(
-                              ([key, value]) => (
-                                <TableRow key={key}>
+                            {coreFields.attributes.map((attr) => (
+                                <TableRow key={attr.id}>
                                   <TableCell>
                                     <TextField
-                                      value={key}
+                                      value={attr.key}
                                       onChange={(e) =>
                                         updateAttributeKey(
-                                          key,
+                                          attr.id,
                                           e.target.value
                                         )
                                       }
@@ -527,16 +556,16 @@ export default function SchemaMappings() {
                                     <Autocomplete
                                       freeSolo
                                       options={fieldOptions}
-                                      value={value || ''}
+                                      value={attr.value || ''}
                                       onChange={(_, newVal) =>
                                         updateAttributeValue(
-                                          key,
+                                          attr.id,
                                           newVal
                                         )
                                       }
                                       onInputChange={(_, newInputValue, reason) => {
                                         if (reason === 'input') {
-                                          updateAttributeValue(key, newInputValue);
+                                          updateAttributeValue(attr.id, newInputValue);
                                         }
                                       }}
                                       loading={fieldsLoading}
@@ -559,15 +588,14 @@ export default function SchemaMappings() {
                                       size="small"
                                       color="error"
                                       onClick={() =>
-                                        removeAttribute(key)
+                                        removeAttribute(attr.id)
                                       }
                                     >
                                       <DeleteIcon fontSize="small" />
                                     </IconButton>
                                   </TableCell>
                                 </TableRow>
-                              )
-                            )}
+                              ))}
                           </TableBody>
                         </Table>
                       )}
