@@ -311,7 +311,7 @@ Vue.component('datafile-import', {
             return false;
         },
         removeFile(file_idx){
-            Vue.delete(this.files,file_idx);      
+            delete this.files[file_idx];      
             this.files.splice(file_idx, 0);
         },        
         handleFileUpload(event)
@@ -392,7 +392,7 @@ Vue.component('datafile-import', {
                                 <tbody>
                                     <tr v-for="(file,file_index) in files" :key="file.name">
                                     <td>{{ file.name }}</td>
-                                    <td>{{ file.size | kbmb }}</td>
+                                    <td>{{ kbmb(file.size) }}</td>
                                     <td><button class="float-right" @click="removeFile(file_index)" :title="$t('Remove')"><i class="fas fa-trash"></i></button></td>
                                     </tr>
                                 </tbody>

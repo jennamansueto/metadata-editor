@@ -9,7 +9,7 @@ Vue.component('vue-collection-remove-dialog', {
         removeCollectionFromList: function(collection_id){
             let index = this.collections.findIndex(x => x.id === collection_id);
             if (index > -1) {
-                Vue.delete(this.collections, index);
+                delete this.collections[index];
             }
         },
         removeFromCollection: async function(project_id, collection_id) {

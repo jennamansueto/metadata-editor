@@ -751,7 +751,7 @@ Vue.component('editor-bounding-box-field', {
             this.drawingMode = false;
         }
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         this.destroyMap();
     },
     template: `

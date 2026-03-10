@@ -84,7 +84,7 @@ Vue.component('indicator-dsd', {
                 }
             } catch (error) {
                 console.log("Error loading columns", error);
-                EventBus.$emit('onFail', 'Failed to load columns');
+                EventBus.emit('onFail', 'Failed to load columns');
             } finally {
                 this.loading = false;
             }
@@ -140,12 +140,12 @@ Vue.component('indicator-dsd', {
                         this.columns.push(new_column);
                         let newIdx = this.columns.length - 1;
                         this.editColumn(newIdx);
-                        EventBus.$emit('onSuccess', 'Column created!');
+                        EventBus.emit('onSuccess', 'Column created!');
                     }
                 })
                 .catch((error) => {
                     console.log("error creating column", error);
-                    EventBus.$emit('onFail', 'Failed to create column');
+                    EventBus.emit('onFail', 'Failed to create column');
                 });
         },
         importColumns: function() {
@@ -167,7 +167,7 @@ Vue.component('indicator-dsd', {
                     const msg = data.updated !== undefined
                         ? (vm.$t('code_lists_populated') || 'Code lists populated') + ': ' + data.updated + ' ' + (vm.$t('columns_updated') || 'columns updated')
                         : (vm.$t('code_lists_populated') || 'Code lists populated');
-                    EventBus.$emit('onSuccess', msg);
+                    EventBus.emit('onSuccess', msg);
                     if (data.skipped && data.skipped.length > 0) {
                         console.log('Populate code lists skipped:', data.skipped);
                     }
@@ -176,11 +176,11 @@ Vue.component('indicator-dsd', {
                     }
                     await vm.loadColumns();
                 } else {
-                    EventBus.$emit('onFail', data.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists'));
+                    EventBus.emit('onFail', data.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists'));
                 }
             } catch (error) {
                 const msg = (error.response && error.response.data && error.response.data.message) || error.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists');
-                EventBus.$emit('onFail', msg);
+                EventBus.emit('onFail', msg);
             } finally {
                 vm.isPopulatingCodeLists = false;
             }
@@ -222,7 +222,7 @@ Vue.component('indicator-dsd', {
                 headers: { 'Content-Type': 'application/json' }
             })
                 .then(function (response) {
-                    EventBus.$emit('onSuccess', 'Column saved!');
+                    EventBus.emit('onSuccess', 'Column saved!');
                     // Update column_copy only after successful save
                     if (vm.edit_item !== null) {
                         vm.column_copy = _.cloneDeep(vm.columns[vm.edit_item]);
@@ -230,7 +230,7 @@ Vue.component('indicator-dsd', {
                 })
                 .catch(function (error) {
                     console.log(error);
-                    EventBus.$emit('onFail', 'Failed to save column');
+                    EventBus.emit('onFail', 'Failed to save column');
                 });
         },
         deleteColumn: function() {
@@ -268,7 +268,7 @@ Vue.component('indicator-dsd', {
                         vm.page_action = "list";
                     }
                     
-                    EventBus.$emit('onSuccess', ids.length === 1 ? 'Column deleted!' : `${ids.length} columns deleted!`);
+                    EventBus.emit('onSuccess', ids.length === 1 ? 'Column deleted!' : `${ids.length} columns deleted!`);
                 })
                 .catch(function (error) {
                     console.log("error deleting column", error);
@@ -386,7 +386,7 @@ Vue.component('indicator-dsd', {
             if (this.edit_item === null) {
                 return;
             }
-            Vue.set(this.columns, this.edit_item, column);
+            this.columns[this.edit_item] = column;
             if (column && column.id) {
                 this.saveColumnDebounce();
             }
@@ -396,9 +396,9 @@ Vue.component('indicator-dsd', {
             var col = this.columns[this.edit_item];
             if (!col) return;
             if (!col.metadata) {
-                Vue.set(col, 'metadata', {});
+                col['metadata'] = {};
             }
-            Vue.set(col.metadata, 'value_label_column', newValue == null ? '' : String(newValue));
+            col.metadata['value_label_column'] = newValue == null ? '' : String(newValue);
             if (col.id && this.columnHasChanges(col)) {
                 this.saveColumnDebounce();
             }
@@ -429,7 +429,7 @@ Vue.component('indicator-dsd', {
             } catch (error) {
                 // This is an actual error (network, server error, etc.)
                 console.error("Validation error:", error);
-                EventBus.$emit('onFail', 'Failed to validate data structure: ' + (error.response?.data?.message || error.message));
+                EventBus.emit('onFail', 'Failed to validate data structure: ' + (error.response?.data?.message || error.message));
             } finally {
                 this.isValidating = false;
             }

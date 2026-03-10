@@ -332,7 +332,7 @@ Vue.component('variables', {
             var url = CI.base_url + '/api/variables/' + vm.dataset_id;
             axios.post(url, variable)
                 .then(function (response) {
-                    EventBus.$emit('onSuccess', vm.$t('variable_renamed') || 'Variable renamed.');
+                    EventBus.emit('onSuccess', vm.$t('variable_renamed') || 'Variable renamed.');
                     if (vm.edit_items.length === 1 && vm.edit_items[0] === index) {
                         vm.variable_copy = _.cloneDeep(vm.variables[index]);
                     }
@@ -360,19 +360,19 @@ Vue.component('variables', {
                     var updated = response.data && response.data.updated !== undefined ? response.data.updated : 0;
                     return vm.reloadDataFileVariables()
                         .then(function () {
-                            EventBus.$emit("onSuccess", updated ? (updated + " " + (updated === 1 ? "variable" : "variables") + " updated.") : "Change case applied.");
+                            EventBus.emit("onSuccess", updated ? (updated + " " + (updated === 1 ? "variable" : "variables") + " updated.") : "Change case applied.");
                             vm.changeCaseUpdateStatus = "";
                             vm.changeCaseDialog = false;
                         })
                         .catch(function () {
-                            EventBus.$emit("onFail", "Change case applied but failed to refresh variables.");
+                            EventBus.emit("onFail", "Change case applied but failed to refresh variables.");
                             vm.changeCaseUpdateStatus = "";
                             vm.changeCaseDialog = false;
                         });
                 })
                 .catch(function (error) {
                     var msg = (error.response && error.response.data && error.response.data.message) ? error.response.data.message : "Failed to apply change case";
-                    EventBus.$emit("onFail", msg);
+                    EventBus.emit("onFail", msg);
                     vm.changeCaseUpdateStatus = "";
                 });
         },
@@ -515,7 +515,7 @@ Vue.component('variables', {
                                     sum_stats_options_[sum_stats_key]=this.variableMultiple[field_name][sum_stats_key];
                                 }
                             }
-                            Vue.set(variable_,'sum_stats_options',sum_stats_options_);
+                            variable_['sum_stats_options'] = sum_stats_options_;
                         }
                         else{
 
@@ -527,7 +527,7 @@ Vue.component('variables', {
                             }
 
                             //variable_[field_name]=JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
-                            Vue.set(variable_,field_name,JSON.parse(JSON.stringify(this.variableMultiple[field_name])));
+                            variable_[field_name] = JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
                         }
                     }
                 }
@@ -559,7 +559,7 @@ Vue.component('variables', {
                 data
             )
             .then(function (response) {
-                EventBus.$emit('onSuccess', 'Variable saved!');
+                EventBus.emit('onSuccess', 'Variable saved!');
                 // Update variable_copy only after successful save
                 if (vm.edit_items.length === 1) {
                     vm.variable_copy = _.cloneDeep(vm.variables[vm.edit_items[0]]);
@@ -567,7 +567,7 @@ Vue.component('variables', {
             })
             .catch(function (error) {
                 console.log(error);
-                EventBus.$emit('onFail', 'Failed to save variable');
+                EventBus.emit('onFail', 'Failed to save variable');
             })
             .then(function () {
                 //console.log("request completed");
@@ -961,9 +961,9 @@ Vue.component('variables', {
             if (this.edit_items.length==1){
                 let variable_= this.variables[this.edit_items[0]];
                 if (variable_ && !variable_.var_invalrng){
-                    Vue.set(variable_, 'var_invalrng', {
+                    variable_['var_invalrng'] = {
                         "values":[]
-                    });
+                    };
                 }
                 return variable_;
             }

@@ -5,7 +5,7 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet">
 
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
@@ -752,11 +752,12 @@
   </script>
 
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
 
   <script>
     <?php

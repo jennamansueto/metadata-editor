@@ -1,8 +1,8 @@
 <script>
-        Vue.use(Vuex)
-        Vue.use(VueDeepSet)     
+        // Vue 3: Vue.use() replaced with app.use() in main app setup
+        // VueDeepSet removed for Vue 3 migration
 
-        window.bus = new Vue();//todo remove?
+        window.bus = mitt();
 
         Vue.mixin({
             methods: {
@@ -357,7 +357,8 @@
 
         ]
 
-        const router = new VueRouter({
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
             routes
         })
 
@@ -377,7 +378,7 @@
             next();
         })
 
-        var store = new Vuex.Store({
+        var store = Vuex.createStore({
             state: {
                 user_has_edit_access:user_has_edit_access,
                 active_section: "not set",
@@ -873,7 +874,7 @@
                     return resp;
                 },
             },
-            mutations: VueDeepSet.extendMutation({
+            mutations: {
                 // other mutations
                 data_model (state,data) {
                     console.log("value added");
@@ -911,12 +912,11 @@
                     state.metadata_types=data;
                 },
                 variables(state,data){
-                    Vue.set(state.variables, data.fid, data.variables);
+                    state.variables[data.fid] = data.variables;
                 },
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
-                        Vue.set(state.variables,data.fid,[]);
-                        Vue.set(state.variables[data.fid],data.fid,{});
+                        state.variables[data.fid] = [];
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;
@@ -930,7 +930,7 @@
                 variables_active_tab(state,data){
                     state.variables_active_tab=data;
                 }
-            })            
+            }            
         })
 
 

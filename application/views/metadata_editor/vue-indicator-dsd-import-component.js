@@ -61,7 +61,7 @@ Vue.component('indicator-dsd-import', {
             this.$router.beforeHooks.push(this._routeGuard);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         window.removeEventListener('beforeunload', this._boundBeforeUnload);
         window.removeEventListener('hashchange', this._boundHashChange);
         if (this._routeGuard && this.$router && Array.isArray(this.$router.beforeHooks)) {
@@ -362,7 +362,7 @@ Vue.component('indicator-dsd-import', {
             console.log('processImport called');
             
             if (!this.file || !this.csvData) {
-                EventBus.$emit('onFail', 'No CSV file to import');
+                EventBus.emit('onFail', 'No CSV file to import');
                 return;
             }
 
@@ -370,7 +370,7 @@ Vue.component('indicator-dsd-import', {
             const selectedColumns = this.columnMappings.filter(m => m.selected);
             console.log('Selected columns:', selectedColumns.length);
             if (selectedColumns.length === 0) {
-                EventBus.$emit('onFail', 'Please select at least one column to import');
+                EventBus.emit('onFail', 'Please select at least one column to import');
                 return;
             }
 
@@ -378,7 +378,7 @@ Vue.component('indicator-dsd-import', {
             const validation = this.validateIndicatorId();
             console.log('Indicator ID validation:', validation);
             if (!validation || !validation.valid) {
-                EventBus.$emit('onFail', validation ? validation.error : 'Indicator ID validation failed');
+                EventBus.emit('onFail', validation ? validation.error : 'Indicator ID validation failed');
                 return;
             }
 
@@ -428,7 +428,7 @@ Vue.component('indicator-dsd-import', {
                         // Import completed but with errors
                         this.errors = response.data.errors;
                         this.importStatus = 'Import completed with errors';
-                        EventBus.$emit('onFail', 'CSV import completed with errors. Please check the errors below.');
+                        EventBus.emit('onFail', 'CSV import completed with errors. Please check the errors below.');
                         this.step = 2; // Go back to preview to show errors
                     } else if (response.data.status === 'success') {
                         // Refresh project data so left-tree data preview gets the new file (no page refresh needed)
@@ -447,23 +447,23 @@ Vue.component('indicator-dsd-import', {
                                     this.importStatus = 'Import completed. Code lists populated.';
                                     const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                                     const message = `CSV imported: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg} Code lists populated for ${pop.updated} columns.`;
-                                    EventBus.$emit('onSuccess', message);
+                                    EventBus.emit('onSuccess', message);
                                 } else {
                                     this.importStatus = 'Import completed successfully!';
                                     const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                                     const message = `CSV imported successfully: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg}`;
-                                    EventBus.$emit('onSuccess', message);
+                                    EventBus.emit('onSuccess', message);
                                 }
                             } catch (popErr) {
                                 this.importStatus = 'Import completed (code list populate had issues).';
                                 const message = `CSV imported: ${response.data.created || 0} created, ${response.data.updated || 0} updated. Code list populate failed: ${(popErr.response && popErr.response.data && popErr.response.data.message) || popErr.message}`;
-                                EventBus.$emit('onSuccess', message);
+                                EventBus.emit('onSuccess', message);
                             }
                         } else {
                             this.importStatus = 'Import completed successfully!';
                             const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                             const message = `CSV imported successfully: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg}`;
-                            EventBus.$emit('onSuccess', message);
+                            EventBus.emit('onSuccess', message);
                         }
                         this.importProgress = 100;
                         this.hasUnsavedChanges = false;
@@ -491,7 +491,7 @@ Vue.component('indicator-dsd-import', {
                     this.errors.push(error.message || 'Failed to import CSV');
                 }
                 this.step = 2; // Go back to preview to show errors
-                EventBus.$emit('onFail', 'CSV import failed: ' + (this.errors[0] || 'Unknown error'));
+                EventBus.emit('onFail', 'CSV import failed: ' + (this.errors[0] || 'Unknown error'));
             } finally {
                 this.isProcessing = false;
             }
@@ -542,7 +542,7 @@ Vue.component('indicator-dsd-import', {
             this.hasUnsavedChanges = true;
         },
         setRequiredFieldLabelColumn: function(fieldKey, csvColumn) {
-            this.$set(this.requiredFieldLabelColumns, fieldKey, csvColumn || '');
+            this.requiredFieldLabelColumns[fieldKey] = csvColumn || '';
             this.hasUnsavedChanges = true;
         },
         isRequiredFieldMapped: function(mapping) {

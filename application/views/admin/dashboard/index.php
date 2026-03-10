@@ -1,6 +1,6 @@
 <!-- Include Vue.js and Vuetify -->
 <link href="<?php echo base_url('vue-app/assets/mdi.min.css'); ?>" rel="stylesheet">
-<link href="<?php echo base_url('vue-app/assets/vuetify.min.css'); ?>" rel="stylesheet">
+<link href="<?php echo base_url('vue-app/assets/vuetify3.min.css'); ?>" rel="stylesheet">
 
 <style>
     .dashboard-component {
@@ -1040,9 +1040,10 @@
 </div>
 
 <!-- Vue.js and Vuetify -->
-<script src="<?php echo base_url('vue-app/assets/vue.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/vue-router.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/vuetify.min.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/vue.compat.global.prod.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/vue-router.global.prod.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/vuetify3.min.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/mitt.umd.js'); ?>"></script>
 <script src="<?php echo base_url('vue-app/assets/axios.min.js'); ?>"></script>
 <script src="<?php echo base_url('vue-app/assets/chart.min.js'); ?>"></script>
 <script>
@@ -1327,7 +1328,7 @@ const AnalyticsSection = {
             return 'error';
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.destroyCharts();
     }
 };
@@ -1689,7 +1690,7 @@ const DashboardHome = {
         this.loadDashboardStats();
         this.startLiveRefresh();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopLiveRefresh();
     },
     methods: {
@@ -1926,22 +1927,22 @@ const ApiLogsAggregates = {
     }
 };
 
-const router = new VueRouter({
-    mode: 'hash',
+const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes: [
         { path: '/', component: DashboardHome },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
-        { path: '*', redirect: '/' }
+        { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
-    vuetify: new Vuetify({
-        theme: {
-            themes: {
-                light: {
+const vuetify = Vuetify.createVuetify({
+    theme: {
+        themes: {
+            light: {
+                dark: false,
+                colors: {
                     primary: '#1976D2',
                     secondary: '#424242',
                     accent: '#82B1FF',
@@ -1952,7 +1953,11 @@ new Vue({
                 }
             }
         }
-    }),
-    router
+    }
 });
+
+const dashboardApp = Vue.createApp({});
+dashboardApp.use(vuetify);
+dashboardApp.use(router);
+dashboardApp.mount('#dashboard-app');
 </script>
