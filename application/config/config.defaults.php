@@ -31,5 +31,11 @@ $config['supported_languages'] = json_encode(array(
     array('folder' => 'uzbek',   'code' => 'uz', 'display' => 'Uzbek',    'direction' => 'ltr'),
 ));
 
+//LLM/AI integration settings
+$config['llm_api_url'] = '';
+$config['llm_api_key'] = '';
+$config['llm_model'] = 'gpt-4';
+$config['llm_default_temperature'] = '0.7';
+
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */
