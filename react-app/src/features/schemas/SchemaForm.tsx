@@ -195,10 +195,10 @@ export default function SchemaForm({ mode }: SchemaFormProps) {
   const formTitle = isCreate ? t('create_schema') : t('edit_schema');
 
   const isSaveDisabled = useMemo(() => {
-    if (uploading || pendingUploadLoading) return true;
+    if (initializing || uploading || pendingUploadLoading) return true;
     if (isCreate) return !mainFile;
     return false;
-  }, [uploading, pendingUploadLoading, isCreate, mainFile]);
+  }, [initializing, uploading, pendingUploadLoading, isCreate, mainFile]);
 
   const existingMainFile = useMemo((): FileRow | null => {
     if (!currentSchema?.filename) return null;
