@@ -11,6 +11,12 @@ Vue.component('summary-component', {
           project_validation:[],
           dialog_admin_metadata:false,
           admin_metadata_templates:[],
+          // Lock & Version dialog
+          dialog_lock_version:false,
+          lock_version_number:'',
+          lock_version_notes:'',
+          lock_version_loading:false,
+          lock_version_error:'',
         }
       },
     created: function(){      
@@ -40,6 +46,9 @@ Vue.component('summary-component', {
         },
         ProjectVersionInfo(){
             return this.$store.state.project_version_info;
+        },
+        ProjectIsLocked(){
+            return this.$store.state.project_is_locked;
         },
         projectTemplateSelectedIndex: {
             get: function () {
@@ -124,6 +133,46 @@ Vue.component('summary-component', {
                 });
 
             });
+        },
+        openLockVersionDialog: function(){
+            this.lock_version_number='';
+            this.lock_version_notes='';
+            this.lock_version_error='';
+            this.dialog_lock_version=true;
+        },
+        lockAndVersion: function(){
+            let vm=this;
+            vm.lock_version_loading=true;
+            vm.lock_version_error='';
+
+            if (!vm.lock_version_number || vm.lock_version_number.trim()===''){
+                vm.lock_version_error='Version number is required';
+                vm.lock_version_loading=false;
+                return;
+            }
+
+            let url=CI.base_url + '/api/editor/lock/' + vm.ProjectID;
+            let payload={
+                version_number: vm.lock_version_number.trim(),
+                version_notes: vm.lock_version_notes.trim()
+            };
+
+            axios.post(url, payload)
+            .then(function(response){
+                vm.lock_version_loading=false;
+                vm.dialog_lock_version=false;
+                if (response.data && response.data.status==='success'){
+                    bus.$emit('onSuccess', 'Version ' + vm.lock_version_number + ' created and locked');
+                }
+            })
+            .catch(function(error){
+                vm.lock_version_loading=false;
+                if (error.response && error.response.data && error.response.data.message){
+                    vm.lock_version_error=error.response.data.message;
+                } else {
+                    vm.lock_version_error='Failed to create version';
+                }
+            });
         }
     },     
     template: `
@@ -182,6 +231,27 @@ Vue.component('summary-component', {
                                     
                                 </div>
 
+                            </div>
+
+                            <!-- Lock & Version button -->
+                            <div class="mt-3" v-if="isProjectEditable && !ProjectIsLocked">
+                                <v-btn
+                                    color="deep-orange"
+                                    outlined
+                                    @click="openLockVersionDialog"
+                                >
+                                    <v-icon left>mdi-lock-plus</v-icon>
+                                    {{$t('lock_and_version')}}
+                                </v-btn>
+                            </div>
+                            <div class="mt-3" v-if="ProjectIsLocked">
+                                <v-chip color="deep-orange" text-color="white">
+                                    <v-icon left>mdi-lock</v-icon>
+                                    {{$t('locked')}} 
+                                    <span v-if="ProjectVersionInfo && ProjectVersionInfo.version_number" class="ml-1">
+                                        - v{{ProjectVersionInfo.version_number}}
+                                    </span>
+                                </v-chip>
                             </div>
 
                             <!-- end -->
@@ -342,9 +412,74 @@ Vue.component('summary-component', {
                             </template>
                         <!-- end template dialog -->
 
+                        <!-- Lock & Version dialog -->
+                        <template>
+                            <div class="text-center">
+                                <v-dialog
+                                    v-model="dialog_lock_version"
+                                    max-width="550px"
+                                    persistent
+                                >
+                                    <v-card>
+                                        <v-card-title class="text-h5 grey lighten-2">
+                                            <v-icon left>mdi-lock-plus</v-icon>
+                                            {{$t('lock_and_version')}}
+                                        </v-card-title>
 
-                        
+                                        <v-card-text class="pt-5">
+                                            <p class="mb-4">{{$t('lock_version_description')}}</p>
 
+                                            <v-alert v-if="lock_version_error" type="error" dense outlined class="mb-4">
+                                                {{lock_version_error}}
+                                            </v-alert>
+
+                                            <v-text-field
+                                                v-model="lock_version_number"
+                                                :label="$t('version_number')"
+                                                placeholder="e.g. 1.0.0"
+                                                outlined
+                                                dense
+                                                required
+                                                :rules="[v => !!v || $t('version_number_required')]"
+                                            ></v-text-field>
+
+                                            <v-textarea
+                                                v-model="lock_version_notes"
+                                                :label="$t('version_notes')"
+                                                placeholder=""
+                                                outlined
+                                                dense
+                                                rows="3"
+                                            ></v-textarea>
+                                        </v-card-text>
+
+                                        <v-divider></v-divider>
+
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn
+                                                text
+                                                @click="dialog_lock_version = false"
+                                                :disabled="lock_version_loading"
+                                            >
+                                                {{$t('cancel')}}
+                                            </v-btn>
+                                            <v-btn
+                                                color="deep-orange"
+                                                dark
+                                                @click="lockAndVersion"
+                                                :loading="lock_version_loading"
+                                                :disabled="!lock_version_number"
+                                            >
+                                                <v-icon left>mdi-lock</v-icon>
+                                                {{$t('lock_and_version')}}
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                            </div>
+                        </template>
+                        <!-- end Lock & Version dialog -->
 
                     </div>
                    

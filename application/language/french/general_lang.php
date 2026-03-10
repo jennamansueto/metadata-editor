@@ -180,6 +180,18 @@ $lang['version_type_help']="<p>Pour le versioning de projet, le <a href='https:/
     <li><strong>Patch</strong>: pour de petites corrections ou raffinements compatibles</li>
 </ul>";
 $lang['version_created_successfully']="Version créée avec succès";
+$lang['lock_and_version']="Verrouiller et versionner";
+$lang['lock_version_description']="Créer un instantané verrouillé en lecture seule du projet actuel. Le projet original restera modifiable pour les futures mises à jour.";
+$lang['version_number']="Numéro de version";
+$lang['version_number_required']="Le numéro de version est requis";
+$lang['unlocked']="Déverrouillé";
+$lang['no_versions_found']="Aucune version n'a encore été créée. Utilisez le bouton Verrouiller et versionner sur le résumé du projet pour créer une version.";
+$lang['view_version']="Voir la version";
+$lang['view']="Voir";
+$lang['status']="Statut";
+$lang['actions']="Actions";
+$lang['created_on']="Créé le";
+$lang['cancel']="Annuler";
 
 $lang['Cancel changes']="Annuler les modifications";
 $lang['READ ONLY']="LECTURE SEULE";

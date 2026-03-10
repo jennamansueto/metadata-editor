@@ -180,6 +180,18 @@ $lang['version_type_help']="<p>For project versioning, <a href='https://semver.o
     <li><strong>Patch</strong>: for small, backward-compatible corrections or refinements</li>
 </ul>";
 $lang['version_created_successfully']="Version created successfully";
+$lang['lock_and_version']="Lock & Version";
+$lang['lock_version_description']="Create a locked read-only snapshot of the current project. The original project will remain editable for future updates.";
+$lang['version_number']="Version number";
+$lang['version_number_required']="Version number is required";
+$lang['unlocked']="Unlocked";
+$lang['no_versions_found']="No versions have been created yet. Use the Lock & Version button on the project summary to create a version.";
+$lang['view_version']="View version";
+$lang['view']="View";
+$lang['status']="Status";
+$lang['actions']="Actions";
+$lang['created_on']="Created on";
+$lang['cancel']="Cancel";
 
 $lang['Cancel changes']="Cancel changes";
 $lang['READ ONLY']="READ ONLY";

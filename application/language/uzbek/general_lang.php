@@ -180,6 +180,18 @@ $lang['version_type_help']="<p>Loyiha versiyalash uchun <a href='https://semver.
     <li><strong>Patch</strong>: kichik, moslashuvchi tuzatishlar yoki yaxshilanishlar uchun</li>
 </ul>";
 $lang['version_created_successfully']="Versiya muvaffaqiyatli yaratildi";
+$lang['lock_and_version']="Bloklash va versiyalash";
+$lang['lock_version_description']="Joriy loyihaning bloklangan faqat o'qish uchun suratini yarating. Asl loyiha kelajakdagi yangilanishlar uchun tahrirlanishi mumkin bo'lib qoladi.";
+$lang['version_number']="Versiya raqami";
+$lang['version_number_required']="Versiya raqami talab qilinadi";
+$lang['unlocked']="Bloklangan emas";
+$lang['no_versions_found']="Hali versiyalar yaratilmagan. Versiya yaratish uchun loyiha xulosasidagi Bloklash va versiyalash tugmasini ishlating.";
+$lang['view_version']="Versiyani ko'rish";
+$lang['view']="Ko'rish";
+$lang['status']="Holat";
+$lang['actions']="Harakatlar";
+$lang['created_on']="Yaratilgan sana";
+$lang['cancel']="Bekor qilish";
 
 $lang['Cancel changes']="O'zgarishlarni bekor qilish";
 $lang['READ ONLY']="FAQAT O'QISH";

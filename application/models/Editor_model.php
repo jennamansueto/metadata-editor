@@ -2205,7 +2205,122 @@ class Editor_model extends CI_Model {
 		return $updates;
 	}
 
-	
+
+
+	/**
+	 * 
+	 * Create a locked version snapshot of a project
+	 * 
+	 * Duplicates the project as a new row with is_locked=1, preserving all metadata.
+	 * The original project remains editable for future updates.
+	 * 
+	 * @param int $sid - Project ID to version
+	 * @param string $version_number - Semantic version number (e.g., "1.0.0")
+	 * @param string $version_notes - Notes about this version
+	 * @param int $user_id - ID of the user creating the version
+	 * @return int - The new version project ID
+	 */
+	function create_locked_version($sid, $version_number, $version_notes, $user_id)
+	{
+		// Get the original project
+		$project = $this->get_row($sid);
+		if (!$project) {
+			throw new Exception("PROJECT_NOT_FOUND: Project with ID $sid not found");
+		}
+
+		// Determine the main project ID (if this project is already a version, use its pid)
+		$main_project_id = ($project['pid'] && $project['pid'] != $sid) ? $project['pid'] : $sid;
+
+		// Check if version number already exists for this main project
+		$existing = $this->find_version_by_number($main_project_id, $version_number);
+		if ($existing) {
+			throw new Exception("VERSION_EXISTS: Version $version_number already exists for this project");
+		}
+
+		// Build the new version row
+		$version_data = array(
+			'idno' => $project['idno'],
+			'type' => $project['type'],
+			'title' => $project['title'],
+			'abbreviation' => isset($project['abbreviation']) ? $project['abbreviation'] : null,
+			'nation' => isset($project['nation']) ? $project['nation'] : null,
+			'year_start' => isset($project['year_start']) ? $project['year_start'] : null,
+			'year_end' => isset($project['year_end']) ? $project['year_end'] : null,
+			'study_idno' => isset($project['study_idno']) ? $project['study_idno'] : null,
+			'authoring_entity' => isset($project['authoring_entity']) ? $project['authoring_entity'] : null,
+			'template_uid' => isset($project['template_uid']) ? $project['template_uid'] : null,
+			'metadata' => $this->encode_metadata($project['metadata']),
+			'attributes' => isset($project['attributes']) ? json_encode($project['attributes']) : null,
+			'pid' => $main_project_id,
+			'is_locked' => 1,
+			'version_number' => $version_number,
+			'version_created' => time(),
+			'version_created_by' => $user_id,
+			'version_notes' => $version_notes,
+			'published' => isset($project['published']) ? $project['published'] : 0,
+			'created' => time(),
+			'created_by' => $user_id,
+			'changed' => time(),
+			'changed_by' => $user_id
+		);
+
+		$this->db->insert('editor_projects', $version_data);
+		$new_id = $this->db->insert_id();
+
+		if (!$new_id) {
+			throw new Exception("FAILED_TO_CREATE_VERSION: Could not create version snapshot");
+		}
+
+		return $new_id;
+	}
+
+
+	/**
+	 * 
+	 * Get all versions for a project
+	 * 
+	 * @param int $sid - Project ID (main project)
+	 * @return array - List of version records
+	 */
+	function get_project_versions($sid)
+	{
+		// Determine the main project ID
+		$project = $this->get_basic_info($sid);
+		if (!$project) {
+			throw new Exception("PROJECT_NOT_FOUND: Project with ID $sid not found");
+		}
+
+		$main_project_id = ($project['pid'] && $project['pid'] != $sid) ? $project['pid'] : $sid;
+
+		$this->db->select('id, idno, title, version_number, version_created, version_created_by, version_notes, is_locked, created, changed');
+		$this->db->where('pid', $main_project_id);
+		$this->db->where('id !=', $main_project_id);
+		$this->db->order_by('version_created', 'DESC');
+		$versions = $this->db->get('editor_projects')->result_array();
+
+		return $versions;
+	}
+
+
+	/**
+	 * 
+	 * Get the main project ID for a given project
+	 * If the project is a version (has a pid), returns the pid.
+	 * Otherwise returns the project's own ID.
+	 * 
+	 * @param int $sid - Project ID
+	 * @return int - Main project ID
+	 */
+	function get_main_project_id($sid)
+	{
+		$project = $this->get_basic_info($sid);
+		if (!$project) {
+			throw new Exception("PROJECT_NOT_FOUND: Project with ID $sid not found");
+		}
+
+		return ($project['pid'] && $project['pid'] != $sid) ? $project['pid'] : $sid;
+	}
+
 	
 }//end-class
 	
