@@ -23,6 +23,13 @@ $config['cache_disabled'] = 1;
 //site's default language
 $config['language'] = 'english';
 
+//PDF cover page customization
+$config['pdf_cover_logo'] = '';              // path to uploaded logo image (relative to FCPATH)
+$config['pdf_cover_primary_color'] = '#0969da';   // background color for the cover banner
+$config['pdf_cover_text_color'] = '#ffffff';       // text color on the cover banner
+$config['pdf_cover_secondary_color'] = '#0969da';  // accent color for IDNO and labels
+$config['pdf_cover_design'] = 'default';           // design template: default, minimal, modern
+
 //enabled languages (JSON array)
 $config['supported_languages'] = json_encode(array(
     array('folder' => 'english', 'code' => 'en', 'display' => 'English',  'direction' => 'ltr'),

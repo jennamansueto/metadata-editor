@@ -240,6 +240,157 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 
 <?php echo form_close();?>
 
+
+<fieldset class="field-expanded">
+	<legend><i class="fas fa-file-pdf mr-3" style="color:#007bff;"></i><?php echo t('pdf_cover_page_settings');?></legend>
+
+	<!-- Current logo display + remove button -->
+	<?php if (!empty($pdf_cover_logo)): ?>
+	<div class="field">
+		<label><?php echo t('pdf_cover_logo');?></label>
+		<div>
+			<div class="mb-2">
+				<span class="text-muted"><?php echo t('pdf_cover_logo_current');?>:</span>
+				<img src="<?php echo base_url() . htmlspecialchars($pdf_cover_logo); ?>" alt="Cover logo" style="max-height:60px;max-width:200px;border:1px solid #ddd;padding:4px;background:#fff;" />
+			</div>
+			<?php echo form_open('admin/configurations/remove_cover_logo', 'style="display:inline;" id="form_remove_logo"'); ?>
+				<button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('<?php echo t('pdf_cover_logo_remove');?>?');">
+					<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_logo_remove');?>
+				</button>
+			<?php echo form_close(); ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
+	<!-- Logo upload form -->
+	<?php echo form_open_multipart('admin/configurations/upload_cover_logo', 'id="form_cover_logo"'); ?>
+	<div class="field">
+		<?php if (empty($pdf_cover_logo)): ?>
+		<label><?php echo t('pdf_cover_logo');?></label>
+		<?php else: ?>
+		<label><?php echo t('pdf_cover_logo_replace'); ?></label>
+		<?php endif; ?>
+		<div>
+			<input type="file" name="cover_logo" accept="image/png,image/jpeg,image/gif" class="form-control-file d-inline-block" style="width:auto;" />
+			<button type="submit" class="btn btn-sm btn-outline-primary ml-2"><i class="fas fa-upload mr-1"></i>Upload</button>
+			<span class="field-note"><?php echo t('pdf_cover_logo_note');?></span>
+		</div>
+	</div>
+	<?php echo form_close(); ?>
+
+	<!-- Color and design settings (regular form) -->
+	<?php echo form_open('admin/configurations', 'id="form_pdf_cover"'); ?>
+
+	<div class="field">
+		<label for="pdf_cover_primary_color"><?php echo t('pdf_cover_primary_color');?></label>
+		<input type="color" name="pdf_cover_primary_color" id="pdf_cover_primary_color"
+			value="<?php echo htmlspecialchars(isset($pdf_cover_primary_color) && $pdf_cover_primary_color ? $pdf_cover_primary_color : '#0969da'); ?>"
+			style="width:60px;height:36px;padding:2px;cursor:pointer;" />
+		<span class="field-note"><?php echo t('pdf_cover_primary_color_note');?></span>
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_text_color"><?php echo t('pdf_cover_text_color');?></label>
+		<input type="color" name="pdf_cover_text_color" id="pdf_cover_text_color"
+			value="<?php echo htmlspecialchars(isset($pdf_cover_text_color) && $pdf_cover_text_color ? $pdf_cover_text_color : '#ffffff'); ?>"
+			style="width:60px;height:36px;padding:2px;cursor:pointer;" />
+		<span class="field-note"><?php echo t('pdf_cover_text_color_note');?></span>
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_secondary_color"><?php echo t('pdf_cover_secondary_color');?></label>
+		<input type="color" name="pdf_cover_secondary_color" id="pdf_cover_secondary_color"
+			value="<?php echo htmlspecialchars(isset($pdf_cover_secondary_color) && $pdf_cover_secondary_color ? $pdf_cover_secondary_color : '#0969da'); ?>"
+			style="width:60px;height:36px;padding:2px;cursor:pointer;" />
+		<span class="field-note"><?php echo t('pdf_cover_secondary_color_note');?></span>
+	</div>
+
+	<div class="field">
+		<label for="pdf_cover_design"><?php echo t('pdf_cover_design');?></label>
+		<select name="pdf_cover_design" id="pdf_cover_design" class="form-control">
+			<?php $current_design = isset($pdf_cover_design) ? $pdf_cover_design : 'default'; ?>
+			<option value="default" <?php echo $current_design === 'default' ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_default'); ?></option>
+			<option value="minimal" <?php echo $current_design === 'minimal' ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_minimal'); ?></option>
+			<option value="modern" <?php echo $current_design === 'modern' ? 'selected' : ''; ?>><?php echo t('pdf_cover_design_modern'); ?></option>
+		</select>
+		<span class="field-note"><?php echo t('pdf_cover_design_note');?></span>
+	</div>
+
+	<div style="text-align:right;margin-top:10px;">
+		<input class="btn btn-primary" type="submit" value="<?php echo t('update');?>" name="submit"/>
+	</div>
+
+	<!-- Live Preview -->
+	<div class="field" style="margin-top:20px;">
+		<label><?php echo t('pdf_cover_preview');?></label>
+		<div id="pdf-cover-preview" style="border:1px solid #ccc;width:300px;min-height:400px;background:#fff;font-family:Arial,Helvetica,sans-serif;position:relative;overflow:hidden;">
+		</div>
+	</div>
+
+	<?php echo form_close(); ?>
+
+	<script>
+	(function() {
+		function updatePreview() {
+			var primary   = document.getElementById('pdf_cover_primary_color').value;
+			var textColor = document.getElementById('pdf_cover_text_color').value;
+			var secondary = document.getElementById('pdf_cover_secondary_color').value;
+			var design    = document.getElementById('pdf_cover_design').value;
+			var logoSrc   = <?php echo json_encode(!empty($pdf_cover_logo) ? base_url() . $pdf_cover_logo : ''); ?>;
+			var preview   = document.getElementById('pdf-cover-preview');
+
+			var logoHtml = logoSrc ? '<img src="' + logoSrc + '" style="max-height:40px;max-width:120px;" />' : '';
+
+			if (design === 'minimal') {
+				preview.innerHTML =
+					'<div style="padding:15px;">' +
+						(logoHtml ? '<div style="margin-bottom:15px;">' + logoHtml + '</div>' : '') +
+					'</div>' +
+					'<div style="border-top:4px solid ' + primary + ';margin:0 15px;"></div>' +
+					'<div style="padding:15px;padding-top:180px;text-align:left;">' +
+						'<div style="font-size:1.4em;font-weight:bold;color:#333;">Sample Project Title</div>' +
+					'</div>' +
+					'<div style="padding:0 15px;">' +
+						'<div style="font-size:0.8em;color:' + secondary + ';font-weight:bold;">PROJ-001</div>' +
+						'<div style="font-size:0.7em;color:gray;margin-top:3px;">Report generated on: Jan 1, 2026</div>' +
+					'</div>';
+			} else if (design === 'modern') {
+				preview.innerHTML =
+					'<div style="display:flex;min-height:400px;">' +
+						'<div style="width:40px;background-color:' + primary + ';"></div>' +
+						'<div style="flex:1;padding:15px;">' +
+							(logoHtml ? '<div style="margin-bottom:15px;">' + logoHtml + '</div>' : '') +
+							'<div style="padding-top:160px;text-align:center;">' +
+								'<div style="font-size:1.4em;font-weight:bold;color:#333;">Sample Project Title</div>' +
+								'<div style="font-size:0.8em;color:' + secondary + ';font-weight:bold;margin-top:10px;">PROJ-001</div>' +
+								'<div style="font-size:0.7em;color:gray;margin-top:8px;">Report generated on: Jan 1, 2026</div>' +
+							'</div>' +
+						'</div>' +
+					'</div>';
+			} else {
+				// default design
+				preview.innerHTML =
+					'<div style="background-color:' + primary + ';padding:10px;">' +
+						(logoHtml ? '<div style="padding:5px;">' + logoHtml + '</div>' : '') +
+						'<div style="padding-top:170px;text-align:right;font-size:1.4em;color:' + textColor + ';">Sample Project Title</div>' +
+					'</div>' +
+					'<div style="text-align:right;padding:10px;">' +
+						'<div style="font-size:0.8em;color:' + secondary + ';font-weight:bold;">PROJ-001</div>' +
+						'<div style="font-size:0.7em;color:gray;margin-top:3px;">Report generated on: Jan 1, 2026</div>' +
+					'</div>';
+			}
+		}
+
+		document.getElementById('pdf_cover_primary_color').addEventListener('input', updatePreview);
+		document.getElementById('pdf_cover_text_color').addEventListener('input', updatePreview);
+		document.getElementById('pdf_cover_secondary_color').addEventListener('input', updatePreview);
+		document.getElementById('pdf_cover_design').addEventListener('change', updatePreview);
+		updatePreview();
+	})();
+	</script>
+</fieldset>
+
+
 <fieldset class="field-expanded">
 	<legend><i class="fas fa-life-ring mr-3" style="color:#007bff;"></i><?php echo t('support_and_updates');?></legend>
 

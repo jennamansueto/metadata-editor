@@ -86,6 +86,25 @@ $lang['analytics_config_file_note']="These settings are read-only and configured
 $lang['yes']="Yes";
 $lang['no']="No";
 
+$lang['pdf_cover_page_settings']="PDF Cover Page";
+$lang['pdf_cover_logo']="Cover logo";
+$lang['pdf_cover_logo_note']="Upload a logo image to display on the PDF cover page (PNG, JPG, GIF; max 2MB)";
+$lang['pdf_cover_logo_current']="Current logo";
+$lang['pdf_cover_logo_remove']="Remove logo";
+$lang['pdf_cover_logo_replace']="Replace logo";
+$lang['pdf_cover_primary_color']="Banner background color";
+$lang['pdf_cover_primary_color_note']="Background color for the cover page banner";
+$lang['pdf_cover_text_color']="Banner text color";
+$lang['pdf_cover_text_color_note']="Text color for the project title on the cover banner";
+$lang['pdf_cover_secondary_color']="Accent color";
+$lang['pdf_cover_secondary_color_note']="Color used for the project ID and other accent elements";
+$lang['pdf_cover_design']="Cover page design";
+$lang['pdf_cover_design_note']="Choose a layout design for the PDF cover page";
+$lang['pdf_cover_design_default']="Default &mdash; Full-width colored banner with right-aligned title";
+$lang['pdf_cover_design_minimal']="Minimal &mdash; Clean design with thin accent line";
+$lang['pdf_cover_design_modern']="Modern &mdash; Side stripe with centered content";
+$lang['pdf_cover_preview']="Preview";
+
 $lang['support_and_updates']="Support &amp; Updates";
 $lang['installed_version']="Installed version";
 $lang['latest_version']="Latest version";
