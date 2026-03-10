@@ -62,6 +62,7 @@ interface SchemaDetail {
   uid?: string;
   title?: string;
   description?: string;
+  is_core?: boolean;
   metadata_options?: MetadataOptions;
 }
 
@@ -173,6 +174,13 @@ export default function SchemaMappings() {
     }
 
     const schema: SchemaDetail = response.data.schema;
+
+    if (schema.is_core) {
+      showAlert(t('core_schema_edit_forbidden'), { color: 'error' });
+      navigate('/');
+      return;
+    }
+
     setCurrentSchema(schema);
     setSchemaTitle(schema.title || schema.uid || '');
     setMetadataOptions(schema.metadata_options || {});
