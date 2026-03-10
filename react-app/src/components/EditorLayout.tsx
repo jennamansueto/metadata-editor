@@ -83,6 +83,9 @@ const EditorLayout: React.FC = () => {
 
   const cancelProject = async () => {
     if (projectId) {
+      if (!window.confirm(t('Do you want to discard changes?') || 'Do you want to discard changes?')) {
+        return;
+      }
       try {
         await useProjectStore.getState().loadProject(projectId);
         setIsDirty(false);
