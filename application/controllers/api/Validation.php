@@ -834,8 +834,11 @@ class Validation extends MY_REST_Controller
             $this->editor_acl->user_has_project_access($sid, $permission='view');
 
             $metadata = $project['metadata'];
+            if (!is_array($metadata)) {
+                $metadata = array();
+            }
             $type = $project['type'];
-            $template_uid = isset($project['template_uid']) ? $project['template_uid'] : null;
+            $template_uid = isset($project['template_uid']) && !empty($project['template_uid']) ? $project['template_uid'] : null;
 
             // Initialize diagnostic result
             $result = array(
@@ -855,37 +858,57 @@ class Validation extends MY_REST_Controller
             $all_issues = array();
 
             // ---- Category 1: Core Metadata Completeness ----
-            $core_checks = $this->_diagnostic_core_metadata($metadata, $type);
-            $result['categories'][] = $core_checks;
-            $all_issues = array_merge($all_issues, $core_checks['issues']);
+            try {
+                $core_checks = $this->_diagnostic_core_metadata($metadata, $type);
+                $result['categories'][] = $core_checks;
+                $all_issues = array_merge($all_issues, $core_checks['issues']);
+            } catch (Exception $e) {
+                // Skip category on error
+            }
 
             // ---- Category 2: Template Required Fields ----
             if ($template_uid) {
-                $this->load->model('Editor_template_model');
-                $template = $this->Editor_template_model->get_template_by_uid($template_uid);
-                if ($template && isset($template['template'])) {
-                    $template_checks = $this->_diagnostic_template_fields($metadata, $template['template']);
-                    $result['categories'][] = $template_checks;
-                    $all_issues = array_merge($all_issues, $template_checks['issues']);
+                try {
+                    $this->load->model('Editor_template_model');
+                    $template = $this->Editor_template_model->get_template_by_uid($template_uid);
+                    if ($template && isset($template['template'])) {
+                        $template_checks = $this->_diagnostic_template_fields($metadata, $template['template']);
+                        $result['categories'][] = $template_checks;
+                        $all_issues = array_merge($all_issues, $template_checks['issues']);
+                    }
+                } catch (Exception $e) {
+                    // Skip category on error
                 }
             }
 
             // ---- Category 3: Documentation Quality ----
-            $doc_checks = $this->_diagnostic_documentation_quality($metadata, $type);
-            $result['categories'][] = $doc_checks;
-            $all_issues = array_merge($all_issues, $doc_checks['issues']);
+            try {
+                $doc_checks = $this->_diagnostic_documentation_quality($metadata, $type);
+                $result['categories'][] = $doc_checks;
+                $all_issues = array_merge($all_issues, $doc_checks['issues']);
+            } catch (Exception $e) {
+                // Skip category on error
+            }
 
             // ---- Category 4: Type-Specific Checks ----
-            $type_checks = $this->_diagnostic_type_specific($sid, $metadata, $type);
-            if ($type_checks) {
-                $result['categories'][] = $type_checks;
-                $all_issues = array_merge($all_issues, $type_checks['issues']);
+            try {
+                $type_checks = $this->_diagnostic_type_specific($sid, $metadata, $type);
+                if ($type_checks) {
+                    $result['categories'][] = $type_checks;
+                    $all_issues = array_merge($all_issues, $type_checks['issues']);
+                }
+            } catch (Exception $e) {
+                // Skip category on error
             }
 
             // ---- Category 5: Field Quality ----
-            $quality_checks = $this->_diagnostic_field_quality($metadata, $type);
-            $result['categories'][] = $quality_checks;
-            $all_issues = array_merge($all_issues, $quality_checks['issues']);
+            try {
+                $quality_checks = $this->_diagnostic_field_quality($metadata, $type);
+                $result['categories'][] = $quality_checks;
+                $all_issues = array_merge($all_issues, $quality_checks['issues']);
+            } catch (Exception $e) {
+                // Skip category on error
+            }
 
             // Calculate summary
             $total_checks = 0;
@@ -916,10 +939,12 @@ class Validation extends MY_REST_Controller
 
             $this->set_response($response, REST_Controller::HTTP_OK);
         }
-        catch(Exception $e){
+        catch(Throwable $e){
             $error_output = array(
                 'status' => 'failed',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'file' => basename($e->getFile()),
+                'line' => $e->getLine()
             );
             $this->set_response($error_output, REST_Controller::HTTP_BAD_REQUEST);
         }
@@ -1237,8 +1262,7 @@ class Validation extends MY_REST_Controller
             }
         }
 
-        // Check for keywords
-        $checks++;
+        // Check for keywords (only for types that have keyword paths)
         $keywords = null;
         switch ($type) {
             case 'microdata':
@@ -1250,29 +1274,20 @@ class Validation extends MY_REST_Controller
                 break;
         }
 
-        if ($this->_has_meaningful_value($keywords) && is_array($keywords) && count($keywords) >= 3) {
-            $passed++;
-        } else {
-            $keyword_count = is_array($keywords) ? count($keywords) : 0;
-            $issues[] = array(
-                'severity' => 'warning',
-                'field' => 'keywords',
-                'label' => 'Keywords Coverage',
-                'message' => 'Project has ' . $keyword_count . ' keyword(s). At least 3 keywords are recommended for good discoverability.',
-                'recommendation' => 'Add more keywords to help users find this dataset'
-            );
-        }
-
-        // Check for external resources (documentation files)
-        $checks++;
-        $this->load->model('Resource_model');
-        try {
-            $resources = $this->Resource_model->get_resources_by_project($sid = null);
-            // Use a simpler approach - just mark as passed for now
-            $passed++;
-        } catch (Exception $e) {
-            // Can't check resources, skip
-            $passed++;
+        if ($keywords !== null) {
+            $checks++;
+            if ($this->_has_meaningful_value($keywords) && is_array($keywords) && count($keywords) >= 3) {
+                $passed++;
+            } else {
+                $keyword_count = is_array($keywords) ? count($keywords) : 0;
+                $issues[] = array(
+                    'severity' => 'warning',
+                    'field' => 'keywords',
+                    'label' => 'Keywords Coverage',
+                    'message' => 'Project has ' . $keyword_count . ' keyword(s). At least 3 keywords are recommended for good discoverability.',
+                    'recommendation' => 'Add more keywords to help users find this dataset'
+                );
+            }
         }
 
         $warnings = 0;
@@ -1311,10 +1326,9 @@ class Validation extends MY_REST_Controller
         switch ($type) {
             case 'microdata':
             case 'survey':
-                // Check data files
-                $this->load->model('Editor_datafile_model');
-                $data_files = $this->Editor_datafile_model->get_all_by_sid($sid);
-                $file_count = is_array($data_files) ? count($data_files) : 0;
+                // Check data files using direct DB query
+                $this->db->where('sid', $sid);
+                $file_count = $this->db->count_all_results('editor_data_files');
 
                 $checks++;
                 if ($file_count > 0) {
@@ -1331,27 +1345,14 @@ class Validation extends MY_REST_Controller
 
                 // Check variables
                 if ($file_count > 0) {
-                    $this->load->model('Editor_variable_model');
-                    $total_vars = 0;
-                    $vars_without_labels = 0;
+                    // Count total variables
+                    $this->db->where('sid', $sid);
+                    $total_vars = $this->db->count_all_results('editor_variables');
 
-                    foreach ($data_files as $file) {
-                        $fid = isset($file['file_id']) ? $file['file_id'] : null;
-                        if (!$fid) continue;
-
-                        // Count variables via simple query
-                        $this->db->where('sid', $sid);
-                        $this->db->where('fid', $fid);
-                        $var_count = $this->db->count_all_results('editor_variables');
-                        $total_vars += $var_count;
-
-                        // Count variables without labels
-                        $this->db->where('sid', $sid);
-                        $this->db->where('fid', $fid);
-                        $this->db->where('(labl IS NULL OR TRIM(COALESCE(labl,\'\')) = \'\')', null, false);
-                        $unlabeled = $this->db->count_all_results('editor_variables');
-                        $vars_without_labels += $unlabeled;
-                    }
+                    // Count variables without labels
+                    $this->db->where('sid', $sid);
+                    $this->db->where("(labl IS NULL OR TRIM(COALESCE(labl,'')) = '')", null, false);
+                    $vars_without_labels = $this->db->count_all_results('editor_variables');
 
                     // Check that files have variables
                     $checks++;
@@ -1387,26 +1388,21 @@ class Validation extends MY_REST_Controller
                 break;
 
             case 'geospatial':
-                // Check features
-                $this->load->model('Geospatial_feature_model');
-                try {
-                    $features = $this->Geospatial_feature_model->get_all_by_sid($sid);
-                    $feature_count = is_array($features) ? count($features) : 0;
-                    
-                    $checks++;
-                    if ($feature_count > 0) {
-                        $passed++;
-                    } else {
-                        $issues[] = array(
-                            'severity' => 'warning',
-                            'field' => 'geospatial_features',
-                            'label' => 'Feature Catalog',
-                            'message' => 'No geospatial features have been defined',
-                            'recommendation' => 'Add feature catalog entries to document the geospatial layers'
-                        );
-                    }
-                } catch (Exception $e) {
-                    // Model may not exist, skip
+                // Check features using direct DB query
+                $this->db->where('sid', $sid);
+                $feature_count = $this->db->count_all_results('editor_geospatial_features');
+
+                $checks++;
+                if ($feature_count > 0) {
+                    $passed++;
+                } else {
+                    $issues[] = array(
+                        'severity' => 'warning',
+                        'field' => 'geospatial_features',
+                        'label' => 'Feature Catalog',
+                        'message' => 'No geospatial features have been defined',
+                        'recommendation' => 'Add feature catalog entries to document the geospatial layers'
+                    );
                 }
                 break;
 
