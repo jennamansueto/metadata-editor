@@ -237,8 +237,12 @@ export default function SchemaMappings() {
   }
 
   function addAttribute() {
-    const newKey =
-      'attribute_' + (Object.keys(coreFields.attributes).length + 1);
+    let counter = Object.keys(coreFields.attributes).length + 1;
+    let newKey = 'attribute_' + counter;
+    while (coreFields.attributes[newKey] !== undefined) {
+      counter++;
+      newKey = 'attribute_' + counter;
+    }
     setCoreFields((prev) => ({
       ...prev,
       attributes: { ...prev.attributes, [newKey]: '' },
@@ -307,16 +311,15 @@ export default function SchemaMappings() {
       updatedMetadataOptions.core_fields = {};
     }
 
-    const normalizeField = (field: string[]): string[] | string => {
-      const filtered = field.filter((v) => v && v !== '');
-      return filtered.length > 0 ? filtered : '';
+    const normalizeField = (field: string[]): string[] => {
+      return field.filter((v) => v && v !== '');
     };
 
-    updatedMetadataOptions.core_fields.idno = normalizeField(coreFields.idno) as string[];
-    updatedMetadataOptions.core_fields.title = normalizeField(coreFields.title) as string[];
-    updatedMetadataOptions.core_fields.country = normalizeField(coreFields.country) as string[];
-    updatedMetadataOptions.core_fields.year_start = normalizeField(coreFields.year_start) as string[];
-    updatedMetadataOptions.core_fields.year_end = normalizeField(coreFields.year_end) as string[];
+    updatedMetadataOptions.core_fields.idno = normalizeField(coreFields.idno);
+    updatedMetadataOptions.core_fields.title = normalizeField(coreFields.title);
+    updatedMetadataOptions.core_fields.country = normalizeField(coreFields.country);
+    updatedMetadataOptions.core_fields.year_start = normalizeField(coreFields.year_start);
+    updatedMetadataOptions.core_fields.year_end = normalizeField(coreFields.year_end);
 
     // Validate required fields
     const idnoVal = updatedMetadataOptions.core_fields.idno;
