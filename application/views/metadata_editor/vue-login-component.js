@@ -67,7 +67,6 @@ Vue.component('v-login', {
     template: `
         <div class="v-login"   >
 
-        <template>
             
             <v-row justify="center">
             <v-dialog
@@ -98,7 +97,6 @@ Vue.component('v-login', {
 
             </v-dialog>
             </v-row>
-        </template>
             
         </div>
     `

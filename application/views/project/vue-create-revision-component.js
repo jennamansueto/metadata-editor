@@ -64,7 +64,6 @@ Vue.component('vue-create-revision-dialog', {
         <div class="vue-project-create-revision">
 
         <v-app>
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -168,7 +167,6 @@ Vue.component('vue-create-revision-dialog', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         </v-app>
         
     </div>

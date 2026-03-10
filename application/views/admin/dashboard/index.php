@@ -1041,6 +1041,7 @@
 
 <!-- Vue.js and Vuetify -->
 <script src="<?php echo base_url('vue-app/assets/vue.min.js'); ?>"></script>
+<script src="<?php echo base_url('vue-app/assets/vue-compat-config.js'); ?>"></script>
 <script src="<?php echo base_url('vue-app/assets/vue-router.min.js'); ?>"></script>
 <script src="<?php echo base_url('vue-app/assets/vuetify.min.js'); ?>"></script>
 <script src="<?php echo base_url('vue-app/assets/axios.min.js'); ?>"></script>
@@ -1926,18 +1927,17 @@ const ApiLogsAggregates = {
     }
 };
 
-const router = new VueRouter({
-    mode: 'hash',
+const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes: [
         { path: '/', component: DashboardHome },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
-        { path: '*', redirect: '/' }
+        { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
+var app = Vue.createApp({
     vuetify: new Vuetify({
         theme: {
             themes: {
@@ -1953,6 +1953,8 @@ new Vue({
             }
         }
     }),
-    router
+    data() { return {} }
 });
+app.use(router);
+app.mount('#dashboard-app');
 </script>

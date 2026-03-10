@@ -342,7 +342,6 @@ Vue.component('vue-collections-component', {
             <vue-copy-collection v-model="dialog_copy_collection" v-on:collection-copied="loadCollections"></vue-copy-collection>
             <vue-move-collection v-model="dialog_move_collection" v-on:collection-moved="loadCollections"></vue-move-collection>
 
-            <template>
                 <v-menu
                     v-model="action_menu"
                     :position-x="action_menu_x"
@@ -366,7 +365,6 @@ Vue.component('vue-collections-component', {
           
                     </v-list>
                 </v-menu>
-            </template>
 
             <!-- Collections count at bottom -->
             <div v-if="collections && collections.length > 0" class="mt-4 p-3 text-center text-muted">

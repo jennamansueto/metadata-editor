@@ -20,7 +20,6 @@ Vue.component('vue-list-revisions', {
 
             <div v-if="revisions && revisions.length>0" style="background:white;overflow:auto;max-height:300px;"> 
 
-                <template>
                     <v-expansion-panels>
                         <v-expansion-panel
                         v-for="revision in revisions"
@@ -59,7 +58,6 @@ Vue.component('vue-list-revisions', {
                         </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-expansion-panels>
-                </template>
                 
             </div>
         

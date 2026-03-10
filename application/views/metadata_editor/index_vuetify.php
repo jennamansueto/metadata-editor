@@ -86,6 +86,7 @@
   </div>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
@@ -127,7 +128,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default',
       messages: translation_messages,
       //show warnings in console
@@ -176,13 +178,9 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app=new Vue({
-      el: '#app',
-      i18n,
+    var app = Vue.createApp({
       vuetify: vuetify,
-      router:router,
-      store,
-      data:{          
+      data() { return {          
           active_section:null,
           active_form_field:null,
           schema_validator: null,
@@ -235,7 +233,7 @@
 
         apply_defaults_dialog:false,
         apply_defaults_dialog_key:0
-      },
+      } },
       created: async function(){
         await this.$store.dispatch('initData',{dataset_id:this.dataset_id});
         await this.$store.dispatch('initTreeItems');
@@ -1358,7 +1356,11 @@
           }
       }
     }
-    })
+    });
+    app.use(i18n);
+    app.use(router);
+    app.use(store);
+    vue_app = app.mount('#app');
 
     Vue.component('VueJsonPretty', VueJsonPretty.default);
   </script>

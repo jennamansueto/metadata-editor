@@ -60,7 +60,6 @@ Vue.component('nested-section', {
                             
 
                             <div v-if="fieldDisplayType(column)=='section'"  class="form-section" >                    
-                                <template>
                                     <v-expansion-panels :value="0">
                                         <v-expansion-panel>
                                         <v-expansion-panel-header>
@@ -78,7 +77,6 @@ Vue.component('nested-section', {
                                         </v-expansion-panel-content>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
-                                </template>
                             </div>
 
                             <!-- textarea-->

@@ -13,9 +13,10 @@
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
@@ -198,9 +199,6 @@
                       :items-per-page="100"
                       :hide-default-footer="true"
                     >
-                      <template v-slot:item.template_type="{ item }">
-                        <span>{{ templateTypeLabel(item) }}</span>
-                      </template>
                       <template v-slot:top>
                             <div class="d-flex pl-6 pb-4 align-center">                                
                           <div class="schema-icon-avatar mr-3">
@@ -254,7 +252,7 @@
 
   </v-app>
 
-    <template class="import-template">
+    <div class="import-template">
       <div class="text-center">
         <v-dialog v-model="dialog_import_template" width="500">
 
@@ -293,10 +291,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template>
+    <div>
       <v-menu
         v-model="showTemplateMenu"
         :position-x="menu_x"
@@ -367,7 +365,7 @@
 
         </v-list>
       </v-menu>
-    </template>
+    </div>
 
     <vue-template-share :key="menu_active_template_id" 
         v-if="menu_active_template_id && !isCoreTemplate(menu_active_template_id)" 
@@ -414,7 +412,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -429,7 +428,8 @@
       name: 'home'
     }]
 
-    const router = new VueRouter({
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
       routes
     })
 
@@ -452,12 +452,9 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
-      i18n,
-      el: '#app',
+    var app = Vue.createApp({
       vuetify: vuetify,
-      router: router,
-      data: {
+      data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -492,7 +489,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
-      },
+      } },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
         //this.init_tree_data();
@@ -942,7 +939,10 @@
           reader.readAsText(file);
         }
       }
-    })
+    });
+    app.use(i18n);
+    app.use(router);
+    vue_app = app.mount('#app');
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);

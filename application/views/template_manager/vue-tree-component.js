@@ -268,7 +268,6 @@ Vue.component('nada-treeview', {
     },
     template: `
             <div class="nada-treeview-component">
-            <template>            
               <v-treeview                   
                   color="warning"
                   :open.sync="initiallyOpen" 
@@ -327,7 +326,6 @@ Vue.component('nada-treeview', {
                   </v-icon>
                 </template>
               </v-treeview>
-            </template>
 
             </div>          
             `    

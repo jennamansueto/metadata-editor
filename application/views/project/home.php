@@ -11,7 +11,6 @@
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
 
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -308,7 +307,7 @@
 
                   
 
-                  <template>
+                  <div>
 
                   <div class="bg-white shadow rounded p-3 pt-1 mt-2" elevation="10">
 
@@ -326,11 +325,11 @@
                         </div>
 
                         <div class="col-md-7">
-                          <template>
+                          <div>
                             <div class="float-right" v-if="PaginationTotalPages">
                               <v-pagination v-model="pagination_page" :length="PaginationTotalPages" :total-visible="6" @input="PaginatePage"></v-pagination>
                             </div>
-                          </template>
+                          </div>
                         </div>
 
                       </div>
@@ -452,13 +451,13 @@
                     </table>
 
 
-                    <template>
+                    <div>
                       <div class="mb-5 mt-2" v-if="PaginationTotalPages">
                         <v-pagination v-model="pagination_page" :length="PaginationTotalPages" :total-visible="6" @input="PaginatePage"></v-pagination>
                       </div>
-                    </template>
+                    </div>
                     
-                  </template>
+                  </div>
                   </div>
                   
                 </div>
@@ -495,7 +494,7 @@
 
     
 
-    <template class="create-new-project">
+    <div class="create-new-project">
       <div class="text-center">
         <v-dialog v-model="dialog_create_project" width="500">
 
@@ -531,10 +530,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template class="import-project">
+    <div class="import-project">
       <div class="text-center">
         <v-dialog v-model="dialog_import_project" width="500" :key="dialog_import_project_key">
 
@@ -624,10 +623,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template>
+    <div>
       <v-menu
         v-model="show_project_menu"
         :position-x="menu_x-150"
@@ -674,13 +673,15 @@
 
         </v-list>
       </v-menu>
-    </template>
+    </div>
 
 
     </v-app>
   </div>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
@@ -728,7 +729,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -745,7 +747,7 @@
 
     //routes
     const routes = [{
-        path: '<?php echo site_url("editor");?>',
+        path: '<?php echo parse_url(site_url("editor"), PHP_URL_PATH);?>',
         component: Home,
         name: 'home'
       },
@@ -756,9 +758,9 @@
       }
     ]
 
-    const router = new VueRouter({
-      routes, 
-      mode: 'history'
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHistory(),
+      routes
     })
 
     const vuetify = new Vuetify({
@@ -811,12 +813,9 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
-      el: '#app',
-      i18n,
+    var app = Vue.createApp({
       vuetify: vuetify,
-      router: router,
-      data: {
+      data() { return {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -875,7 +874,7 @@
         dialog_project_revision: false,
         dialog_project_revision_options: {},
         dialog_project_revision_key: 0,
-      },
+      } },
       created: async function() {
         //reload projects on window focus
         document.addEventListener("visibilitychange", function() {
@@ -1836,7 +1835,10 @@
         }
 
       }
-    })
+    });
+    app.use(i18n);
+    app.use(router);
+    vue_app = app.mount('#app');
   </script>
 
   <?php $this->load->view('common/analytics'); ?>

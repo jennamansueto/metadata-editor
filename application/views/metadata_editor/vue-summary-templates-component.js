@@ -159,7 +159,6 @@ Vue.component('summary-templates-component', {
 
 
                 <!-- template dialog -->
-                <template class="project-template">
                     <div class="text-center">
                         <v-dialog
                         style="z-index:5000"
@@ -176,7 +175,6 @@ Vue.component('summary-templates-component', {
                             <div>
                             
                                     <!-- list -->
-                                    <template>
                                         
                                             <v-list two-line>
                                             <v-list-item-group
@@ -223,7 +221,6 @@ Vue.component('summary-templates-component', {
                                             </v-list-item-group>
                                             </v-list>
                                         
-                                        </template>
                                     <!-- end list -->                                    
                                     
                                     
@@ -253,7 +250,6 @@ Vue.component('summary-templates-component', {
                         </v-card>
                         </v-dialog>
                     </div>
-                    </template>
                 <!-- end template dialog -->
 
 

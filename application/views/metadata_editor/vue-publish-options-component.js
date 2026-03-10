@@ -808,13 +808,11 @@ Vue.component('publish-options', {
                             <div v-if="is_publishing">
                                 <div class="border p-3 mt-5 mb-5">
                                     <div><strong>Update status</strong></div>
-                                    <template>
                                         <div>{{publish_processing_message}}...</div>
                                         <v-progress-linear
                                         indeterminate
                                         color="blue"
                                         ></v-progress-linear>
-                                    </template>
                                 </div>                        
                             </div>
                             <!-- end show-status --> 

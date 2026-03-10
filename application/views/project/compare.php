@@ -626,6 +626,7 @@
 
   <!-- Vue.js and dependencies -->
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuex.min.js"></script>
@@ -642,7 +643,8 @@
       default: <?php echo json_encode($translations, JSON_HEX_APOS); ?>
     };
     
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default',
       fallbackLocale: 'default',
       messages: translation_messages
@@ -667,10 +669,10 @@
     });
 
     // Vue app
+    Vue.use(i18n);
     const vue_app = new Vue({
       el: '#app',
-      i18n,
-      vuetify,
+      vuetify: vuetify,
       data: {
         // Get project IDs from URL query string
         project1_id: new URLSearchParams(window.location.search).get('project1'),

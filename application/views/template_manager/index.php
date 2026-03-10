@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-compat-config.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   
@@ -362,7 +363,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     });
@@ -546,13 +548,9 @@
       }
     })
 
-    new Vue({
-      el: "#app",
-      i18n,
-      store,
+    var app = Vue.createApp({
       vuetify: new Vuetify(),
-      data() {
-        return {
+      data() { return {
           user_template_info: user_template_info,
           initiallyOpen: ['template_root'],
           tree_active_items: [],
@@ -1991,6 +1989,9 @@
         },
       }
     });
+    app.use(i18n);
+    app.use(store);
+    vue_app = app.mount('#app');
   </script>
 
 

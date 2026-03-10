@@ -44,7 +44,6 @@ Vue.component('vue-template-revision-history', {
     template: `
         <div class="vue-project-revision-history">
 
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -107,7 +106,6 @@ Vue.component('vue-template-revision-history', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `

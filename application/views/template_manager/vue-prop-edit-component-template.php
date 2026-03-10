@@ -107,7 +107,6 @@
 
             <v-tab-item class="p-3">
                 <!-- controlled vocab -->
-                <template>
                 <div class="mb-3" >
                     <label for="controlled_vocab">{{$t("controlled_vocabulary")}}:</label>
                     <div class="border bg-white" style="max-height:300px;overflow:auto;">
@@ -155,7 +154,6 @@
                     </div>
 
                 </div>
-                </template>
                 <!-- end controlled vocab -->
             </v-tab-item>
             <v-tab-item class="p-3">

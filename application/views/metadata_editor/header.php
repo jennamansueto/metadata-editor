@@ -75,7 +75,6 @@
         </v-btn>
         -->
 
-    <template>
     <div class="text-center">
         <v-menu min-width="600px">
         <template v-slot:activator="{ on, attrs }">
@@ -263,7 +262,6 @@
         
         </v-menu>
     </div>
-    </template>
     </ul>    
 
 </nav>
