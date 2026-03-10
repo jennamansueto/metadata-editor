@@ -57,7 +57,7 @@
 
     // Project metadata and settings
     var project_metadata = {};
-    var project_sid = <?php echo json_encode($sid); ?>;
+    var project_sid = <?php echo (int)$sid; ?>;
     var project_idno = <?php echo json_encode(isset($idno) ? $idno : ''); ?>;
     var project_type = <?php echo json_encode(isset($type) ? $type : ''); ?>;
     var user_has_edit_access = <?php echo (isset($user_has_edit_access) && $user_has_edit_access) ? 'true' : 'false'; ?>;

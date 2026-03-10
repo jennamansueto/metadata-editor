@@ -77,10 +77,14 @@ const EditorLayout: React.FC = () => {
     }
   };
 
-  const cancelProject = () => {
+  const cancelProject = async () => {
     if (projectId) {
-      useProjectStore.getState().loadProject(projectId);
-      setIsDirty(false);
+      try {
+        await useProjectStore.getState().loadProject(projectId);
+        setIsDirty(false);
+      } catch (error) {
+        console.error('Error reverting project:', error);
+      }
     }
   };
 
