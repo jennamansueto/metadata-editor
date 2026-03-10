@@ -187,8 +187,8 @@ export const useProjectStore = create<ProjectState>()(
               if (project.study_idno) {
                 state.metadata_idno = project.study_idno;
               }
-              if (project.is_locked) {
-                state.project_is_locked = project.is_locked;
+              if (project.is_locked !== undefined) {
+                state.project_is_locked = !!project.is_locked;
               }
               state.project_version_info = {
                 version_number: project.version_number,
