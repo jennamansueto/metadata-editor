@@ -223,7 +223,7 @@
 
         apply_defaults_dialog:false,
         apply_defaults_dialog_key:0
-      },
+      } },
       created: async function(){
         await this.$store.dispatch('initData',{dataset_id:this.dataset_id});
         await this.$store.dispatch('initTreeItems');

@@ -489,7 +489,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
-      },
+      } },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
         //this.init_tree_data();

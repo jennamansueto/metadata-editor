@@ -29,7 +29,7 @@
             msg: "Vuejs Example with CDN",
             email:'',
             password:''
-        },
+        } },
         methods:{
             login: function() {
                 vm = this;

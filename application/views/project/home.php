@@ -871,7 +871,7 @@
         dialog_project_revision: false,
         dialog_project_revision_options: {},
         dialog_project_revision_key: 0,
-      },
+      } },
       created: async function() {
         //reload projects on window focus
         document.addEventListener("visibilitychange", function() {
