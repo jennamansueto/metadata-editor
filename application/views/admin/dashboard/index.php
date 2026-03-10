@@ -713,6 +713,10 @@
                     </p>
                 </div>
                 <div class="d-flex align-center">
+                    <v-btn class="mr-2" text color="primary" :to="{ path: '/activity' }" href="#/activity">
+                        <v-icon left>mdi-chart-timeline-variant</v-icon>
+                        <?php echo t('Activity'); ?>
+                    </v-btn>
                     <v-btn class="mr-2" text color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
                         <v-icon left>mdi-traffic-light</v-icon>
                     <?php echo t('API Log Aggregates'); ?>
@@ -1028,6 +1032,259 @@
         </v-row>
 
         <v-overlay :value="running" absolute>
+            <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+        </v-overlay>
+    </v-container>
+</script>
+
+<script type="text/x-template" id="activity-dashboard-template">
+    <v-container class="pa-4">
+        <v-row class="mb-4">
+            <v-col cols="12" class="d-flex justify-space-between align-center">
+                <div>
+                    <h1 class="text-h4 font-weight-medium"><?php echo t('Activity Dashboard'); ?></h1>
+                    <p class="text-caption grey--text mt-1">
+                        <?php echo t('Monitor project and user activity across the system.'); ?>
+                    </p>
+                </div>
+                <div class="d-flex align-center">
+                    <v-btn class="mr-2" text color="primary" :to="{ path: '/' }" href="#/">
+                        <v-icon left>mdi-view-dashboard-outline</v-icon>
+                        <?php echo t('Back to Dashboard'); ?>
+                    </v-btn>
+                    <v-btn color="primary" icon @click="refreshData" :loading="refreshing" :disabled="refreshing">
+                        <v-icon>mdi-refresh</v-icon>
+                    </v-btn>
+                </div>
+            </v-col>
+        </v-row>
+
+        <!-- Summary Cards -->
+        <v-row>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="40" color="primary">mdi-folder-multiple</v-icon>
+                        <div class="text-h4 font-weight-medium primary--text mt-2">{{ totalProjects }}</div>
+                        <div class="text-caption grey--text text-uppercase mt-1"><?php echo t('Total Projects'); ?></div>
+                        <div class="text-caption mt-1">
+                            <v-chip x-small color="success" outlined class="mr-1">{{ projectStatus.published }} <?php echo t('published'); ?></v-chip>
+                            <v-chip x-small color="grey" outlined>{{ projectStatus.draft }} <?php echo t('draft'); ?></v-chip>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="40" color="success">mdi-account-group</v-icon>
+                        <div class="text-h4 font-weight-medium success--text mt-2">{{ topContributors.length }}</div>
+                        <div class="text-caption grey--text text-uppercase mt-1"><?php echo t('Active Contributors'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="40" color="info">mdi-folder-star</v-icon>
+                        <div class="text-h4 font-weight-medium info--text mt-2">{{ collectionStats.total }}</div>
+                        <div class="text-caption grey--text text-uppercase mt-1"><?php echo t('Collections'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="40" color="orange">mdi-trending-up</v-icon>
+                        <div class="text-h4 font-weight-medium orange--text mt-2">{{ projectsThisMonth }}</div>
+                        <div class="text-caption grey--text text-uppercase mt-1"><?php echo t('Projects This Month'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Charts Row -->
+        <v-row class="mt-4">
+            <v-col cols="12" md="8">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="primary">mdi-chart-line</v-icon>
+                        <?php echo t('Project Creation Trend'); ?>
+                        <v-spacer></v-spacer>
+                        <span class="text-caption grey--text"><?php echo t('Last 12 months'); ?></span>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="projectTrendCanvas" height="80"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="deep-purple">mdi-chart-donut</v-icon>
+                        <?php echo t('Projects by Type'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="projectTypeCanvas" height="200"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- User Registration Trend -->
+        <v-row class="mt-4">
+            <v-col cols="12">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="success">mdi-account-plus</v-icon>
+                        <?php echo t('User Registrations'); ?>
+                        <v-spacer></v-spacer>
+                        <span class="text-caption grey--text"><?php echo t('Last 12 months'); ?></span>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="userRegCanvas" height="60"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Tables Row -->
+        <v-row class="mt-4">
+            <!-- Top Contributors -->
+            <v-col cols="12" md="6">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="amber">mdi-trophy</v-icon>
+                        <?php echo t('Top Contributors'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text class="pa-0">
+                        <v-simple-table dense>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><?php echo t('User'); ?></th>
+                                    <th class="text-right"><?php echo t('Projects'); ?></th>
+                                    <th class="text-right"><?php echo t('Last Created'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="topContributors.length === 0">
+                                    <td colspan="4" class="text-center grey--text py-4"><?php echo t('No data available'); ?></td>
+                                </tr>
+                                <tr v-for="(user, index) in topContributors" :key="user.id">
+                                    <td>
+                                        <v-avatar size="24" :color="index < 3 ? 'amber' : 'grey lighten-2'" class="mr-1">
+                                            <span class="text-caption" :class="index < 3 ? 'white--text' : ''">{{ index + 1 }}</span>
+                                        </v-avatar>
+                                    </td>
+                                    <td>
+                                        <div class="text-body-2 font-weight-medium">{{ user.username }}</div>
+                                        <div class="text-caption grey--text">{{ user.email }}</div>
+                                    </td>
+                                    <td class="text-right">
+                                        <v-chip small color="primary" outlined>{{ user.project_count }}</v-chip>
+                                    </td>
+                                    <td class="text-right text-caption">{{ formatTimestamp(user.last_project_created) }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+
+            <!-- User Login History -->
+            <v-col cols="12" md="6">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="green">mdi-login</v-icon>
+                        <?php echo t('Recent User Logins'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text class="pa-0" style="max-height:400px;overflow:auto;">
+                        <v-simple-table dense>
+                            <thead>
+                                <tr>
+                                    <th><?php echo t('User'); ?></th>
+                                    <th><?php echo t('Status'); ?></th>
+                                    <th class="text-right"><?php echo t('Last Login'); ?></th>
+                                    <th class="text-right"><?php echo t('Registered'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="userLogins.length === 0">
+                                    <td colspan="4" class="text-center grey--text py-4"><?php echo t('No data available'); ?></td>
+                                </tr>
+                                <tr v-for="user in userLogins" :key="user.id">
+                                    <td>
+                                        <div class="text-body-2 font-weight-medium">{{ user.username }}</div>
+                                        <div class="text-caption grey--text">{{ user.email }}</div>
+                                    </td>
+                                    <td>
+                                        <v-chip x-small :color="user.active ? 'success' : 'grey'" :text-color="user.active ? 'white' : ''">
+                                            {{ user.active ? '<?php echo t('Active'); ?>' : '<?php echo t('Inactive'); ?>' }}
+                                        </v-chip>
+                                    </td>
+                                    <td class="text-right text-caption">{{ formatTimestamp(user.last_login) }}</td>
+                                    <td class="text-right text-caption">{{ formatTimestamp(user.created_on) }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Recent Project Modifications -->
+        <v-row class="mt-4">
+            <v-col cols="12">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="blue">mdi-file-document-edit</v-icon>
+                        <?php echo t('Recent Project Modifications'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text class="pa-0">
+                        <v-simple-table dense>
+                            <thead>
+                                <tr>
+                                    <th><?php echo t('ID'); ?></th>
+                                    <th><?php echo t('Title'); ?></th>
+                                    <th><?php echo t('Type'); ?></th>
+                                    <th><?php echo t('Created By'); ?></th>
+                                    <th><?php echo t('Modified By'); ?></th>
+                                    <th class="text-right"><?php echo t('Last Modified'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="recentModifications.length === 0">
+                                    <td colspan="6" class="text-center grey--text py-4"><?php echo t('No data available'); ?></td>
+                                </tr>
+                                <tr v-for="project in recentModifications" :key="project.id">
+                                    <td>
+                                        <code class="text-caption">{{ project.idno || '#' + project.id }}</code>
+                                    </td>
+                                    <td>
+                                        <div class="text-body-2" style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ project.title }}</div>
+                                    </td>
+                                    <td>
+                                        <v-chip x-small :color="getTypeColor(project.type)" text-color="white">{{ project.type }}</v-chip>
+                                    </td>
+                                    <td class="text-caption">{{ project.created_by || '—' }}</td>
+                                    <td class="text-caption">{{ project.changed_by || '—' }}</td>
+                                    <td class="text-right text-caption">{{ formatTimestamp(project.changed) }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <v-overlay :value="loading" absolute>
             <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
         </v-overlay>
     </v-container>
@@ -1926,10 +2183,278 @@ const ApiLogsAggregates = {
     }
 };
 
+const ActivityDashboard = {
+    template: '#activity-dashboard-template',
+    mixins: [formattingMixin],
+    data() {
+        return {
+            loading: true,
+            refreshing: false,
+            activityData: null,
+            projectTrendChart: null,
+            projectTypeChart: null,
+            userRegChart: null
+        };
+    },
+    computed: {
+        totalProjects() {
+            if (!this.activityData || !this.activityData.projects_by_type) return 0;
+            return this.activityData.projects_by_type.reduce((sum, item) => sum + item.count, 0);
+        },
+        projectStatus() {
+            if (!this.activityData || !this.activityData.projects_by_status) {
+                return { published: 0, draft: 0 };
+            }
+            return this.activityData.projects_by_status;
+        },
+        topContributors() {
+            return this.activityData && Array.isArray(this.activityData.top_contributors) ? this.activityData.top_contributors : [];
+        },
+        collectionStats() {
+            return this.activityData && this.activityData.collection_stats ? this.activityData.collection_stats : { total: 0, with_projects: 0 };
+        },
+        projectsThisMonth() {
+            if (!this.activityData || !Array.isArray(this.activityData.project_creation_trend)) return 0;
+            var trend = this.activityData.project_creation_trend;
+            return trend.length > 0 ? trend[trend.length - 1].count : 0;
+        },
+        userLogins() {
+            return this.activityData && Array.isArray(this.activityData.user_login_history) ? this.activityData.user_login_history : [];
+        },
+        recentModifications() {
+            return this.activityData && Array.isArray(this.activityData.recent_modifications) ? this.activityData.recent_modifications : [];
+        }
+    },
+    watch: {
+        activityData: {
+            handler() {
+                this.$nextTick(() => {
+                    this.renderCharts();
+                });
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.loadData();
+    },
+    beforeDestroy() {
+        this.destroyCharts();
+    },
+    methods: {
+        async loadData() {
+            this.loading = true;
+            try {
+                var response = await axios.get('<?php echo site_url('api/dashboard/activity_dashboard'); ?>');
+                if (response.data.success) {
+                    this.activityData = response.data.data;
+                } else {
+                    console.error('Failed to load activity data:', response.data.error);
+                }
+            } catch (error) {
+                console.error('Error loading activity data:', error);
+            }
+            this.loading = false;
+        },
+        async refreshData() {
+            this.refreshing = true;
+            await this.loadData();
+            this.refreshing = false;
+        },
+        destroyCharts() {
+            if (this.projectTrendChart) {
+                this.projectTrendChart.destroy();
+                this.projectTrendChart = null;
+            }
+            if (this.projectTypeChart) {
+                this.projectTypeChart.destroy();
+                this.projectTypeChart = null;
+            }
+            if (this.userRegChart) {
+                this.userRegChart.destroy();
+                this.userRegChart = null;
+            }
+        },
+        renderCharts() {
+            this.destroyCharts();
+            this.renderProjectTrendChart();
+            this.renderProjectTypeChart();
+            this.renderUserRegChart();
+        },
+        renderProjectTrendChart() {
+            var canvas = this.$refs.projectTrendCanvas;
+            var ChartLib = window.Chart;
+            if (!canvas || !ChartLib || !this.activityData) return;
+            var trend = this.activityData.project_creation_trend || [];
+            var labels = trend.map(function(item) { return item.label; });
+            var values = trend.map(function(item) { return item.count; });
+            var ctx = canvas.getContext('2d');
+            this.projectTrendChart = new ChartLib(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '<?php echo t('Projects Created'); ?>',
+                        data: values,
+                        backgroundColor: 'rgba(25, 118, 210, 0.7)',
+                        borderColor: '#1976D2',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxRotation: 45, minRotation: 45 }
+                        }
+                    }
+                }
+            });
+        },
+        renderProjectTypeChart() {
+            var canvas = this.$refs.projectTypeCanvas;
+            var ChartLib = window.Chart;
+            if (!canvas || !ChartLib || !this.activityData) return;
+            var types = this.activityData.projects_by_type || [];
+            var labels = types.map(function(item) { return item.type; });
+            var values = types.map(function(item) { return item.count; });
+            var colors = [
+                '#1976D2', '#4CAF50', '#FF9800', '#9C27B0', '#F44336',
+                '#00BCD4', '#795548', '#607D8B', '#E91E63', '#3F51B5',
+                '#009688', '#FF5722', '#CDDC39', '#FFC107', '#8BC34A'
+            ];
+            var ctx = canvas.getContext('2d');
+            this.projectTypeChart = new ChartLib(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 15, usePointStyle: true }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    var total = context.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                                    var pct = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                    return context.label + ': ' + context.parsed + ' (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        renderUserRegChart() {
+            var canvas = this.$refs.userRegCanvas;
+            var ChartLib = window.Chart;
+            if (!canvas || !ChartLib || !this.activityData) return;
+            var regs = this.activityData.monthly_user_registrations || [];
+            var labels = regs.map(function(item) { return item.label; });
+            var values = regs.map(function(item) { return item.count; });
+            var ctx = canvas.getContext('2d');
+            this.userRegChart = new ChartLib(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '<?php echo t('New Users'); ?>',
+                        data: values,
+                        backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                        borderColor: '#4CAF50',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxRotation: 45, minRotation: 45 }
+                        }
+                    }
+                }
+            });
+        },
+        formatTimestamp(ts) {
+            if (!ts) return '—';
+            var date = new Date(parseInt(ts, 10) * 1000);
+            if (isNaN(date.getTime())) return '—';
+            var now = new Date();
+            var diff = now - date;
+            if (diff < 60000) return '<?php echo t('Just now'); ?>';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' <?php echo t('minutes ago'); ?>';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' <?php echo t('hours ago'); ?>';
+            if (diff < 604800000) return Math.floor(diff / 86400000) + ' <?php echo t('days ago'); ?>';
+            return date.toLocaleDateString();
+        },
+        getTypeColor(type) {
+            var colors = {
+                'survey': '#1976D2',
+                'geospatial': '#4CAF50',
+                'timeseries': '#FF9800',
+                'document': '#9C27B0',
+                'table': '#F44336',
+                'image': '#00BCD4',
+                'script': '#795548',
+                'visualization': '#E91E63',
+                'video': '#3F51B5',
+                'microdata': '#009688'
+            };
+            return colors[type] || '#607D8B';
+        }
+    }
+};
+
 const router = new VueRouter({
     mode: 'hash',
     routes: [
         { path: '/', component: DashboardHome },
+        { path: '/activity', component: ActivityDashboard },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
         { path: '*', redirect: '/' }
