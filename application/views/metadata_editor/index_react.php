@@ -6,6 +6,7 @@
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <title>Metadata Editor (React)</title>
+  <link rel="stylesheet" href="<?php echo base_url(); ?>react-app/dist/app.css">
   <style>
     body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
     #root { min-height: 100vh; }
@@ -73,7 +74,6 @@
 
   <!-- Vite-built React app bundle -->
   <script type="module" src="<?php echo base_url(); ?>react-app/dist/app.js"></script>
-  <link rel="stylesheet" href="<?php echo base_url(); ?>react-app/dist/app.css">
 
 </body>
 </html>
