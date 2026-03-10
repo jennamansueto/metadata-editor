@@ -180,6 +180,18 @@ $lang['version_type_help']="<p>Para el versionado de proyectos, se utiliza <a hr
     <li><strong>Parche</strong>: para correcciones pequeñas y compatibles o refinamientos</li>
 </ul>";
 $lang['version_created_successfully']="Versión creada exitosamente";
+$lang['lock_and_version']="Bloquear y versionar";
+$lang['lock_version_description']="Crear una instantánea bloqueada de solo lectura del proyecto actual. El proyecto original seguirá siendo editable para futuras actualizaciones.";
+$lang['version_number']="Número de versión";
+$lang['version_number_required']="El número de versión es obligatorio";
+$lang['unlocked']="Desbloqueado";
+$lang['no_versions_found']="Aún no se han creado versiones. Use el botón Bloquear y versionar en el resumen del proyecto para crear una versión.";
+$lang['view_version']="Ver versión";
+$lang['view']="Ver";
+$lang['status']="Estado";
+$lang['actions']="Acciones";
+$lang['created_on']="Creado el";
+$lang['cancel']="Cancelar";
 
 $lang['Cancel changes']="Cancelar cambios";
 $lang['READ ONLY']="SOLO LECTURA";
