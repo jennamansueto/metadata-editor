@@ -455,12 +455,7 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    Vue.use(i18n)
-    Vue.use(router)
-    vue_app = new Vue({
-      el: '#app',
-      vuetify: vuetify,
-      router: router,
+    var app = Vue.createApp({
       data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
@@ -946,7 +941,11 @@
           reader.readAsText(file);
         }
       }
-    })
+    });
+    app.use(i18n);
+    app.use(router);
+    app.use(vuetify);
+    vue_app = app.mount('#app');
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);

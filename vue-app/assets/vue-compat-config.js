@@ -123,3 +123,46 @@ if (typeof Vue !== 'undefined' && Vue.configureCompat) {
     // Also expose for manual calling if needed
     window._registerVuetifyKebabAliases = ensureKebabAliases;
 })();
+
+// ---------------------------------------------------------------------------
+// Vue Router 4 compat helper
+// ---------------------------------------------------------------------------
+// Problem: Vue Router 4 is a Vue 3 plugin (its install() expects an app
+// instance). The compat build's Vue.use() passes the Vue constructor instead
+// of an app, so $route and $router never get injected.
+//
+// Solution: Manually define $router and $route on Vue.prototype so they are
+// available in all component instances (including in-DOM templates that
+// reference $route.fullPath, etc.).
+// ---------------------------------------------------------------------------
+(function() {
+    if (typeof Vue === 'undefined') return;
+
+    window._installRouterCompat = function(router) {
+        if (!router || !router.currentRoute) return;
+
+        // Strategy: Wrap Vue.createApp so the NEXT call (triggered internally
+        // by new Vue()) installs the router on the real app before it mounts.
+        // This ensures Vue Router 4's provide/inject mechanism works properly
+        // for <router-view> and <router-link>.
+        var _origCreateApp = Vue.createApp;
+        Vue.createApp = function() {
+            var app = _origCreateApp.apply(this, arguments);
+            app.use(router);
+            // Restore original after first use (one-shot wrapper)
+            Vue.createApp = _origCreateApp;
+            return app;
+        };
+
+        // Also add $router/$route to prototype as a fallback for any
+        // component that accesses them before the app is created.
+        Object.defineProperty(Vue.prototype, '$router', {
+            configurable: true,
+            get: function() { return router; }
+        });
+        Object.defineProperty(Vue.prototype, '$route', {
+            configurable: true,
+            get: function() { return router.currentRoute.value; }
+        });
+    };
+})();

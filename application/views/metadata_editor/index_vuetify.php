@@ -178,14 +178,8 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    Vue.use(i18n)
-    Vue.use(router)
-    vue_app=new Vue({
-      el: '#app',
-      vuetify: vuetify,
-      router:router,
-      store,
-      data:{          
+    var app = Vue.createApp({
+      data() { return {          
           active_section:null,
           active_form_field:null,
           schema_validator: null,
@@ -238,7 +232,7 @@
 
         apply_defaults_dialog:false,
         apply_defaults_dialog_key:0
-      },
+      } },
       created: async function(){
         await this.$store.dispatch('initData',{dataset_id:this.dataset_id});
         await this.$store.dispatch('initTreeItems');
@@ -1361,7 +1355,12 @@
           }
       }
     }
-    })
+    });
+    app.use(i18n);
+    app.use(router);
+    app.use(vuetify);
+    app.use(store);
+    vue_app = app.mount('#app');
 
     Vue.component('VueJsonPretty', VueJsonPretty.default);
   </script>
