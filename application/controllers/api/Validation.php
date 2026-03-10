@@ -1065,6 +1065,7 @@ class Validation extends MY_REST_Controller
 
             case 'indicator':
             case 'timeseries':
+            case 'timeseries-db':
                 $type_fields = array(
                     array('path' => 'series_description.idno', 'label' => 'Series IDNO', 'severity' => 'error', 'recommendation' => 'Provide a unique identifier'),
                     array('path' => 'series_description.name', 'label' => 'Series Name', 'severity' => 'error', 'recommendation' => 'Provide the indicator/series name'),
@@ -1238,6 +1239,7 @@ class Validation extends MY_REST_Controller
                 break;
             case 'indicator':
             case 'timeseries':
+            case 'timeseries-db':
                 $abstract = $this->_get_nested_value($metadata, 'series_description.definition_short');
                 break;
         }
