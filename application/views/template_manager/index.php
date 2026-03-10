@@ -623,7 +623,7 @@
             }            
           ]          
         }
-      } },
+      },
       created: function() {
         this.init_template();
         this.init_tree();
