@@ -1177,7 +1177,7 @@ class Validation extends MY_REST_Controller
             $is_recommended = false;
 
             if (is_string($rules)) {
-                $is_required = strpos($rules, 'required') !== false;
+                $is_required = (bool) preg_match('/(?:^|\|)required(?:$|\|)/', $rules);
             } elseif (is_array($rules)) {
                 $is_required = in_array('required', $rules);
             }
