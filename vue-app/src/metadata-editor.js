@@ -288,16 +288,16 @@ const ImportOptions = { template: '<div><import-options/> </div>' };
 const _main = {props: ['active_section'],template: '<div><study-metadata/></div>' };
 const Datafiles ={template: '<div><datafiles/></div>'};
 const Datafile = {props: ['file_id'],template: '<div><datafile/></div>' };
-const DatafileEdit=VueDatafileEdit;
+const DatafileEdit=Vue.component('datafile-edit');
 const DatafileExplorer = {props: ['file_id'],template: '<div><datafile-data-explorer/></div>' };
 const DatafileImport = {template: '<div><datafile-import/></div>' };
 const Variables ={props: ['file_id'],template: '<div><variables/></div>'};
 const VariableGroups ={template: '<div><variable-groups /> </div>'};
-const ResourcesComp =VueExternalResources;
+const ResourcesComp =Vue.component('external-resources');
 const FileManager ={props: ['index'],template: '<div><file-manager /></div>'};
 const ResourcesImport ={template: '<div> <external-resources-import /></div>'};
-const ResourcesEditComp =VueExternalResourcesEdit;
-const ResourcesCreateComp =VueExternalResourcesCreate;
+const ResourcesEditComp =Vue.component('external-resources-edit');
+const ResourcesCreateComp =Vue.component('external-resources-create');
 const GeoFeatures ={props: ['index'],template: '<div><geospatial-features/></div>'};
 const GeoFeaturesImport ={props: ['index'],template: '<div><geospatial-feature-import/></div>'};
 const GeoFeature ={props: ['id'],template: '<div><geospatial-feature-edit :feature_id="id"/></div>'};
@@ -314,8 +314,8 @@ const AdminMetadataHistory ={template: '<div><admin-metadata-history/></div>'};
 const SdmxCsvExport = {template: '<div><sdmx-csv-export-options/></div>'};
 const ValidationReport ={template: '<div><validation-report/></div>'};
 
-const AdminMetadataEdit= VueAdminMetadataEdit;
-const MetadataTypesComp =VueMetadataTypes;
+const AdminMetadataEdit= Vue.component('admin-metadata-edit');
+const MetadataTypesComp =Vue.component('metadata-types');
 
 // Routes
 const routes = [

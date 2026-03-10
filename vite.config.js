@@ -35,6 +35,7 @@ export default defineConfig({
         'vue-scrollto'
       ],
       output: {
+        strict: false,
         globals: {
           'vue': 'Vue',
           'vuex': 'Vuex',

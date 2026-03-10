@@ -1,4 +1,5 @@
-const EventBus = new Vue();
+window.EventBus = new Vue();
+const EventBus = window.EventBus;
 
 //Global confirm function
 Vue.prototype.$confirm = function (message) {
