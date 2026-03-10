@@ -310,6 +310,11 @@ class Configurations extends MY_Controller {
 	 */
 	function remove_cover_logo()
 	{
+		if ($this->input->method() !== 'post') {
+			redirect('admin/configurations');
+			return;
+		}
+
 		$logo_path = $this->Configurations_model->get_config_item('pdf_cover_logo');
 		if (!empty($logo_path) && file_exists(FCPATH . $logo_path)) {
 			unlink(FCPATH . $logo_path);

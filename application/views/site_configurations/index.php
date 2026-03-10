@@ -253,9 +253,11 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 				<div class="mb-2">
 					<span class="text-muted"><?php echo t('pdf_cover_logo_current');?>:</span>
 					<img src="<?php echo base_url() . htmlspecialchars($pdf_cover_logo); ?>" alt="Cover logo" style="max-height:60px;max-width:200px;border:1px solid #ddd;padding:4px;background:#fff;" />
-					<a href="<?php echo site_url('admin/configurations/remove_cover_logo'); ?>" class="btn btn-sm btn-outline-danger ml-2" onclick="return confirm('<?php echo t('pdf_cover_logo_remove');?>?');">
-						<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_logo_remove');?>
-					</a>
+						<?php echo form_open('admin/configurations/remove_cover_logo', 'style="display:inline;"'); ?>
+						<button type="submit" class="btn btn-sm btn-outline-danger ml-2" onclick="return confirm('<?php echo t('pdf_cover_logo_remove');?>?');">
+							<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_logo_remove');?>
+						</button>
+					<?php echo form_close(); ?>
 				</div>
 			<?php endif; ?>
 			<input type="file" name="cover_logo" accept="image/png,image/jpeg,image/gif" class="form-control-file d-inline-block" style="width:auto;" />
