@@ -34,7 +34,7 @@ export default function GlobalSiteHeader() {
     if (url.endsWith('/index.php')) {
       url = url.slice(0, -10);
     }
-    return url;
+    return url.replace(/\/?$/, '/');
   })();
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function GlobalSiteHeader() {
         >
           <Box
             component="img"
-            src={baseUrl + '/vue-app/assets/images/logo-white.svg'}
+            src={baseUrl + 'vue-app/assets/images/logo-white.svg'}
             sx={{ height: 20, mr: 0.5 }}
             alt="Logo"
           />
