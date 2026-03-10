@@ -18,7 +18,7 @@ class Schemas extends MY_Controller {
         $options = array(
             'translations' => $this->lang->language
         );
-        echo $this->load->view('schemas/index',$options,true);
+        echo $this->load->view('schemas/index_react',$options,true);
     }
 
     public function preview($uid = null)
