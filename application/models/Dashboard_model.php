@@ -1023,4 +1023,216 @@ class Dashboard_model extends CI_Model {
         $response = $this->datautils->get_jobs();
         return $response;
     }
+
+    /**
+     * Get comprehensive activity dashboard data
+     */
+    public function get_activity_dashboard_data()
+    {
+        return [
+            'project_creation_trend' => $this->get_project_creation_trend(),
+            'projects_by_type' => $this->get_projects_by_type_chart(),
+            'projects_by_status' => $this->get_projects_by_status(),
+            'recent_modifications' => $this->get_recent_project_modifications(20),
+            'user_login_history' => $this->get_user_login_history(20),
+            'top_contributors' => $this->get_top_contributors(10),
+            'monthly_user_registrations' => $this->get_monthly_user_registrations(),
+            'collection_stats' => $this->get_collection_stats()
+        ];
+    }
+
+    /**
+     * Get project creation trend (monthly, last 12 months)
+     */
+    public function get_project_creation_trend()
+    {
+        $months = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $month_start = mktime(0, 0, 0, date('n') - $i, 1, date('Y'));
+            $month_end = mktime(23, 59, 59, date('n') - $i + 1, 0, date('Y'));
+            $label = date('M Y', $month_start);
+
+            $this->db->where('created >=', $month_start);
+            $this->db->where('created <=', $month_end);
+            $count = $this->db->count_all_results('editor_projects');
+
+            $months[] = [
+                'label' => $label,
+                'month' => date('Y-m', $month_start),
+                'count' => (int)$count
+            ];
+        }
+
+        return $months;
+    }
+
+    /**
+     * Get projects grouped by type for chart
+     */
+    public function get_projects_by_type_chart()
+    {
+        $this->db->select('type, COUNT(*) as count');
+        $this->db->from('editor_projects');
+        $this->db->group_by('type');
+        $this->db->order_by('count', 'DESC');
+        $results = $this->db->get()->result_array();
+
+        $data = [];
+        foreach ($results as $row) {
+            $data[] = [
+                'type' => $row['type'] ?: 'unknown',
+                'count' => (int)$row['count']
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get projects by published status
+     */
+    public function get_projects_by_status()
+    {
+        $this->db->select('
+            SUM(CASE WHEN published = 1 THEN 1 ELSE 0 END) as published,
+            SUM(CASE WHEN published = 0 OR published IS NULL THEN 1 ELSE 0 END) as draft
+        ');
+        $this->db->from('editor_projects');
+        $row = $this->db->get()->row_array();
+
+        return [
+            'published' => (int)($row['published'] ?? 0),
+            'draft' => (int)($row['draft'] ?? 0)
+        ];
+    }
+
+    /**
+     * Get recent project modifications
+     */
+    public function get_recent_project_modifications($limit = 20)
+    {
+        $this->db->select('ep.id, ep.idno, ep.title, ep.type, ep.created, ep.changed, u_created.username as created_by_name, u_changed.username as changed_by_name');
+        $this->db->from('editor_projects ep');
+        $this->db->join('users u_created', 'ep.created_by = u_created.id', 'left');
+        $this->db->join('users u_changed', 'ep.changed_by = u_changed.id', 'left');
+        $this->db->order_by('ep.changed', 'DESC');
+        $this->db->limit($limit);
+        $results = $this->db->get()->result_array();
+
+        $items = [];
+        foreach ($results as $row) {
+            $items[] = [
+                'id' => (int)$row['id'],
+                'idno' => $row['idno'],
+                'title' => $row['title'],
+                'type' => $row['type'],
+                'created' => (int)$row['created'],
+                'changed' => (int)$row['changed'],
+                'created_by' => $row['created_by_name'],
+                'changed_by' => $row['changed_by_name']
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get user login history
+     */
+    public function get_user_login_history($limit = 20)
+    {
+        $this->db->select('id, username, email, last_login, created_on, active');
+        $this->db->from('users');
+        $this->db->where('last_login >', 0);
+        $this->db->order_by('last_login', 'DESC');
+        $this->db->limit($limit);
+        $results = $this->db->get()->result_array();
+
+        $items = [];
+        foreach ($results as $row) {
+            $items[] = [
+                'id' => (int)$row['id'],
+                'username' => $row['username'],
+                'email' => $row['email'],
+                'last_login' => (int)$row['last_login'],
+                'created_on' => (int)$row['created_on'],
+                'active' => (int)$row['active']
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get top contributors by project count
+     */
+    public function get_top_contributors($limit = 10)
+    {
+        $this->db->select('u.id, u.username, u.email, COUNT(ep.id) as project_count, MAX(ep.created) as last_project_created');
+        $this->db->from('users u');
+        $this->db->join('editor_projects ep', 'u.id = ep.created_by', 'inner');
+        $this->db->group_by('u.id, u.username, u.email');
+        $this->db->order_by('project_count', 'DESC');
+        $this->db->limit($limit);
+        $results = $this->db->get()->result_array();
+
+        $items = [];
+        foreach ($results as $row) {
+            $items[] = [
+                'id' => (int)$row['id'],
+                'username' => $row['username'],
+                'email' => $row['email'],
+                'project_count' => (int)$row['project_count'],
+                'last_project_created' => (int)$row['last_project_created']
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get monthly user registrations (last 12 months)
+     */
+    public function get_monthly_user_registrations()
+    {
+        $months = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $month_start = mktime(0, 0, 0, date('n') - $i, 1, date('Y'));
+            $month_end = mktime(23, 59, 59, date('n') - $i + 1, 0, date('Y'));
+            $label = date('M Y', $month_start);
+
+            $this->db->where('created_on >=', $month_start);
+            $this->db->where('created_on <=', $month_end);
+            $count = $this->db->count_all_results('users');
+
+            $months[] = [
+                'label' => $label,
+                'month' => date('Y-m', $month_start),
+                'count' => (int)$count
+            ];
+        }
+
+        return $months;
+    }
+
+    /**
+     * Get collection statistics
+     */
+    public function get_collection_stats()
+    {
+        // Total collections
+        $total_collections = $this->db->count_all('editor_collections');
+
+        // Collections with projects
+        $this->db->select('COUNT(DISTINCT collection_id) as count');
+        $this->db->from('editor_collections_tree ct');
+        $this->db->join('editor_projects ep', 'ct.descendant = ep.id', 'inner');
+        $result = $this->db->get()->row_array();
+        $with_projects = (int)($result['count'] ?? 0);
+
+        return [
+            'total' => (int)$total_collections,
+            'with_projects' => $with_projects
+        ];
+    }
 }
