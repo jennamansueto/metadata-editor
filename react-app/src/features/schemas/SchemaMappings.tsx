@@ -325,90 +325,93 @@ export default function SchemaMappings() {
   async function handleSubmit() {
     if (submittingRef.current || loading || saving) return;
     submittingRef.current = true;
-    setFormErrorMessage('');
-    setSaving(true);
-
-    const existingTitle = currentSchema?.title || '';
-    const existingDescription =
-      typeof currentSchema?.description === 'string'
-        ? currentSchema.description
-        : '';
-
-    if (!existingTitle) {
-      setFormErrorMessage(t('schema_title_required'));
-      setSaving(false);
-      return;
-    }
-
-    const updatedMetadataOptions: MetadataOptions = JSON.parse(
-      JSON.stringify(metadataOptions || {})
-    );
-    if (
-      !updatedMetadataOptions.core_fields ||
-      typeof updatedMetadataOptions.core_fields !== 'object'
-    ) {
-      updatedMetadataOptions.core_fields = {};
-    }
-
-    const normalizeField = (field: string[]): string[] => {
-      return field.filter((v) => v && v !== '');
-    };
-
-    updatedMetadataOptions.core_fields.idno = normalizeField(coreFields.idno);
-    updatedMetadataOptions.core_fields.title = normalizeField(coreFields.title);
-    updatedMetadataOptions.core_fields.country = normalizeField(coreFields.country);
-    updatedMetadataOptions.core_fields.year_start = normalizeField(coreFields.year_start);
-    updatedMetadataOptions.core_fields.year_end = normalizeField(coreFields.year_end);
-
-    // Validate required fields
-    const idnoVal = updatedMetadataOptions.core_fields.idno;
-    if (!idnoVal || (Array.isArray(idnoVal) && idnoVal.length === 0)) {
-      setFormErrorMessage(t('idno_required'));
-      setSaving(false);
-      return;
-    }
-
-    const titleVal = updatedMetadataOptions.core_fields.title;
-    if (!titleVal || (Array.isArray(titleVal) && titleVal.length === 0)) {
-      setFormErrorMessage(t('title_required'));
-      setSaving(false);
-      return;
-    }
-
-    // Normalize attributes
-    const attrsRecord = entriesToRecord(coreFields.attributes);
-    const cleanAttrs: Record<string, string> = {};
-    Object.entries(attrsRecord).forEach(([key, val]) => {
-      if (key && key !== '' && val && typeof val === 'string' && val !== '') {
-        cleanAttrs[key] = val;
-      }
-    });
-    updatedMetadataOptions.core_fields.attributes =
-      Object.keys(cleanAttrs).length > 0 ? cleanAttrs : {};
-
-    const formData = new FormData();
-    formData.append('title', existingTitle);
-    formData.append('description', existingDescription);
-    formData.append(
-      'metadata_options',
-      JSON.stringify(updatedMetadataOptions)
-    );
-
     try {
-      await axios.post(
-        baseApiUrl + '/update/' + encodeURIComponent(schemaUid),
-        formData
+      setFormErrorMessage('');
+      setSaving(true);
+
+      const existingTitle = currentSchema?.title || '';
+      const existingDescription =
+        typeof currentSchema?.description === 'string'
+          ? currentSchema.description
+          : '';
+
+      if (!existingTitle) {
+        setFormErrorMessage(t('schema_title_required'));
+        setSaving(false);
+        return;
+      }
+
+      const updatedMetadataOptions: MetadataOptions = JSON.parse(
+        JSON.stringify(metadataOptions || {})
       );
-      showAlert(t('schema_mappings_updated'), { color: 'success' });
-      navigate(-1);
-    } catch (error) {
-      const message = extractErrorMessage(
-        error,
-        t('schema_mappings_update_failed')
+      if (
+        !updatedMetadataOptions.core_fields ||
+        typeof updatedMetadataOptions.core_fields !== 'object'
+      ) {
+        updatedMetadataOptions.core_fields = {};
+      }
+
+      const normalizeField = (field: string[]): string[] => {
+        return field.filter((v) => v && v !== '');
+      };
+
+      updatedMetadataOptions.core_fields.idno = normalizeField(coreFields.idno);
+      updatedMetadataOptions.core_fields.title = normalizeField(coreFields.title);
+      updatedMetadataOptions.core_fields.country = normalizeField(coreFields.country);
+      updatedMetadataOptions.core_fields.year_start = normalizeField(coreFields.year_start);
+      updatedMetadataOptions.core_fields.year_end = normalizeField(coreFields.year_end);
+
+      // Validate required fields
+      const idnoVal = updatedMetadataOptions.core_fields.idno;
+      if (!idnoVal || (Array.isArray(idnoVal) && idnoVal.length === 0)) {
+        setFormErrorMessage(t('idno_required'));
+        setSaving(false);
+        return;
+      }
+
+      const titleVal = updatedMetadataOptions.core_fields.title;
+      if (!titleVal || (Array.isArray(titleVal) && titleVal.length === 0)) {
+        setFormErrorMessage(t('title_required'));
+        setSaving(false);
+        return;
+      }
+
+      // Normalize attributes
+      const attrsRecord = entriesToRecord(coreFields.attributes);
+      const cleanAttrs: Record<string, string> = {};
+      Object.entries(attrsRecord).forEach(([key, val]) => {
+        if (key && key !== '' && val && typeof val === 'string' && val !== '') {
+          cleanAttrs[key] = val;
+        }
+      });
+      updatedMetadataOptions.core_fields.attributes =
+        Object.keys(cleanAttrs).length > 0 ? cleanAttrs : {};
+
+      const formData = new FormData();
+      formData.append('title', existingTitle);
+      formData.append('description', existingDescription);
+      formData.append(
+        'metadata_options',
+        JSON.stringify(updatedMetadataOptions)
       );
-      setFormErrorMessage(message);
+
+      try {
+        await axios.post(
+          baseApiUrl + '/update/' + encodeURIComponent(schemaUid),
+          formData
+        );
+        showAlert(t('schema_mappings_updated'), { color: 'success' });
+        navigate(-1);
+      } catch (error) {
+        const message = extractErrorMessage(
+          error,
+          t('schema_mappings_update_failed')
+        );
+        setFormErrorMessage(message);
+      } finally {
+        setSaving(false);
+      }
     } finally {
-      setSaving(false);
       submittingRef.current = false;
     }
   }
