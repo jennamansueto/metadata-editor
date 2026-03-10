@@ -162,6 +162,7 @@ Vue.component('geospatial-gallery', {
 
                 var vm = this;
                 this.map.whenReady(function() {
+                    if (!vm.map) return;
                     vm.map.invalidateSize();
                     vm.updateMapBoundingBox();
                 });
