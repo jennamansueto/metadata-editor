@@ -46,8 +46,8 @@ export default function MainNavigationTabs({
   }
 
   function handleTabClick(page: string) {
-    const siteUrl = ci.site_url || '';
-    window.location.href = siteUrl + '/' + page;
+    const siteUrl = (ci.site_url || '').replace(/\/?$/, '/');
+    window.location.href = siteUrl + page;
   }
 
   return (
