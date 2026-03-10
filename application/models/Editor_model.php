@@ -2250,6 +2250,7 @@ class Editor_model extends CI_Model {
 			'authoring_entity' => isset($project['authoring_entity']) ? $project['authoring_entity'] : null,
 			'template_uid' => isset($project['template_uid']) ? $project['template_uid'] : null,
 			'metadata' => $this->encode_metadata($project['metadata']),
+			'attributes' => isset($project['attributes']) ? json_encode($project['attributes']) : null,
 			'pid' => $main_project_id,
 			'is_locked' => 1,
 			'version_number' => $version_number,
