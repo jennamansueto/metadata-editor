@@ -241,6 +241,55 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 <?php echo form_close();?>
 
 <fieldset class="field-expanded">
+	<legend><i class="fas fa-robot mr-3" style="color:#007bff;"></i>LLM / AI Integration</legend>
+
+	<p class="field-note mb-3">
+		Configure an LLM API (OpenAI-compatible) to enable AI-powered features such as keyword suggestion for indicator metadata.
+		Leave the API URL and Key empty to use mock/demo mode.
+	</p>
+
+	<?php echo form_open('', 'id="form_llm_settings" name="form_llm_settings"');?>
+
+	<div class="field">
+		<label for="llm_api_url">LLM API URL</label>
+		<input class="form-control" name="llm_api_url" type="text" id="llm_api_url"
+			value="<?php echo htmlspecialchars(get_form_value('llm_api_url', isset($llm_api_url) ? $llm_api_url : '')); ?>"
+			placeholder="https://api.openai.com/v1" />
+		<span class="field-note">Base URL for the OpenAI-compatible API (e.g. https://api.openai.com/v1)</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_api_key">LLM API Key</label>
+		<input class="form-control" name="llm_api_key" type="password" id="llm_api_key"
+			value="<?php echo htmlspecialchars(get_form_value('llm_api_key', isset($llm_api_key) ? $llm_api_key : '')); ?>"
+			placeholder="sk-..." />
+		<span class="field-note">API key for authentication</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_model">Model</label>
+		<input class="form-control" name="llm_model" type="text" id="llm_model"
+			value="<?php echo htmlspecialchars(get_form_value('llm_model', isset($llm_model) ? $llm_model : 'gpt-4')); ?>"
+			placeholder="gpt-4" />
+		<span class="field-note">Model name (e.g. gpt-4, gpt-3.5-turbo)</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_default_temperature">Default Temperature</label>
+		<input class="form-control input-fixed-3" name="llm_default_temperature" type="text" id="llm_default_temperature"
+			value="<?php echo htmlspecialchars(get_form_value('llm_default_temperature', isset($llm_default_temperature) ? $llm_default_temperature : '0.7')); ?>"
+			placeholder="0.7" />
+		<span class="field-note">Value between 0.0 (deterministic) and 1.0 (creative). Default: 0.7</span>
+	</div>
+
+	<div style="text-align:right;">
+		<input class="btn btn-primary" type="submit" value="<?php echo t('update');?>" name="submit"/>
+	</div>
+
+	<?php echo form_close();?>
+</fieldset>
+
+<fieldset class="field-expanded">
 	<legend><i class="fas fa-life-ring mr-3" style="color:#007bff;"></i><?php echo t('support_and_updates');?></legend>
 
 	<div class="field">

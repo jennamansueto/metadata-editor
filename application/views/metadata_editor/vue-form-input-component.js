@@ -117,6 +117,13 @@ Vue.component("form-input", {
     ProjectType() {
       return this.$store.state.project_type;
     },
+    isKeywordField() {
+      if (!this.field || !this.field.key) return false;
+      var key = this.field.key.toLowerCase();
+      return key === 'series_description.keywords'
+          || key === 'keywords'
+          || key.endsWith('.keywords');
+    },
   },
   template: `
             <div class="form-input-field mt-3" :class="'form-input-' + field.type"  >
@@ -143,6 +150,12 @@ Vue.component("form-input", {
                     <div class="form-field form-field-table">
                         <label :for="'field-' + field.key">{{field.title}}</label>
                         <span class="small" v-if="field.help_text" role="button" data-toggle="collapse" :data-target="'#field-toggle-' + normalizeClassID(field.key)" ><i class="far fa-question-circle"></i></span>
+                        <keyword-suggest
+                            v-if="isKeywordField"
+                            v-model="local"
+                            :field="field"
+                            @input="$emit('input', $event)"
+                        ></keyword-suggest>
                         <small :id="'field-toggle-' + normalizeClassID(field.key)" class="collapse help-text form-text text-muted mb-2">{{field.help_text}}</small>
                         <table-grid-component 
                             v-model="local" 
