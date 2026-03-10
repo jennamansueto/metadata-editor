@@ -7,7 +7,9 @@ Vue.component('geospatial-gallery', {
             mapContainerId: 'geospatial-gallery-map-' + Math.random().toString(36).substr(2, 9),
             previewDialog: false,
             previewImage: null,
-            previewIndex: 0
+            previewIndex: 0,
+            _isDestroyed: false,
+            _mapInitRetries: 0
         }
     },
     created: async function(){
@@ -22,11 +24,13 @@ Vue.component('geospatial-gallery', {
         });
     },
     beforeDestroy: function() {
+        this._isDestroyed = true;
         this.destroyMap();
     },
     watch: {
         hasBoundingBox: function(newVal) {
             if (newVal) {
+                this._mapInitRetries = 0;
                 this.$nextTick(() => {
                     setTimeout(() => {
                         this.initializeMap();
@@ -114,11 +118,15 @@ Vue.component('geospatial-gallery', {
     },
     methods:{
         initializeMap: function() {
+            if (this._isDestroyed) return;
             if (!this.hasBoundingBox) return;
 
             var mapContainer = document.getElementById(this.mapContainerId);
             if (!mapContainer) {
-                setTimeout(() => this.initializeMap(), 100);
+                if (this._mapInitRetries < 10) {
+                    this._mapInitRetries++;
+                    setTimeout(() => this.initializeMap(), 100);
+                }
                 return;
             }
 
@@ -128,8 +136,10 @@ Vue.component('geospatial-gallery', {
             }
 
             if (typeof L === 'undefined') {
-                console.error('Leaflet is not loaded');
-                setTimeout(() => this.initializeMap(), 200);
+                if (this._mapInitRetries < 10) {
+                    this._mapInitRetries++;
+                    setTimeout(() => this.initializeMap(), 200);
+                }
                 return;
             }
 
