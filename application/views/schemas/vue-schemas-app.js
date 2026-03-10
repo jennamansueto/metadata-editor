@@ -1278,5 +1278,8 @@
   schemasApp.use(vuetify);
   schemasApp.use(router);
   schemasApp.config.globalProperties.CI = window.CI;
+  schemasApp.config.globalProperties.$confirm = $confirm;
+  schemasApp.config.globalProperties.$alert = $alert;
+  schemasApp.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
   schemasApp.mount('#app');
 })();

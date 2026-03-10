@@ -1192,6 +1192,9 @@
     app.use(i18n);
     app.use(vuetify);
     app.config.globalProperties.CI = window.CI;
+    app.config.globalProperties.$confirm = $confirm;
+    app.config.globalProperties.$alert = $alert;
+    app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
     vue_app = app.mount('#app');
   </script>
 

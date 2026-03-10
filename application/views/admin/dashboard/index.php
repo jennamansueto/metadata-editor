@@ -1960,5 +1960,8 @@ const dashboardApp = Vue.createApp({});
 dashboardApp.use(vuetify);
 dashboardApp.use(router);
 dashboardApp.config.globalProperties.CI = window.CI;
+if (typeof $confirm !== 'undefined') dashboardApp.config.globalProperties.$confirm = $confirm;
+if (typeof $alert !== 'undefined') dashboardApp.config.globalProperties.$alert = $alert;
+if (typeof $extractErrorMessage !== 'undefined') dashboardApp.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
 dashboardApp.mount('#dashboard-app');
 </script>
