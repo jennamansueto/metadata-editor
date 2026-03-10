@@ -813,8 +813,12 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    const __homeApp = Vue.createApp({
-      data() { return {
+    Vue.use(i18n)
+    vue_app = new Vue({
+      el: '#app',
+      vuetify: vuetify,
+      router: router,
+      data: {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -873,7 +877,7 @@
         dialog_project_revision: false,
         dialog_project_revision_options: {},
         dialog_project_revision_key: 0,
-      }; },
+      },
       created: async function() {
         //reload projects on window focus
         document.addEventListener("visibilitychange", function() {
@@ -1835,10 +1839,6 @@
 
       }
     })
-    __homeApp.use(i18n)
-    __homeApp.use(vuetify)
-    __homeApp.use(router)
-    vue_app = __homeApp.mount('#app')
   </script>
 
   <?php $this->load->view('common/analytics'); ?>

@@ -176,14 +176,14 @@
     });
 
     // Initialize Vue app
-    const app = Vue.createApp({
+    Vue.use(i18n);
+    new Vue({
+        el: "#app",
+        vuetify: vuetify,
         data() {
             return {
                 // App data if needed
             }
         }
     });
-    app.use(i18n);
-    app.use(vuetify);
-    app.mount('#app');
 </script>

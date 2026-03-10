@@ -455,8 +455,12 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    const __templatesApp = Vue.createApp({
-      data() { return {
+    Vue.use(i18n)
+    vue_app = new Vue({
+      el: '#app',
+      vuetify: vuetify,
+      router: router,
+      data: {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -942,15 +946,10 @@
         }
       }
     })
-    __templatesApp.use(i18n)
-    __templatesApp.use(vuetify)
-    __templatesApp.use(router)
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
     Vue.component('VueJsonPretty', VueJsonPretty.default)
-
-    vue_app = __templatesApp.mount('#app')
 
   </script>
 </body>

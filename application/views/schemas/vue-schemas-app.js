@@ -1240,7 +1240,11 @@
     routes
   });
 
-  const app = Vue.createApp({
+  Vue.use(i18n);
+  new Vue({
+    el: '#app',
+    vuetify,
+    router,
     data() {
       return {
         baseApiRoot,
@@ -1271,8 +1275,4 @@
       }
     }
   });
-  app.use(i18n);
-  app.use(vuetify);
-  app.use(router);
-  app.mount('#app');
 })();

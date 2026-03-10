@@ -181,7 +181,10 @@
 
       const apiBase = (CI && CI.site_url ? CI.site_url : '').replace(/\/?$/, '/') + 'api/tags';
 
-      const app = Vue.createApp({
+      Vue.use(i18n);
+      vue_app = new Vue({
+        el: '#app',
+        vuetify: vuetify,
         data() {
           return {
             navTabsModel: 4,
@@ -299,9 +302,6 @@
           }
         }
       });
-      app.use(i18n);
-      app.use(vuetify);
-      app.mount('#app');
     })();
   </script>
 </body>

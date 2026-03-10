@@ -548,9 +548,12 @@
       }
     })
 
-    const __tmApp = Vue.createApp({
-      data() {
-        return {
+    Vue.use(i18n);
+    vue_app = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      store,
+      data: {
           user_template_info: user_template_info,
           initiallyOpen: ['template_root'],
           tree_active_items: [],
@@ -1989,10 +1992,6 @@
         },
       }
     });
-    __tmApp.use(i18n);
-    __tmApp.use(store);
-    __tmApp.use(new Vuetify());
-    __tmApp.mount('#app');
   </script>
 
 

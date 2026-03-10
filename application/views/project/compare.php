@@ -669,8 +669,11 @@
     });
 
     // Vue app
-    const compareApp = Vue.createApp({
-      data() { return {
+    Vue.use(i18n);
+    const vue_app = new Vue({
+      el: '#app',
+      vuetify: vuetify,
+      data: {
         // Get project IDs from URL query string
         project1_id: new URLSearchParams(window.location.search).get('project1'),
         project2_id: new URLSearchParams(window.location.search).get('project2'),
@@ -1186,9 +1189,6 @@
         }
       }
     });
-    compareApp.use(i18n);
-    compareApp.use(vuetify);
-    const vue_app = compareApp.mount('#app');
   </script>
 
 </body>
