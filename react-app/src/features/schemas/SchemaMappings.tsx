@@ -71,7 +71,7 @@ function normalizeMetadataOptions(options: MetadataOptions | null | undefined): 
     normalized.core_fields = { ...(defaults.core_fields as CoreFields) };
   } else {
     normalized.core_fields = { ...(defaults.core_fields as CoreFields), ...normalized.core_fields };
-    const arrayFields = ['idno', 'title'] as const;
+    const arrayFields = ['idno', 'title', 'country', 'year_start', 'year_end'] as const;
     arrayFields.forEach((field) => {
       const value = normalized.core_fields![field];
       if (Array.isArray(value)) {
