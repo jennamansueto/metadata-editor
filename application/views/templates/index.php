@@ -383,7 +383,7 @@
 
   </div>
 
-  <script>
+  <script type="module">
   
     
     <?php
@@ -433,7 +433,7 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
+    const vue_app = new Vue({
       i18n,
       el: '#app',
       vuetify: vuetify,

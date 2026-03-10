@@ -325,7 +325,7 @@
     </v-app>
   </div>
 
-  <script>
+  <script type="module">
     //global js functions
     function getTreeKeys(tree_items, output) {
       tree_items.forEach(item => {
@@ -880,7 +880,7 @@
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, nodeKey);
 
           //unselect cut field
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               if (cutNodeKey == nodeKey) {
@@ -909,7 +909,7 @@
           const activeNodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, activeNodeKey);
 
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               
@@ -942,7 +942,7 @@
           
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, itemKey);
 
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               if (itemKey == cutNodeKey) {
@@ -1349,17 +1349,17 @@
           return findInTree(this.UserTreeItems);
         },
         moveUp: function() {
-          parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
-          nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
+          let parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
+          let nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
           if (nodeIdx > 0) {
             this.array_move(parentNode.items, nodeIdx, nodeIdx - 1);
           }
         },
         moveDown: function() {
-          parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
-          nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
+          let parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
+          let nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
 
-          parentNodeItemsCount = parentNode.items.length - 1;
+          let parentNodeItemsCount = parentNode.items.length - 1;
 
           if (nodeIdx > -1 && nodeIdx < parentNodeItemsCount) {
             this.array_move(parentNode.items, nodeIdx, nodeIdx + 1);
@@ -1379,7 +1379,7 @@
             return false;
           }
 
-          for (index = 0; index < node.items.length; index++) {
+          for (let index = 0; index < node.items.length; index++) {
             let item = node.items[index];
             if (item.key && item.key == key) {
               return index;
@@ -1408,7 +1408,7 @@
           return exists;
         },
         findNodeParent: function(tree, node_key) {
-          found = '';
+          let found = '';
           for (var i = 0; i < tree.items.length; i++) {
             let item = tree.items[i];
             if (item.key && item.key == node_key) {
@@ -1417,7 +1417,7 @@
             }
 
             if (item.items) {
-              result = this.findNodeParent(item, node_key);
+              let result = this.findNodeParent(item, node_key);
               if (result != '') {
                 return result;
               }
@@ -1501,7 +1501,7 @@
             return;
           }
           
-          vm = this;
+          let vm = this;
           let url = CI.base_url + '/api/templates/update/' + this.user_template_info.uid;
 
           // Sync UserTreeItems back to UserTemplate.items before saving
@@ -1509,7 +1509,7 @@
           // Note: Root and description nodes are virtual and not saved
           this.$store.state.user_template.items = this.UserTreeItems;
 
-          formData = this.user_template_info;
+          let formData = this.user_template_info;
           formData.template = this.UserTemplate;
 
           axios.post(url,

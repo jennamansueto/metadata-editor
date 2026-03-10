@@ -1058,7 +1058,7 @@ window.DashboardI18n = {
 </script>
 <script src="<?php echo base_url('javascript/dashboard-components.js'); ?>"></script>
 
-<script>
+<script type="module">
 const formattingMixin = {
     methods: {
         formatNumber(value) {

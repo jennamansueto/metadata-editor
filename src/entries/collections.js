@@ -37,7 +37,7 @@ Vue.component('v-login', LoginComponent);
 Vue.component('vue-tree-list', TreeList);
 Vue.component('vue-collections-component', CollectionsComponent);
 Vue.component('vue-edit-collection', EditCollection);
-Vue.component('vue-manage-users', ManageUsers);
+Vue.component('vue-collection-access-manager', ManageUsers);
 Vue.component('vue-copy-collection', CopyCollection);
 Vue.component('vue-move-collection', MoveCollection);
 Vue.component('vue-global-site-header', GlobalSiteHeader);

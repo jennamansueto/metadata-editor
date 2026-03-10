@@ -165,7 +165,7 @@
     <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/collections.js"></script>
   
 
-    <script>
+    <script type="module">
         <?php
             // All component JS files are now imported via the Vite bundle (collections.js)
         ?>
@@ -235,7 +235,7 @@
             Vue.use(GlobalLoginPlugin);
         }
 
-        vue_app = new Vue({
+        const vue_app = new Vue({
             el: '#app',
             i18n: i18n,
             router: router,

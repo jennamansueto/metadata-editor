@@ -690,7 +690,7 @@
     }
   </style>
 
-  <script>
+  <script type="module">
 
     <?php
     // All component JS files are now imported via the Vite bundle (home.js)
@@ -783,7 +783,7 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
+    const vue_app = new Vue({
       el: '#app',
       i18n,
       vuetify: vuetify,
@@ -1063,7 +1063,7 @@
         },
         CreateFilterQS: function(){
           let search_filters = {};
-          for(i=0;i<Object.keys(this.search_filters).length;i++){
+          for(let i=0;i<Object.keys(this.search_filters).length;i++){
             let filter_name=Object.keys(this.search_filters)[i];
             let qsKey = filter_name === 'tags' ? 'tag' : filter_name;
             search_filters[qsKey]=this.search_filters[filter_name].join(",");
@@ -1097,7 +1097,7 @@
 
           //get from querystring
           let search_filters = {};
-          for(i=0;i<Object.keys(this.search_filters).length;i++){
+          for(let i=0;i<Object.keys(this.search_filters).length;i++){
             let filter_name=Object.keys(this.search_filters)[i];
             let paramName = filter_name === 'tags' ? 'tag' : filter_name;
             let values=urlParams.get(paramName);
@@ -1108,7 +1108,7 @@
           }
 
           //apply filters
-          for(f=0;f<Object.keys(search_filters).length;f++){
+          for(let f=0;f<Object.keys(search_filters).length;f++){
             let filter_name=Object.keys(search_filters)[f];
             this.search_filters[filter_name]=search_filters[filter_name];
           }
@@ -1216,7 +1216,7 @@
               vm.facets = response.data.facets;
               let facet_types = Object.keys(vm.facets);
 
-              for (i = 0; i < facet_types.length; i++) {
+              for (let i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
                 Vue.set(vm.search_filters, facet_name, []);
               }
@@ -1591,7 +1591,7 @@
         toggleProjectSelection: function() {
           this.selected_projects = [];
           if (this.select_all_projects == true) {
-            for (i = 0; i < this.Projects.length; i++) {
+            for (let i = 0; i < this.Projects.length; i++) {
               this.selected_projects.push(this.Projects[i].id);
             }
           }
@@ -1681,7 +1681,7 @@
           }
         },
         getCollectionsList: async function() {
-          vm = this;
+          let vm = this;
           let url = CI.site_url + '/api/collections/tree';
           let response = await axios.get(url);
 
@@ -1758,7 +1758,7 @@
                 return false;
             }
 
-            vm=this;
+            let vm=this;
             this.import_file_errors=null;
             this.import_project_loading=true;
             let url=CI.site_url + '/api/importproject/';

@@ -46,12 +46,12 @@ import MainNavigationTabs from '@views/editor_common/main-navigation-tabs-compon
 
 // Register components globally
 Vue.component('v-login', LoginComponent);
-Vue.component('template-revision-history', TemplateRevisionHistory);
-Vue.component('template-share', TemplateShareComponent);
-Vue.component('template-share-common', TemplateShareCommon);
-Vue.component('template-acl-common', TemplateAclCommon);
-Vue.component('template-acl', TemplateAcl);
-Vue.component('template-uuid', TemplateUuid);
+Vue.component('vue-template-revision-history', TemplateRevisionHistory);
+Vue.component('vue-template-share', TemplateShareComponent);
+Vue.component('vue-template-share-common', TemplateShareCommon);
+Vue.component('vue-template-acl-common', TemplateAclCommon);
+Vue.component('vue-template-acl', TemplateAcl);
+Vue.component('vue-template-uuid', TemplateUuid);
 Vue.component('vue-global-site-header', GlobalSiteHeader);
 Vue.component('main-navigation-tabs', MainNavigationTabs);
 Vue.component('VueJsonPretty', VueJsonPretty);

@@ -145,7 +145,7 @@
     </v-app>
   </div>
 
-  <script>
+  <script type="module">
     (function() {
       const translations = <?php echo json_encode(isset($translations) ? $translations : array(), JSON_UNESCAPED_UNICODE); ?>;
       const i18n = new VueI18n({ locale: 'default', messages: { default: translations } });

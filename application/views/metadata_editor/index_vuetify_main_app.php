@@ -1,4 +1,3 @@
-<script>
         // Vue.use(Vuex), Vue.use(VueDeepSet), window.bus, Vue.mixin (global mixin),
         // and all component imports are now handled by the Vite bundle (metadata-editor.js)
 
@@ -243,14 +242,14 @@
                     return state.data_files;
                 },
                 getDataFileById: (state) => (fid) => {
-                    for(i=0;i<state.data_files.length;i++){
+                    for(let i=0;i<state.data_files.length;i++){
                         if(state.data_files[i].file_id==fid){
                             return state.data_files[i];
                         }
                     }
                 },
                 getDataFileNameById: (state) => (fid) => {
-                    for(i=0;i<state.data_files.length;i++){
+                    for(let i=0;i<state.data_files.length;i++){
                         if(state.data_files[i].file_id==fid){
                             return state.data_files[i].file_name;
                         }
@@ -266,8 +265,8 @@
                     var max_file_id=0;
                     let datafiles=state.data_files;
                     
-                    for(i=0;i<datafiles.length;i++){
-                        file_id=datafiles[i].file_id;
+                    for(let i=0;i<datafiles.length;i++){
+                        let file_id=datafiles[i].file_id;
                         if (parseInt(file_id.substr(1))>max_file_id){
                             max_file_id=file_id.substr(1);
                         }
@@ -280,11 +279,11 @@
                     let variables=state.variables;
                     let datafile_names=Object.keys(variables);
 
-                    for(k=0;k<datafile_names.length;k++){
-                        fid=datafile_names[k];
+                    for(let k=0;k<datafile_names.length;k++){
+                        let fid=datafile_names[k];
                         
-                        for(i=0;i<variables[fid].length;i++){
-                            variable=variables[fid][i];
+                        for(let i=0;i<variables[fid].length;i++){
+                            let variable=variables[fid][i];
                             if(parseInt(variable.vid.substr(1))>max_var){
                                 max_var=variable.vid.substr(1);
                             }
@@ -842,4 +841,3 @@
 
     // Vue.component registrations for ValidationProvider, ValidationObserver,
     // splitpanes, and pane are now in the Vite bundle (metadata-editor.js)
-</script>

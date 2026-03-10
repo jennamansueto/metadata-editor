@@ -109,7 +109,7 @@
     </div>
 </div>
 
-<script>
+<script type="module">
     // Set up CI base URL
     var CI = {
         'base_url': '<?php echo site_url(); ?>',

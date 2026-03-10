@@ -94,9 +94,8 @@
   <!-- Vite bundle -->
   <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/metadata-editor.js"></script>
 
+  <script type="module">
   <?php echo $this->load->view("metadata_editor/index_vuetify_main_app",null,true);?>
-
-  <script>
     
     const translation_messages = {
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
@@ -151,7 +150,7 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app=new Vue({
+    const vue_app=new Vue({
       el: '#app',
       i18n,
       vuetify: vuetify,

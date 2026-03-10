@@ -31,12 +31,12 @@ import ValidationRules from '@views/template_manager/vue-validation-rules-compon
 import PropEdit from '@views/template_manager/vue-prop-edit-component.js';
 
 // Register components globally
-Vue.component('field-key', FieldKey);
-Vue.component('field-custom-key', FieldCustomKey);
-Vue.component('prop-key', PropKey);
-Vue.component('tree-component', TreeComponent);
-Vue.component('tree-field', TreeField);
-Vue.component('table-grid', TableGrid);
-Vue.component('validation-rules', ValidationRules);
+Vue.component('vue-key-field', FieldKey);
+Vue.component('vue-custom-key-field', FieldCustomKey);
+Vue.component('vue-prop-key-field', PropKey);
+Vue.component('nada-treeview', TreeComponent);
+Vue.component('nada-treeview-field', TreeField);
+Vue.component('table-grid-component', TableGrid);
+Vue.component('validation-rules-component', ValidationRules);
 Vue.component('prop-edit', PropEdit);
 Vue.component('draggable', draggable);
