@@ -1937,8 +1937,7 @@ const router = VueRouter.createRouter({
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
+var app = Vue.createApp({
     vuetify: new Vuetify({
         theme: {
             themes: {
@@ -1954,6 +1953,8 @@ new Vue({
             }
         }
     }),
-    router
+    data() { return {} }
 });
+app.use(router);
+app.mount('#dashboard-app');
 </script>

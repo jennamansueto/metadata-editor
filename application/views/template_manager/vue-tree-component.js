@@ -284,11 +284,13 @@ Vue.component('nada-treeview', {
                   item-children="items"                  
               >
 
+                <template #label="{ item }" >
                     <span @click="treeClick(item)" :title="item.title" class="tree-item-label" :class="getItemClasses(item)" >
                         <span v-if="item.type=='resource'" >{{item.title | truncate(23, '...') }}</span>
                         <span v-else>{{item.title}} <template v-if="item.title==''">Untitled</template></span>
                         <span v-if="isItemCut(item)">*</span>                        
                     </span>
+                </template>
 
                 <template v-slot:prepend="{ item, open }" >
                   <v-icon v-if="item.type=='template_root'" :class="{'additional-item': isItemAdditional(item)}">
