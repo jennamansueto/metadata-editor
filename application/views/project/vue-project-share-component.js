@@ -168,7 +168,6 @@ Vue.component('vue-project-share', {
     template: `
         <div class="vue-project-share">
 
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -315,7 +314,6 @@ Vue.component('vue-project-share', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `

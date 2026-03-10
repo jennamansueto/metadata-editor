@@ -89,7 +89,6 @@ Vue.component('nested-array', {
     template: `
             <div class="nested-array" >
 
-                <template>                
                     <v-expansion-panels :value="0" :multiple="true" :disabled="isFieldReadOnly">
                         <draggable tag="v-expansion-panel" :list="local_data" handle=".handle">
                         <v-expansion-panel v-for="(item,index) in local_data">
@@ -110,7 +109,6 @@ Vue.component('nested-array', {
 
                         </v-expansion-panel-header>
                         <v-expansion-panel-content>
-                            <template>
                                 <div v-for="(column,idx_col) in localColumns" scope="row" :key="column.key" >
 
                                     <div>
@@ -164,7 +162,6 @@ Vue.component('nested-array', {
                                     
                                 </div>
                             
-                            </template>
 
                         </v-expansion-panel-content>
                         </v-expansion-panel>
@@ -174,7 +171,6 @@ Vue.component('nested-array', {
                         <button type="button" class="btn btn-light btn-sm btn-outline-primary" @click="addRow" >Add section - {{title}}</button>
                     </div>
                 
-                </template>
 
 
             </div>  `    

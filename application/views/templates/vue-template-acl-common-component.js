@@ -176,7 +176,6 @@ Vue.component('vue-template-acl-common', {
     template: `
         <div class="vue-project-share-common">
 
-        <template>        
             
 
                 <v-card>
@@ -312,7 +311,6 @@ Vue.component('vue-template-acl-common', {
                 </v-card>
                 
             
-        </template>
         
     </div>
     `

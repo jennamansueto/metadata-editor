@@ -64,7 +64,6 @@ Vue.component('v-form', {
             <!-- form-section-container -->
                 <div v-if="fieldDisplayType(item)=='section_container'"  class="form-section-container" >
                     
-                    <template>
                         <div style="font-size:18px;font-weight:bold;" class="section-container-title">{{item.title}} - {{item.key}}</div>                        
                                 <v-form
                                         :items="item.items" 
@@ -75,13 +74,11 @@ Vue.component('v-form', {
                                         :css_class="'lvl-' + depth"
                                     >
                                 </v-form>                        
-                    </template>                    
                 </div>
                 <!-- end-form-section-container -->
 
                 <!-- form-section --> 
                 <div v-if="fieldDisplayType(item)=='section'"  class="form-section" >                    
-                    <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
                             <v-expansion-panel-header>
@@ -100,7 +97,6 @@ Vue.component('v-form', {
                             </v-expansion-panel-content>
                             </v-expansion-panel>
                         </v-expansion-panels>
-                    </template>
                 </div>
                 <!-- end-form-section -->
 

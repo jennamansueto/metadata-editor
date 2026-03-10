@@ -479,7 +479,6 @@ Vue.component('variable-edit', {
     },
     template: `
         <div class="variable-edit-component pb-5">
-        <template>
             <v-tabs v-model="active_tab">
                 <v-tab key="statistics" href="#statistics">{{$t('statistics')}}</v-tab>
                 <v-tab key="weights" href="#weights">
@@ -635,7 +634,6 @@ Vue.component('variable-edit', {
 
                 </v-tab-item>
             </v-tabs>
-        </template>
 
         </div>          
         `

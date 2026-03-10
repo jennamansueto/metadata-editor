@@ -889,9 +889,7 @@ Vue.component('indicator-dsd-import', {
                                 <div v-if="csvPreviewView === 'data'">
                                     <p class="text-muted mb-2">
                                         {{csvData.totalRows}} {{$t("rows_found") || "rows found"}}
-                                        <template>
                                             ({{$t("showing_first") || "showing first"}} {{previewRows}})
-                                        </template>
                                     </p>
                                 </div>
 

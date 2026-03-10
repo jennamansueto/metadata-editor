@@ -136,7 +136,6 @@ Vue.component('v-form-preview', {
             <!-- form-section-container -->
                 <div v-if="item.type=='section_container' && hasDisplayableContent(item.items)"  class="form-section-container" >
                     
-                    <template>
                         <div  class="section-container-title">{{item.title}}</div>                        
                                 <v-form-preview
                                         :items="item.items" 
@@ -147,14 +146,12 @@ Vue.component('v-form-preview', {
                                         :css_class="'lvl-' + depth"
                                     >
                                 </v-form-preview>
-                    </template>                    
                 </div>
                 <!-- end-form-section-container -->
 
                 <!-- form-section -->
                 <div v-if="item.type=='section' && hasDisplayableContent(item.items)"  class="form-section mb-3" >
                     <div>
-                    <template>
                         <div class="card-x">
                             
                             <div class="card-header-x border-bottom ml-3">
@@ -173,7 +170,6 @@ Vue.component('v-form-preview', {
                             </div>
                             
                         </div>
-                    </template>
                     </div>
                 </div>
                 <!-- end-form-section -->

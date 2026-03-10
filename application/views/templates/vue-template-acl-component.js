@@ -33,7 +33,6 @@ Vue.component('vue-template-acl', {
     template: `
         <div class="vue-project-share">
 
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -81,7 +80,6 @@ Vue.component('vue-template-acl', {
 
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `

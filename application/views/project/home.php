@@ -307,7 +307,7 @@
 
                   
 
-                  <template>
+                  <div>
 
                   <div class="bg-white shadow rounded p-3 pt-1 mt-2" elevation="10">
 
@@ -325,11 +325,11 @@
                         </div>
 
                         <div class="col-md-7">
-                          <template>
+                          <div>
                             <div class="float-right" v-if="PaginationTotalPages">
                               <v-pagination v-model="pagination_page" :length="PaginationTotalPages" :total-visible="6" @input="PaginatePage"></v-pagination>
                             </div>
-                          </template>
+                          </div>
                         </div>
 
                       </div>
@@ -451,13 +451,13 @@
                     </table>
 
 
-                    <template>
+                    <div>
                       <div class="mb-5 mt-2" v-if="PaginationTotalPages">
                         <v-pagination v-model="pagination_page" :length="PaginationTotalPages" :total-visible="6" @input="PaginatePage"></v-pagination>
                       </div>
-                    </template>
+                    </div>
                     
-                  </template>
+                  </div>
                   </div>
                   
                 </div>
@@ -494,7 +494,7 @@
 
     
 
-    <template class="create-new-project">
+    <div class="create-new-project">
       <div class="text-center">
         <v-dialog v-model="dialog_create_project" width="500">
 
@@ -530,10 +530,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template class="import-project">
+    <div class="import-project">
       <div class="text-center">
         <v-dialog v-model="dialog_import_project" width="500" :key="dialog_import_project_key">
 
@@ -623,10 +623,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template>
+    <div>
       <v-menu
         v-model="show_project_menu"
         :position-x="menu_x-150"
@@ -673,7 +673,7 @@
 
         </v-list>
       </v-menu>
-    </template>
+    </div>
 
 
     </v-app>
@@ -814,6 +814,7 @@
     }
 
     var app = Vue.createApp({
+      vuetify: vuetify,
       data() { return {
         page_layout: 'list',
         projects: [],
@@ -1837,7 +1838,6 @@
     });
     app.use(i18n);
     app.use(router);
-    app.use(vuetify);
     vue_app = app.mount('#app');
   </script>
 

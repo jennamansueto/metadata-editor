@@ -253,11 +253,11 @@
         }
 
         var app = Vue.createApp({
+            vuetify: vuetify,
             data() { return {} }
         });
         app.use(i18n);
         app.use(router);
-        app.use(vuetify);
         vue_app = app.mount('#app');
     </script>
 

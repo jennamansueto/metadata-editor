@@ -412,7 +412,6 @@ Vue.component('datafile-import', {
                                 >
                                     <div v-html='$t("data_upload_notice")'></div>
                                     
-                                    <template>
                                                                                     
                                             <v-radio-group
                                             v-model="keep_data"
@@ -434,7 +433,6 @@ Vue.component('datafile-import', {
                                             </v-radio>
                                             </v-radio-group>
                                         
-                                        </template>
 
                             </v-alert>
                            

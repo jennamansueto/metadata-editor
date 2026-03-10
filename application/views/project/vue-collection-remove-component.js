@@ -65,7 +65,6 @@ Vue.component('vue-collection-remove-dialog', {
         <div class="vue-collection-remove-dialog">
 
         <v-app>
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -110,7 +109,6 @@ Vue.component('vue-collection-remove-dialog', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         </v-app>
         
     </div>

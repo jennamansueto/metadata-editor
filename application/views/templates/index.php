@@ -199,9 +199,6 @@
                       :items-per-page="100"
                       :hide-default-footer="true"
                     >
-                      <template v-slot:item.template_type="{ item }">
-                        <span>{{ templateTypeLabel(item) }}</span>
-                      </template>
                       <template v-slot:top>
                             <div class="d-flex pl-6 pb-4 align-center">                                
                           <div class="schema-icon-avatar mr-3">
@@ -255,7 +252,7 @@
 
   </v-app>
 
-    <template class="import-template">
+    <div class="import-template">
       <div class="text-center">
         <v-dialog v-model="dialog_import_template" width="500">
 
@@ -294,10 +291,10 @@
           </v-card>
         </v-dialog>
       </div>
-    </template>
+    </div>
 
 
-    <template>
+    <div>
       <v-menu
         v-model="showTemplateMenu"
         :position-x="menu_x"
@@ -368,7 +365,7 @@
 
         </v-list>
       </v-menu>
-    </template>
+    </div>
 
     <vue-template-share :key="menu_active_template_id" 
         v-if="menu_active_template_id && !isCoreTemplate(menu_active_template_id)" 
@@ -456,6 +453,7 @@
     }
 
     var app = Vue.createApp({
+      vuetify: vuetify,
       data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
@@ -944,7 +942,6 @@
     });
     app.use(i18n);
     app.use(router);
-    app.use(vuetify);
     vue_app = app.mount('#app');
 
     //register components

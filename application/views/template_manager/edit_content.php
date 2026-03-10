@@ -408,7 +408,6 @@
 
         <v-tab-item class="p-3 tab-cv" v-if="!ActiveArrayNodeIsNested">
             <!-- controlled vocab -->
-            <template >
             <div class="mb-3" >
                 <label for="controlled_vocab">{{$t("controlled_vocabulary")}}:</label>
                 <div class="bg-white border " style="max-height:300px;overflow:auto;">
@@ -461,12 +460,10 @@
                 </div>
 
             </div>
-            </template>
             <!-- end controlled vocab -->
         </v-tab-item>
         <v-tab-item class="p-3 tab-default" v-if="!ActiveArrayNodeIsNested || (ActiveNode && isControlField(ActiveNode.type) == true)">
             <!-- default -->
-            <template >
                 <div class="mb-3" >
                     <label for="controlled_vocab">{{$t("default")}}:</label>
                     <div class="bg-white" style="max-height:300px;overflow:auto;" v-if="ActiveNode && ActiveNode.type=='array'">
@@ -514,7 +511,6 @@
                         ></v-text-field>
                     </div>
                 </div>
-            </template>
             <!-- end default -->
         </v-tab-item>
         <v-tab-item class="p-3 tab-rules" v-if="ActiveNode && isControlField(ActiveNode.type)">

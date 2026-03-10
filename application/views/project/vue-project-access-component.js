@@ -24,7 +24,6 @@ Vue.component('vue-project-access-dialog', {
     template: `
         <div class="vue-project-share">
 
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -103,7 +102,6 @@ Vue.component('vue-project-access-dialog', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `

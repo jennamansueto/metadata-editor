@@ -172,7 +172,6 @@ Vue.component('datafile-data-explorer', {
                     </div>
                     <br/>
 
-                    <template>
                         <div v-if="data_loading_dialog==true">
                             <div class="pt-4 ">    
                                 <div>{{$t('loading_please_wait')}}</div>
@@ -182,7 +181,6 @@ Vue.component('datafile-data-explorer', {
                                 ></v-progress-linear>
                             </div>
                         </div>                
-                    </template>
 
                     
                     <div v-if="!variable_data.records" class="text-center m-3 p-3" >                        
@@ -203,7 +201,6 @@ Vue.component('datafile-data-explorer', {
                             <div class="mt-2">{{$t('showing_records_range', {start: PageOffset+1, end: PageOffset+variable_data.records.length, total: PaginationTotalRecords})}}</div>
                         </div>
                         <div class="col-md-9">
-                        <template>                
                             <div class="float-right">
                                 <v-pagination
                                     v-model="CurrentPage"
@@ -212,7 +209,6 @@ Vue.component('datafile-data-explorer', {
                                     @input="navigatePage"
                                 ></v-pagination>                    
                             </div>
-                        </template>
                         </div>
                     </div>
                     

@@ -88,7 +88,6 @@ Vue.component('nested-section-subsection', {
     template: `
             <div class="nested-section-subsection mt-3" >
 
-                    <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
                             <v-expansion-panel-header>
@@ -167,7 +166,6 @@ Vue.component('nested-section-subsection', {
                             </v-expansion-panel-content>
                             </v-expansion-panel>
                         </v-expansion-panels>
-                    </template>
 
             </div>  `
 })

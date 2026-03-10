@@ -173,7 +173,6 @@ Vue.component('vue-template-share-common', {
     template: `
         <div class="vue-project-share-common">
 
-        <template>        
             <div>
 
                 <v-card>
@@ -307,7 +306,6 @@ Vue.component('vue-template-share-common', {
                 </v-card>
                 
             </div>
-        </template>
         
     </div>
     `

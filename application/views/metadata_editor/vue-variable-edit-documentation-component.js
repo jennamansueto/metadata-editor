@@ -209,7 +209,6 @@ Vue.component('variable-edit-documentation', {
             
             <div class="row mt-1">
                 <div class="col-auto">
-                <template>
                     <v-navigation-drawer
                         v-model="drawer"
                         :mini-variant.sync="drawer_mini" permanent bottom>
@@ -241,7 +240,6 @@ Vue.component('variable-edit-documentation', {
                         </v-list-item>
                         </v-list>                        
                     </v-navigation-drawer>                        
-                </template>
                 </div>
 
                 <div class="col">

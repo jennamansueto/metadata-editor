@@ -60,7 +60,6 @@ Vue.component('vue-template-uuid', {
     template: `
         <div class="vue-project-uuid">
 
-        <template>        
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"
@@ -127,7 +126,6 @@ Vue.component('vue-template-uuid', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `

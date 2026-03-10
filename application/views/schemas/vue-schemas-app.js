@@ -1241,6 +1241,7 @@
   });
 
   var app = Vue.createApp({
+    vuetify: vuetify,
     data() {
       return {
         baseApiRoot,
@@ -1273,6 +1274,5 @@
   });
   app.use(i18n);
   app.use(router);
-  app.use(vuetify);
   app.mount('#app');
 })();

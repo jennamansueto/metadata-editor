@@ -555,7 +555,6 @@ Vue.component('vue-collection-access-manager', {
         </div>
 
         <!--change user role-->
-        <template>
             <v-menu
                 v-model="menu_change_user_role"
                 :position-x="menu_x-100"
@@ -570,7 +569,6 @@ Vue.component('vue-collection-access-manager', {
                 </v-list-item>  
                 </v-list>
             </v-menu>
-        </template>
         <!--end change user role-->
         
     </div>

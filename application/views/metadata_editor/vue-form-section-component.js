@@ -72,7 +72,6 @@ Vue.component('form-section', {
     template: `
             <div class="form-section mt-3" >
 
-                    <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
                             <v-expansion-panel-header>
@@ -102,7 +101,6 @@ Vue.component('form-section', {
                             </v-expansion-panel-content>
                             </v-expansion-panel>
                         </v-expansion-panels>
-                    </template>
 
             </div>  `
 })

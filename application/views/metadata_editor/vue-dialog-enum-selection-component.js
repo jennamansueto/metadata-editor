@@ -79,7 +79,6 @@ Vue.component('vue-dialog-enum-selection-component', {
                     <div>
                     
                         <!-- card text -->
-                        <template>
 
                         <v-text-field
                             v-model="search"
@@ -103,7 +102,6 @@ Vue.component('vue-dialog-enum-selection-component', {
                                 :options="table_options"
                             >                                
                             </v-data-table>
-                        </template>
 
                         <!-- end card text -->
                     </div>

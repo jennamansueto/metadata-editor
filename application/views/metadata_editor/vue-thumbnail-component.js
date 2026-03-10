@@ -99,7 +99,6 @@ Vue.component('project-thumbnail', {
 
 
                 <!--dialog-->
-                <template>
                     <div class="text-center">
                         <v-dialog
                         v-model="show_dialog"
@@ -150,7 +149,6 @@ Vue.component('project-thumbnail', {
                         </v-card>
                         </v-dialog>
                     </div>
-                    </template>
                 <!--end dialog -->
 
 

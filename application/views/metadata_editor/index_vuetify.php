@@ -179,6 +179,7 @@
     }
 
     var app = Vue.createApp({
+      vuetify: vuetify,
       data() { return {          
           active_section:null,
           active_form_field:null,
@@ -1358,7 +1359,6 @@
     });
     app.use(i18n);
     app.use(router);
-    app.use(vuetify);
     app.use(store);
     vue_app = app.mount('#app');
 

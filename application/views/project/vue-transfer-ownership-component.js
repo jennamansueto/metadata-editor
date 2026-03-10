@@ -69,7 +69,6 @@ Vue.component('vue-transfer-ownership', {
     },
     template: `
         <div class="vue-project-transfer-ownership">
-        <template>
             <div class="text-center">
                 <v-dialog
                 v-model="dialog"                
@@ -154,7 +153,6 @@ Vue.component('vue-transfer-ownership', {
                 </v-card>
                 </v-dialog>
             </div>
-        </template>
         
     </div>
     `
