@@ -21,7 +21,9 @@ Vue.component('version-history', {
             
             try {
                 let resp = await axios.get(url);
-                if (resp.data && resp.data.versions) {
+                if (resp.data && resp.data.result && resp.data.result.versions) {
+                    vm.versions = resp.data.result.versions;
+                } else if (resp.data && resp.data.versions) {
                     vm.versions = resp.data.versions;
                 }
             } catch(error) {
@@ -33,8 +35,12 @@ Vue.component('version-history', {
         },
         momentDate(date) {
             if (!date) return '';
-            // version_created is a unix timestamp
-            return moment.unix(date).format("YYYY-MM-DD HH:mm:ss");
+            // version_created may be ISO string or unix timestamp
+            let m = moment(date);
+            if (!m.isValid()) {
+                m = moment.unix(date);
+            }
+            return m.isValid() ? m.format("YYYY-MM-DD HH:mm:ss") : '';
         },
         openVersion(version) {
             // Open the locked version in a new tab
@@ -88,7 +94,7 @@ Vue.component('version-history', {
                                 </v-chip>
                             </td>
                             <td>{{momentDate(version.version_created)}}</td>
-                            <td>{{version.version_created_by_username || 'Unknown'}}</td>
+                            <td>{{version.version_created_by_name || version.version_created_by_username || 'Unknown'}}</td>
                             <td>{{version.version_notes || '-'}}</td>
                             <td>
                                 <v-chip small :color="version.is_locked == 1 ? 'deep-orange' : 'green'" text-color="white">
