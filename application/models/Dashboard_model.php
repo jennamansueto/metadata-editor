@@ -1224,9 +1224,8 @@ class Dashboard_model extends CI_Model {
         $total_collections = $this->db->count_all('editor_collections');
 
         // Collections with projects
-        $this->db->select('COUNT(DISTINCT collection_id) as count');
-        $this->db->from('editor_collections_tree ct');
-        $this->db->join('editor_projects ep', 'ct.descendant = ep.id', 'inner');
+        $this->db->select('COUNT(DISTINCT cp.collection_id) as count');
+        $this->db->from('editor_collection_projects cp');
         $result = $this->db->get()->row_array();
         $with_projects = (int)($result['count'] ?? 0);
 
