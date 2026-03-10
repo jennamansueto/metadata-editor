@@ -1,0 +1,13 @@
+{
+  "name": "metadata-editor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "dev": "vite build --watch --mode development"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
