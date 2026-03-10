@@ -747,7 +747,7 @@
 
     //routes
     const routes = [{
-        path: '<?php echo site_url("editor");?>',
+        path: '/:pathMatch(.*)*',
         component: Home,
         name: 'home'
       },
@@ -759,7 +759,7 @@
     ]
 
     const router = VueRouter.createRouter({
-      history: VueRouter.createWebHistory(),
+      history: VueRouter.createWebHashHistory(),
       routes
     })
 
