@@ -120,7 +120,9 @@ if (!empty($logo_path) && file_exists($logo_path)) {
 
     <div style="margin-top:5px;font-size:12pt;color:gray;">
         <?php echo t('Report generated on'); ?>: <?php echo $date_str; ?>
+        <?php if ($project_type): ?>
         <div style="margin-top:15px;">Project type: <?php echo $project_type; ?></div>
+        <?php endif; ?>
     </div>
 
     <div style="margin-top:50px;font-size:12pt;color:gray;">
