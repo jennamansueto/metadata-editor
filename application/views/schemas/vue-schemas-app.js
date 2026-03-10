@@ -1241,6 +1241,7 @@
   });
 
   Vue.use(i18n);
+  Vue.use(router);
   new Vue({
     el: '#app',
     vuetify,

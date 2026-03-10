@@ -814,6 +814,7 @@
     }
 
     Vue.use(i18n)
+    Vue.use(router)
     vue_app = new Vue({
       el: '#app',
       vuetify: vuetify,
