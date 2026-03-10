@@ -1246,7 +1246,7 @@ class Validation extends MY_REST_Controller
 
         if ($abstract !== null) {
             $checks++;
-            $abstract_text = is_string($abstract) ? $abstract : '';
+            $abstract_text = is_string($abstract) ? $abstract : (is_array($abstract) ? implode(' ', array_filter(array_map(function($v) { return is_string($v) ? $v : (is_array($v) && isset($v['text']) ? $v['text'] : ''); }, $abstract))) : '');
             $abstract_len = strlen(trim($abstract_text));
 
             if ($abstract_len >= 100) {
