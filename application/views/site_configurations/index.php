@@ -244,22 +244,33 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 <fieldset class="field-expanded">
 	<legend><i class="fas fa-file-pdf mr-3" style="color:#007bff;"></i><?php echo t('pdf_cover_page_settings');?></legend>
 
-	<!-- Logo upload (separate form with enctype) -->
-	<?php echo form_open_multipart('admin/configurations/upload_cover_logo', 'id="form_cover_logo"'); ?>
+	<!-- Current logo display + remove button -->
+	<?php if (!empty($pdf_cover_logo)): ?>
 	<div class="field">
 		<label><?php echo t('pdf_cover_logo');?></label>
 		<div>
-			<?php if (!empty($pdf_cover_logo)): ?>
-				<div class="mb-2">
-					<span class="text-muted"><?php echo t('pdf_cover_logo_current');?>:</span>
-					<img src="<?php echo base_url() . htmlspecialchars($pdf_cover_logo); ?>" alt="Cover logo" style="max-height:60px;max-width:200px;border:1px solid #ddd;padding:4px;background:#fff;" />
-						<?php echo form_open('admin/configurations/remove_cover_logo', 'style="display:inline;"'); ?>
-						<button type="submit" class="btn btn-sm btn-outline-danger ml-2" onclick="return confirm('<?php echo t('pdf_cover_logo_remove');?>?');">
-							<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_logo_remove');?>
-						</button>
-					<?php echo form_close(); ?>
-				</div>
-			<?php endif; ?>
+			<div class="mb-2">
+				<span class="text-muted"><?php echo t('pdf_cover_logo_current');?>:</span>
+				<img src="<?php echo base_url() . htmlspecialchars($pdf_cover_logo); ?>" alt="Cover logo" style="max-height:60px;max-width:200px;border:1px solid #ddd;padding:4px;background:#fff;" />
+			</div>
+			<?php echo form_open('admin/configurations/remove_cover_logo', 'style="display:inline;" id="form_remove_logo"'); ?>
+				<button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('<?php echo t('pdf_cover_logo_remove');?>?');">
+					<i class="fas fa-trash mr-1"></i><?php echo t('pdf_cover_logo_remove');?>
+				</button>
+			<?php echo form_close(); ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
+	<!-- Logo upload form -->
+	<?php echo form_open_multipart('admin/configurations/upload_cover_logo', 'id="form_cover_logo"'); ?>
+	<div class="field">
+		<?php if (empty($pdf_cover_logo)): ?>
+		<label><?php echo t('pdf_cover_logo');?></label>
+		<?php else: ?>
+		<label><?php echo t('pdf_cover_logo_replace'); ?></label>
+		<?php endif; ?>
+		<div>
 			<input type="file" name="cover_logo" accept="image/png,image/jpeg,image/gif" class="form-control-file d-inline-block" style="width:auto;" />
 			<button type="submit" class="btn btn-sm btn-outline-primary ml-2"><i class="fas fa-upload mr-1"></i>Upload</button>
 			<span class="field-note"><?php echo t('pdf_cover_logo_note');?></span>

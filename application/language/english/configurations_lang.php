@@ -91,6 +91,7 @@ $lang['pdf_cover_logo']="Cover logo";
 $lang['pdf_cover_logo_note']="Upload a logo image to display on the PDF cover page (PNG, JPG, GIF; max 2MB)";
 $lang['pdf_cover_logo_current']="Current logo";
 $lang['pdf_cover_logo_remove']="Remove logo";
+$lang['pdf_cover_logo_replace']="Replace logo";
 $lang['pdf_cover_primary_color']="Banner background color";
 $lang['pdf_cover_primary_color_note']="Background color for the cover page banner";
 $lang['pdf_cover_text_color']="Banner text color";
