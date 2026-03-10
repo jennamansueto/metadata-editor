@@ -1,4 +1,5 @@
-Vue.component('vue-collection-access-manager', {
+export default {
+    name: 'vue-collection-access-manager',
     props: ['value'],
     data() {
         return {
@@ -575,5 +576,4 @@ Vue.component('vue-collection-access-manager', {
         
     </div>
     `
-});
-
+};

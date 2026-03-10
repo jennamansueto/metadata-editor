@@ -1,5 +1,6 @@
 /// Geospatial feature import component
-Vue.component('geospatial-feature-import', {
+export default {
+    name: 'geospatial-feature-import',
     props: ['index'],
     data: function () {    
         return {
@@ -1502,4 +1503,4 @@ Vue.component('geospatial-feature-import', {
             </v-dialog>
         </div>
     `
-});
+};

@@ -1,5 +1,6 @@
 //Edit admin metadata
-const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
+const componentDef = {
+    name: 'admin-metadata-edit',
     props: ['index', 'id'],
     data() {
         return {
@@ -360,6 +361,5 @@ const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
 
         </div>
     `
-})
-
-
+};
+export default componentDef;

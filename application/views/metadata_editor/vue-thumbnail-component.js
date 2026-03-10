@@ -1,5 +1,6 @@
 /// thumbnail
-Vue.component('project-thumbnail', {
+export default {
+    name: 'project-thumbnail',
     data: function () {    
         return {
             show_dialog:false,
@@ -158,5 +159,4 @@ Vue.component('project-thumbnail', {
 
             </div>          
             `    
-});
-
+};

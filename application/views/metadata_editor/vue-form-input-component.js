@@ -1,5 +1,6 @@
 //form input component
-Vue.component("form-input", {
+export default {
+  name: 'form-input',
   props: ["value", "field", "title"],
   data: function () {
     return {};
@@ -445,4 +446,4 @@ Vue.component("form-input", {
       return rules;
     },
   },
-});
+};

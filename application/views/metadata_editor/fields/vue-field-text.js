@@ -1,5 +1,6 @@
 //text field control
-Vue.component('editor-text-field', {
+export default {
+    name: 'editor-text-field',
     props: ['value'],
     template: `
     <div>
@@ -10,4 +11,4 @@ Vue.component('editor-text-field', {
       >
     </div>
     `
-  });
+  };

@@ -1,4 +1,5 @@
-Vue.component('hello', {
+export default {
+    name: 'hello',
     props: ['title', 'items', 'depth', 'css_class','path', 'field'],
     data() {
         return {
@@ -46,4 +47,4 @@ Vue.component('hello', {
             <h1>Hello world!</h1>
         </div>
     `
-})
+};

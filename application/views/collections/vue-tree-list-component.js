@@ -1,4 +1,5 @@
-Vue.component('vue-tree-list', {
+export default {
+    name: 'vue-tree-list',
     props: ['value','parent_path','path_level','permissions','getPermissionsFunction'],
     data() {
         return {
@@ -133,5 +134,4 @@ Vue.component('vue-tree-list', {
         
     </div>
     `
-});
-
+};

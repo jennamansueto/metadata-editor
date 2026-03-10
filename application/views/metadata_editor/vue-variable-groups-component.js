@@ -1,4 +1,5 @@
-Vue.component('variable-groups', {    
+export default {
+    name: 'variable-groups',    
     data() {
         return {            
             project_id:project_sid,
@@ -489,6 +490,4 @@ Vue.component('variable-groups', {
             </template>
         </div>
     `
-});
-
-
+};

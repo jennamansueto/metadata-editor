@@ -1,5 +1,6 @@
 //treeview ///////////////////////////////////////////////////
-Vue.component('form-tree', {
+export default {
+    name: 'form-tree',
     props: ['title', 'depth', 'css_class', 'node'],
     data() {
         return {
@@ -137,4 +138,4 @@ Vue.component('form-tree', {
             </form-tree>
         </div>
     `
-})
+};

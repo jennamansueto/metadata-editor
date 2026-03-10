@@ -1,4 +1,5 @@
-Vue.component('vue-dialog-enum-selection-component', {
+export default {
+    name: 'vue-dialog-enum-selection-component',
     props:['value','enums','columns','selected_enum'],
     data() {
         return {            
@@ -124,5 +125,4 @@ Vue.component('vue-dialog-enum-selection-component', {
         
         </div>
     `
-});
-
+};

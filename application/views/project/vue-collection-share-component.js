@@ -1,4 +1,5 @@
-Vue.component('vue-collection-share', {
+export default {
+    name: 'vue-collection-share',
     props: ['value','projects','collections'],
     data() {
         return {
@@ -100,5 +101,4 @@ Vue.component('vue-collection-share', {
         
     </div>
     `
-});
-
+};

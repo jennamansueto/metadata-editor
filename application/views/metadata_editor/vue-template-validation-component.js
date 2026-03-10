@@ -1,5 +1,6 @@
 /// Template validation component
-Vue.component('template-validation-component', {
+export default {
+    name: 'template-validation-component',
     data () {
         return {
           validation_errors: "",
@@ -511,5 +512,4 @@ Vue.component('template-validation-component', {
                 </v-card>
             </div>          
             `    
-});
-
+};

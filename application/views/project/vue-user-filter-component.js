@@ -1,4 +1,5 @@
-Vue.component('vue-user-filter', {
+export default {
+    name: 'vue-user-filter',
     props: ['value'],
     data() {
         return {
@@ -108,5 +109,4 @@ Vue.component('vue-user-filter', {
             </v-card>
         </v-dialog>
     `
-});
-
+};

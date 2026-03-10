@@ -1,5 +1,6 @@
 //vue variable weights edit component
-Vue.component('variable-weights-component', {
+export default {
+    name: 'variable-weights-component',
     props:['value','variables'],
     data: function () {    
         return {
@@ -93,5 +94,4 @@ Vue.component('variable-weights-component', {
                 </div>
 
             </div>  `    
-});
-
+};

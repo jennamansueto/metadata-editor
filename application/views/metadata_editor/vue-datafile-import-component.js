@@ -1,5 +1,6 @@
 /// datafile import form
-Vue.component('datafile-import', {
+export default {
+    name: 'datafile-import',
     data: function () {    
         return {
             files:[],
@@ -533,4 +534,4 @@ Vue.component('datafile-import', {
 
             </div>          
             `    
-})
+};

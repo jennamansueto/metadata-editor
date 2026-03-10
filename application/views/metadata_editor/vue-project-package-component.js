@@ -1,5 +1,6 @@
 /// project export package component
-Vue.component('project-package', {
+export default {
+    name: 'project-package',
     props:['value'],
     data: function () {    
         return {
@@ -207,5 +208,4 @@ Vue.component('project-package', {
 
             </div>          
             `    
-});
-
+};

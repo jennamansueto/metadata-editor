@@ -8,11 +8,6 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
 
-  <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
-
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -680,19 +675,12 @@
     </v-app>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <!--
-  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/vue-deepset.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/deepdash/browser/deepdash.standalone.min.js"></script>
-  -->
+
+  <!-- Vite bundle -->
+  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/home.js"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />
 
@@ -705,23 +693,7 @@
   <script>
 
     <?php
-    echo $this->load->view("vue/vue-global-eventbus.js", null, true);
-    echo $this->load->view("vue/vue-alert-dialog-component.js", null, true);
-    echo $this->load->view("vue/vue-confirm-dialog-component.js", null, true);
-    echo $this->load->view("project/vue-project-share-component.js", null, true);
-    echo $this->load->view("project/vue-collection-remove-component.js", null, true);
-    echo $this->load->view("project/vue-project-tags-manage-dialog-component.js", null, true);
-    echo $this->load->view("project/vue-collection-share-component.js", null, true);
-    echo $this->load->view("project/vue-project-access-component.js", null, true);
-    echo $this->load->view("project/vue-transfer-ownership-component.js", null, true);
-    echo $this->load->view("editor_common/main-navigation-tabs-component.js", null, true);
-    echo $this->load->view("metadata_editor/vue-login-component.js", null, true);
-    echo $this->load->view("editor_common/global-site-header-component.js", null, true);
-    echo $this->load->view("project/vue-create-revision-component.js", null, true);
-    echo $this->load->view("project/vue-list-revisions-component.js", null, true);
-    echo $this->load->view("project/vue-user-filter-component.js", null, true);
-    echo $this->load->view("project/vue-tag-filter-component.js", null, true);
-
+    // All component JS files are now imported via the Vite bundle (home.js)
     ?>
 
     const translation_messages = {

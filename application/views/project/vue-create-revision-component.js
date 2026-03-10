@@ -1,4 +1,5 @@
-Vue.component('vue-create-revision-dialog', {
+export default {
+    name: 'vue-create-revision-dialog',
     props: ['value', 'project_id', 'project'],
     data() {
         return {
@@ -173,5 +174,4 @@ Vue.component('vue-create-revision-dialog', {
         
     </div>
     `
-});
-
+};

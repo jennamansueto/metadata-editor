@@ -1,4 +1,5 @@
-Vue.component('vue-project-share', {
+export default {
+    name: 'vue-project-share',
     props: ['value','users','project_id'],
     data() {
         return {            
@@ -319,5 +320,4 @@ Vue.component('vue-project-share', {
         
     </div>
     `
-});
-
+};

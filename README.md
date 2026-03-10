@@ -13,6 +13,16 @@ The Metadata Editor is an open-source web-based application developed by the Off
 
 The metadata schemas supported by the Metadata Editor are detailed at https://worldbank.github.io/metadata-schemas
 
+## Frontend Build
+
+The frontend JavaScript is bundled using Vite. After cloning the repository:
+
+```bash
+npm install          # Install dependencies
+npm run build        # Production build → vue-app/assets/dist/
+npm run dev          # Dev server with HMR (optional, for local development)
+```
+
 ## Getting Started
 
 ### Server Requirements
@@ -20,6 +30,7 @@ The metadata schemas supported by the Metadata Editor are detailed at https://wo
 * PHP version 7 or later
 * MySQL/MariDB
 * Apache, IIS or NGINX
+* Node.js 16+ and npm (for frontend build)
 
 ### Installation
 

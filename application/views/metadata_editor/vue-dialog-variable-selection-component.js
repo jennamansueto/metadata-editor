@@ -1,4 +1,5 @@
-Vue.component('dialog-variable-selection', {
+export default {
+    name: 'dialog-variable-selection',
     props:['value',"selected_items"],
     data() {
         return {
@@ -120,5 +121,4 @@ Vue.component('dialog-variable-selection', {
         
         </div>
     `
-});
-
+};

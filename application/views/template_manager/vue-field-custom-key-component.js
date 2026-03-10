@@ -1,5 +1,6 @@
 ///vue component for editing custom KEY field
-Vue.component('vue-custom-key-field', {
+export default {
+    name: 'vue-custom-key-field',
     props:['value','field'],
     data: function () {    
         return {
@@ -156,5 +157,4 @@ Vue.component('vue-custom-key-field', {
 
             </div>          
             `    
-});
-
+};

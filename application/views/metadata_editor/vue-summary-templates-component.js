@@ -1,5 +1,6 @@
 /// Project templates + admin metadata templates
-Vue.component('summary-templates-component', {
+export default {
+    name: 'summary-templates-component',
     data () {
         return {
           validation_errors: "",
@@ -259,5 +260,4 @@ Vue.component('summary-templates-component', {
 
             </div>          
             `    
-});
-
+};

@@ -1,5 +1,6 @@
 ///Collections for the project
-Vue.component('vue-summary-collections', {
+export default {
+    name: 'vue-summary-collections',
     props:[],
     data: function () {    
         return {
@@ -158,5 +159,4 @@ Vue.component('vue-summary-collections', {
 
     </div>          
     `    
-});
-
+};

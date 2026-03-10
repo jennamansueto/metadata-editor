@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('grid-component', {
+export default {
+    name: 'grid-component',
     props:['value','columns','path', 'field'],
     data: function () {    
         return {
@@ -162,4 +163,4 @@ Vue.component('grid-component', {
             return field.type;
         }
     }
-})
+};

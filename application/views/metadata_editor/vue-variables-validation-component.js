@@ -3,7 +3,8 @@
  * Route: #/variables-validation/:file_id
  */
 
-Vue.component('variables-validation', {
+export default {
+    name: 'variables-validation',
     props: ['file_id'],
     data: function() {
         var fileId = this.file_id || (this.$route && this.$route.params && this.$route.params.file_id);
@@ -683,4 +684,4 @@ Vue.component('variables-validation', {
             </v-dialog>
         </div>
     `
-});
+};

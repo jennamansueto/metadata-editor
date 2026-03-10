@@ -1,4 +1,5 @@
-Vue.component('project-history', {
+export default {
+    name: 'project-history',
     props: [],
     data() {
         return {
@@ -91,5 +92,4 @@ Vue.component('project-history', {
 
         </div>
     `
-});
-
+};

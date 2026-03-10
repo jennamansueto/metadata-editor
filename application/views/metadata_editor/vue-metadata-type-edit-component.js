@@ -1,5 +1,6 @@
 //metadata type edit component
-const VueMetadataTypeEdit = Vue.component('metadata-types-edit', {
+const componentDef = {
+    name: 'metadata-types-edit',
     props: ['index', 'id'],
     data() {
         return {
@@ -331,6 +332,5 @@ const VueMetadataTypeEdit = Vue.component('metadata-types-edit', {
 
         </div>
     `
-})
-
-
+};
+export default componentDef;

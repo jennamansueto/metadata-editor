@@ -9,12 +9,7 @@
     <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
     <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
 
-    <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-
-    <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
+    <!-- Libraries now bundled via Vite -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -162,26 +157,17 @@
 
     </div>
 
-    <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-    <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
+
+    <!-- Vite bundle -->
+    <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/collections.js"></script>
   
 
     <script>
         <?php
-            echo $this->load->view("metadata_editor/vue-login-component.js", null, true);
-            echo $this->load->view("collections/vue-tree-list-component.js", null, true);
-            echo $this->load->view("collections/vue-collections-component.js", null, true);
-            echo $this->load->view("collections/vue-edit-collection-component.js", null, true);
-            echo $this->load->view("collections/vue-manage-users-component.js", null, true);
-            echo $this->load->view("collections/vue-copy-collection-component.js", null, true);
-            echo $this->load->view("collections/vue-move-collection-component.js", null, true);
-            echo $this->load->view("editor_common/global-site-header-component.js", null, true);
-            echo $this->load->view("editor_common/main-navigation-tabs-component.js", null, true);
+            // All component JS files are now imported via the Vite bundle (collections.js)
         ?>
 
 

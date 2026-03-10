@@ -1,4 +1,5 @@
-Vue.component('vue-dialog-component', {
+export default {
+    name: 'vue-dialog-component',
     props:['value'],
     data() {
         return {            
@@ -71,5 +72,4 @@ Vue.component('vue-dialog-component', {
         
         </div>
     `
-});
-
+};

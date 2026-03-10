@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form', {
+export default {
+    name: 'v-form',
     props: ['title', 'items', 'depth', 'css_class','path', 'field','active_section'],
     data() {
         return {
@@ -255,7 +256,7 @@ Vue.component('v-form', {
                     background-color="#FFFFFF"                    
                 ></v-combobox>
 
-                <?php /*<select  
+                /*<select  
                     v-model="formData[item.key]" 
                     class="form-control form-field-dropdown"
                     :id="'field-' + normalizeClassID(item.key)" 
@@ -265,7 +266,7 @@ Vue.component('v-form', {
                         {{ option_key }}
                     </option>
                 </select>
-                */ ?>
+                */
                 
                 <small class="help-text form-text text-muted">{{item.help_text}}</small>
             </div>
@@ -279,6 +280,4 @@ Vue.component('v-form', {
             
         </div>
     `
-});
-
-
+};

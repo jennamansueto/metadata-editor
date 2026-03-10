@@ -1,5 +1,6 @@
 // Indicator DSD edit form component
-Vue.component('indicator-dsd-edit', {
+export default {
+    name: 'indicator-dsd-edit',
     props: ['column', 'index_key'],
     data: function() {
         return {
@@ -329,4 +330,4 @@ Vue.component('indicator-dsd-edit', {
             </div>
         </div>
     `
-})
+};

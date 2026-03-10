@@ -1,5 +1,6 @@
 /// geospatial feature data explorer
-Vue.component('geospatial-feature-data', {
+export default {
+    name: 'geospatial-feature-data',
     props:['feature_id'],
     data: function () {    
         return {
@@ -377,4 +378,4 @@ Vue.component('geospatial-feature-data', {
 
         </div>
     `
-});
+};

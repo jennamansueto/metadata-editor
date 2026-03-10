@@ -1,4 +1,5 @@
-Vue.component('vue-copy-collection', {
+export default {
+    name: 'vue-copy-collection',
     props: ['value'],
     data() {
         return {
@@ -142,5 +143,4 @@ Vue.component('vue-copy-collection', {
         
         </div>
         `
-});
-
+};

@@ -1,5 +1,6 @@
 /// datafile data explorer
-Vue.component('datafile-data-explorer', {
+export default {
+    name: 'datafile-data-explorer',
     props:['file_id','value'],
     data: function () {    
         return {
@@ -322,5 +323,4 @@ Vue.component('datafile-data-explorer', {
             
             </div>          
             `    
-});
-
+};

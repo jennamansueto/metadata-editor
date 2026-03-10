@@ -1,5 +1,6 @@
 //vue schema array field component
-Vue.component('schema-array-field', {
+export default {
+    name: 'schema-array-field',
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {
@@ -154,5 +155,4 @@ Vue.component('schema-array-field', {
             </div>
 
             </div>  `    
-});
-
+};

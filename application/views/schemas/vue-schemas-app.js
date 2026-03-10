@@ -1,7 +1,14 @@
-(function() {
-  const translationsJsonBase64 = '<?php echo base64_encode(json_encode(isset($translations) ? $translations : array(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)); ?>';
-  const translation_messages = {
-    default: JSON.parse(atob(translationsJsonBase64))
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Vuetify from 'vuetify';
+import VueI18n from 'vue-i18n';
+import axios from 'axios';
+import moment from 'moment';
+
+Vue.use(VueRouter);
+
+const translation_messages = {
+    default: window.__SCHEMA_TRANSLATIONS__ || {}
   };
 
   const i18n = new VueI18n({
@@ -1274,4 +1281,3 @@
       }
     }
   });
-})();

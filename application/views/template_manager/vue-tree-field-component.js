@@ -1,5 +1,6 @@
 /// view treeview component
-Vue.component('nada-treeview-field', {
+export default {
+    name: 'nada-treeview-field',
     props:['value', 'showSectionContainersOnly'],
     data: function () {    
         return {
@@ -872,5 +873,4 @@ Vue.component('nada-treeview-field', {
             </v-container>
             </div>          
             `    
-});
-
+};

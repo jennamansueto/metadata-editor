@@ -1,4 +1,5 @@
-Vue.component('vue-edit-collection', {
+export default {
+    name: 'vue-edit-collection',
     props: ['value','collection'],
     data() {
         return {
@@ -82,5 +83,4 @@ Vue.component('vue-edit-collection', {
         
     </div>
     `
-});
-
+};

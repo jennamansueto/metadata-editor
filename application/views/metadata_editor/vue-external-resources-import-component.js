@@ -1,5 +1,6 @@
 //external resources import from RDF/JSON
-Vue.component('external-resources-import', {
+export default {
+    name: 'external-resources-import',
     props: ['index'],
     data() {
         return {
@@ -97,6 +98,4 @@ Vue.component('external-resources-import', {
 
         </div>
     `
-})
-
-
+};

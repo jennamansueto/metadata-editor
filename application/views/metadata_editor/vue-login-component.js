@@ -1,5 +1,6 @@
 //v-login
-Vue.component('v-login', {
+export default {
+    name: 'v-login',
     props: ['value'],
     data() {
         return {
@@ -102,6 +103,4 @@ Vue.component('v-login', {
             
         </div>
     `
-});
-
-
+};

@@ -1,7 +1,8 @@
 /**
  * Batch export dialog: export multiple data files to one or more formats
  */
-Vue.component('dialog-batch-export', {
+export default {
+    name: 'dialog-batch-export',
     props: {
         value: { type: Boolean, default: false },
         selectedFiles: { type: Array, default: () => [] }  // [{ file_id, file_name }]
@@ -382,4 +383,4 @@ Vue.component('dialog-batch-export', {
             </v-dialog>
         </div>
     `
-});
+};

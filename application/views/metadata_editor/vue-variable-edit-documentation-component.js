@@ -1,5 +1,6 @@
 ///variable documentation tab
-Vue.component('variable-edit-documentation', {
+export default {
+    name: 'variable-edit-documentation',
     props:['variable'],
     data: function () {    
         return {
@@ -278,5 +279,4 @@ Vue.component('variable-edit-documentation', {
 
         </div>          
         `
-});
-
+};

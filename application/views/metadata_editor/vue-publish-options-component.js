@@ -1,5 +1,6 @@
 /// publish project options
-Vue.component('publish-options', {
+export default {
+    name: 'publish-options',
     props:['value'],
     data: function () {    
         return {
@@ -896,5 +897,4 @@ Vue.component('publish-options', {
                 
             </div>          
             `    
-});
-
+};

@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('grid-preview-component', {
+export default {
+    name: 'grid-preview-component',
     props:['value','columns','path', 'field'],
     data: function () {    
         return {
@@ -64,4 +65,4 @@ Vue.component('grid-preview-component', {
             </table>
 
             </div>  `,
-})
+};

@@ -1,5 +1,6 @@
 //file manager
-Vue.component('file-manager', {
+export default {
+    name: 'file-manager',
     props: ['index', 'id'],
     data() {
         return {
@@ -389,6 +390,4 @@ Vue.component('file-manager', {
             </v-card>
         </div>
     `
-})
-
-
+};

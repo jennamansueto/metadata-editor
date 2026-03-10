@@ -1,5 +1,6 @@
 // Global confirm dialog component
-Vue.component('confirm-dialog', {
+export default {
+    name: 'confirm-dialog',
   template: `
     <v-dialog v-model="dialogVisible" persistent max-width="600">
       <v-card>
@@ -53,4 +54,4 @@ Vue.component('confirm-dialog', {
   beforeDestroy() {
     EventBus.$off('confirm', this.showConfirmDialog);
   },
-});
+};

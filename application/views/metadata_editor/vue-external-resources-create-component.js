@@ -1,5 +1,6 @@
 //external resources
-const VueExternalResourcesCreate= Vue.component('external-resources-create', {
+const componentDef = {
+    name: 'external-resources-create',
     props: ['index'],
     data() {
         return {
@@ -542,6 +543,7 @@ const VueExternalResourcesCreate= Vue.component('external-resources-create', {
         </section>
         </div>
     `
-});
+};
+export default componentDef;
 
 

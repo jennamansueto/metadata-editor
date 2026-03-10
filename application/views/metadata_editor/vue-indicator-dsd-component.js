@@ -1,5 +1,6 @@
 // Indicator Data Structure Definition (DSD) component
-Vue.component('indicator-dsd', {
+export default {
+    name: 'indicator-dsd',
     props: [],
     data() {
         return {
@@ -968,4 +969,4 @@ Vue.component('indicator-dsd', {
             </div>
         </div>
     `
-})
+};

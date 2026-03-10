@@ -1,5 +1,6 @@
 /// Geospatial feature catalogue description component
-Vue.component('geospatial-feature-description', {
+export default {
+    name: 'geospatial-feature-description',
     data: function () {    
         return {
             loading: false,
@@ -171,5 +172,4 @@ Vue.component('geospatial-feature-description', {
             </v-card>
         </div>
     `
-});
-
+};

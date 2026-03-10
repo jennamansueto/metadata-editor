@@ -100,10 +100,8 @@
     }
 </style>
 
-<script src="<?php echo base_url(); ?>vue-app/assets/vue.min.js"></script>
-<script src="<?php echo base_url(); ?>vue-app/assets/vuetify.min.js"></script>
-<script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.min.js"></script>
-<script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
+<!-- Vite bundle -->
+<script type="module" src="<?php echo base_url();?>vue-app/assets/dist/audit-logs.js"></script>
 
 <div id="app" data-app>
     <div class="audit-logs-admin">
@@ -118,8 +116,7 @@
         'site_url': '<?php echo site_url(); ?>'
     };
 
-    // Include the Vue component
-    <?php include_once("vue-audit-logs-component.js"); ?>
+    // Vue component is now imported via the Vite bundle (audit-logs.js)
 
     // Set up translations
     const translation_messages = {

@@ -1,5 +1,6 @@
 /// Project summary page
-Vue.component('summary-component', {
+export default {
+    name: 'summary-component',
     data () {
         return {
           validation_errors: "",
@@ -352,5 +353,4 @@ Vue.component('summary-component', {
 
             </div>          
             `    
-});
-
+};

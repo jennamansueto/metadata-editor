@@ -1,4 +1,5 @@
-Vue.component('dialog-weight-variable-selection', {
+export default {
+    name: 'dialog-weight-variable-selection',
     props:['value',"selected_items","variables"],
     data() {
         return {
@@ -128,5 +129,4 @@ Vue.component('dialog-weight-variable-selection', {
         
         </div>
     `
-});
-
+};

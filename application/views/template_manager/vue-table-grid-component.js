@@ -1,5 +1,6 @@
 //vue table-grid component
-Vue.component('table-grid-component', {
+export default {
+    name: 'table-grid-component',
     props:['value','columns', 'field','enums'],
     data: function () {    
         return {
@@ -359,8 +360,4 @@ Vue.component('table-grid-component', {
             </v-snackbar>            
 
             </div>  `    
-});
-
-
-
-
+};

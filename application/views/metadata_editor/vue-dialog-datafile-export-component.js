@@ -1,4 +1,5 @@
-Vue.component('dialog-datafile-export', {
+export default {
+    name: 'dialog-datafile-export',
     props: {
         value: { type: Boolean, default: false },
         file_id: { type: [String, Number], default: null },
@@ -486,5 +487,4 @@ Vue.component('dialog-datafile-export', {
             </v-dialog>
         </div>
     `
-});
-
+};

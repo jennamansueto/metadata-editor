@@ -1,5 +1,6 @@
 ///Project files summary
-Vue.component('summary-files', {
+export default {
+    name: 'summary-files',
     props:[],
     
     data: function() {
@@ -210,4 +211,4 @@ Vue.component('summary-files', {
             
     </div>         
     `
-});
+};

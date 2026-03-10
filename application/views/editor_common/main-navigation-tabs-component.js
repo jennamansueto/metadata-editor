@@ -7,7 +7,8 @@
  *   - value: Number - v-model value for tab selection (optional)
  * 
  */
-Vue.component('main-navigation-tabs', {
+export default {
+    name: 'main-navigation-tabs',
     props: {
         activeTab: {
             type: String,
@@ -120,5 +121,4 @@ Vue.component('main-navigation-tabs', {
             </v-tabs>
         </div>
     `
-});
-
+};

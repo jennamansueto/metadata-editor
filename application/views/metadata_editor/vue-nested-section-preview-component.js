@@ -1,5 +1,6 @@
 ///// nested-section-preview
-Vue.component('nested-section-preview', {
+export default {
+    name: 'nested-section-preview',
     props:['value','columns','path','title'],
     data: function () {    
         return {
@@ -120,4 +121,4 @@ Vue.component('nested-section-preview', {
             }
         } 
     }
-})
+};

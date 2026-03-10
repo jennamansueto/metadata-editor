@@ -1,5 +1,6 @@
 //vue-main-form-component ///////////////////////////////////////////////////
-Vue.component('form-main', {
+export default {
+    name: 'form-main',
     props: ['title', 'items', 'depth', 'css_class','path'],
     data() {
         return {
@@ -111,7 +112,4 @@ Vue.component('form-main', {
 
         </div>
     `
-});
-
-
-
+};

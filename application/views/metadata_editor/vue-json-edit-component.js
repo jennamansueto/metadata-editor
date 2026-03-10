@@ -1,5 +1,6 @@
 /// JSON Edit Component
-Vue.component('json-edit', {
+export default {
+    name: 'json-edit',
     props: ['value'],
     data: function () {
         return {
@@ -97,4 +98,4 @@ Vue.component('json-edit', {
             </v-tabs-items>
         </div>
     `
-});
+};

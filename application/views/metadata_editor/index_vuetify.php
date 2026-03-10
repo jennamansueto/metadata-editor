@@ -6,9 +6,7 @@
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
-  <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/popper.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
+  <!-- jQuery and Bootstrap now bundled via Vite -->
   
   <link href="<?php echo base_url();?>vue-app/assets/splitpanes.css" rel="stylesheet">
   <!-- Leaflet CSS -->
@@ -85,39 +83,16 @@
     <?php echo $this->load->view("metadata_editor/layout.php",null,true); ?>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
   
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />   
-    
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-scrollto.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vee-validate.full.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/splitpanes.umd.min.js"></script>
-    
-  <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
-
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.css">
-  <!-- Leaflet JS -->
-  <script src="<?php echo base_url();?>vue-app/assets/leaflet.js"></script>
-  <!-- Chart.js for data visualization -->
-  <script src="<?php echo base_url();?>vue-app/assets/chart.min.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
 
-
+  <!-- Vite bundle -->
+  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/metadata-editor.js"></script>
 
   <?php echo $this->load->view("metadata_editor/index_vuetify_main_app",null,true);?>
 

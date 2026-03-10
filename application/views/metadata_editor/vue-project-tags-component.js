@@ -1,5 +1,6 @@
 // Manage Project tags
-Vue.component('vue-project-tags', {
+export default {
+    name: 'vue-project-tags',
     props: {
         projectId: { type: [Number, String], default: null },
         canEdit: { type: Boolean, default: null }
@@ -187,4 +188,4 @@ Vue.component('vue-project-tags', {
         </div>
     </div>
     `
-});
+};

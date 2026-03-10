@@ -1,5 +1,6 @@
 ///// form-section
-Vue.component('form-section', {
+export default {
+    name: 'form-section',
     props:['value','columns','path','title','parentElement'],
     data: function () {    
         return {
@@ -105,4 +106,4 @@ Vue.component('form-section', {
                     </template>
 
             </div>  `
-})
+};

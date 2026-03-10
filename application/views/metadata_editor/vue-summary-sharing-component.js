@@ -1,5 +1,6 @@
 ///Project sharing summary component - users + collections
-Vue.component('vue-summary-sharing-stats', {
+export default {
+    name: 'vue-summary-sharing-stats',
     props:[],
     data: function () {    
         return {
@@ -88,5 +89,4 @@ Vue.component('vue-summary-sharing-stats', {
 
     </div>          
     `    
-});
-
+};

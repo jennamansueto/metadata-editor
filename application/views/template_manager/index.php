@@ -9,16 +9,8 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
-  
-  <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
-
-  <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
+  <!-- Vite bundle -->
+  <script type="module" src="<?php echo base_url();?>vue-app/assets/dist/template-manager.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
@@ -348,14 +340,9 @@
       return Array.from(new Set(output));
     }
 
-    <?php echo include_once("vue-field-key-component.js"); ?>
-    <?php echo include_once("vue-field-custom-key-component.js"); ?>
-    <?php echo include_once("vue-prop-key-component.js"); ?>
-    <?php echo include_once("vue-tree-component.js"); ?>
-    <?php echo include_once("vue-tree-field-component.js"); ?>
-    <?php echo include_once("vue-table-grid-component.js"); ?>
-    <?php echo include_once("vue-validation-rules-component.js"); ?>
-    <?php echo include_once("vue-prop-edit-component.js"); ?>
+    <?php
+    // All component JS files are now imported via the Vite bundle (template-manager.js)
+    ?>
 
 
     const translation_messages = {

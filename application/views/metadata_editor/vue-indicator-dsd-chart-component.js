@@ -1,5 +1,6 @@
 // Indicator DSD Chart Visualization Component
-Vue.component('indicator-dsd-chart', {
+export default {
+    name: 'indicator-dsd-chart',
     props: [],
     data() {
         return {
@@ -670,4 +671,4 @@ Vue.component('indicator-dsd-chart', {
             </div>
         </div>
     `
-})
+};

@@ -1,4 +1,5 @@
-Vue.component('vue-collection-acl', {
+export default {
+    name: 'vue-collection-acl',
     props: ['collection_id'],
     data() {
         return {
@@ -189,4 +190,4 @@ Vue.component('vue-collection-acl', {
             </v-card>
         </div>
     `
-});
+};

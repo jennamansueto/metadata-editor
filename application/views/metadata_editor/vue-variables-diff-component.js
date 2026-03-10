@@ -3,7 +3,8 @@
  * Route: #/variables-diff/:file_id
  */
 
-Vue.component('variables-diff', {
+export default {
+    name: 'variables-diff',
     props: ['file_id'],
     data: function() {
         var fileId = this.file_id || (this.$route && this.$route.params && this.$route.params.file_id);
@@ -201,4 +202,4 @@ Vue.component('variables-diff', {
             </v-dialog>
         </div>
         `
-});
+};

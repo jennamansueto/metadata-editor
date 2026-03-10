@@ -1,4 +1,5 @@
-Vue.component('vue-transfer-ownership', {
+export default {
+    name: 'vue-transfer-ownership',
     props: ['value','projects'],
     data() {
         return {
@@ -158,5 +159,4 @@ Vue.component('vue-transfer-ownership', {
         
     </div>
     `
-});
-
+};

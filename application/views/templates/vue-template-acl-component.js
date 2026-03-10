@@ -1,4 +1,5 @@
-Vue.component('vue-template-acl', {
+export default {
+    name: 'vue-template-acl',
     props: ['value','users','template_id'],
     data() {
         return {
@@ -85,5 +86,4 @@ Vue.component('vue-template-acl', {
         
     </div>
     `
-});
-
+};

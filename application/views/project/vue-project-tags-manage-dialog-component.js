@@ -1,5 +1,6 @@
 /// Dialog to manage tags for a project (add/remove). Used on projects list page when clicking tags on a card.
-Vue.component('vue-project-tags-manage-dialog', {
+export default {
+    name: 'vue-project-tags-manage-dialog',
     props: ['value', 'project_id', 'tags'],
     data: function () {
         return {
@@ -115,4 +116,4 @@ Vue.component('vue-project-tags-manage-dialog', {
         </v-dialog>
     </div>
     `
-});
+};

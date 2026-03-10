@@ -1,4 +1,5 @@
-Vue.component('admin-metadata-history', {
+export default {
+    name: 'admin-metadata-history',
     props: [],
     data() {
         return {
@@ -121,5 +122,4 @@ Vue.component('admin-metadata-history', {
 
         </div>
     `
-});
-
+};

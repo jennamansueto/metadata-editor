@@ -1,5 +1,6 @@
 // Vue Audit Logs Component
-Vue.component('vue-audit-logs-component', {
+export default {
+    name: 'vue-audit-logs-component',
     data: function () {
         return {
             audit_logs: [],
@@ -582,4 +583,4 @@ Vue.component('vue-audit-logs-component', {
             </v-row>
         </div>
     `
-});
+};

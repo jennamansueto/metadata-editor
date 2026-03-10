@@ -1,4 +1,5 @@
-Vue.component('page-preview', {
+export default {
+    name: 'page-preview',
     props: [],
     data() {
         return {
@@ -68,5 +69,4 @@ Vue.component('page-preview', {
 
         </div>
     `
-});
-
+};

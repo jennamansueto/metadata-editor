@@ -1,4 +1,5 @@
-Vue.component('vue-template-revision-history', {
+export default {
+    name: 'vue-template-revision-history',
     props: ['value','template_id'],
     data() {
         return {            
@@ -111,5 +112,4 @@ Vue.component('vue-template-revision-history', {
         
     </div>
     `
-});
-
+};

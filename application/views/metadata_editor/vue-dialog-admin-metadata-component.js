@@ -1,5 +1,6 @@
 //admin metadata selection dialog
-Vue.component('vue-dialog-admin-metadata-component', {
+export default {
+    name: 'vue-dialog-admin-metadata-component',
     props:['value'],
     data() {
         return {            
@@ -120,5 +121,4 @@ Vue.component('vue-dialog-admin-metadata-component', {
         
         </div>
     `
-});
-
+};
