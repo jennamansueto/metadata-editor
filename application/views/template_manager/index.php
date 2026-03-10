@@ -6,15 +6,17 @@
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />
 
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
   
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.global.prod.js"></script>
 
   <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
@@ -362,9 +364,10 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
+      legacy: true
     });
 
     Vue.mixin({
@@ -474,7 +477,7 @@
             }
     })
 
-    const store = new Vuex.Store({
+    const store = Vuex.createStore({
       state: {
         active_node: {},
         active_core_node: {},
@@ -546,11 +549,8 @@
       }
     })
 
-    new Vue({
-      el: "#app",
-      i18n,
-      store,
-      vuetify: new Vuetify(),
+    const vuetify = Vuetify.createVuetify({});
+    const tmApp = Vue.createApp({
       data() {
         return {
           user_template_info: user_template_info,
@@ -711,7 +711,7 @@
               item.props.forEach((prop, propIdx) => {
                 const propKey = prop.prop_key || prop.key;
                 if (propKey === item_key) {
-                  Vue.delete(item.props, propIdx);
+                  item.props.splice(propIdx, 1);
                 }
                 // Recursively check nested props
                 if (prop.props) {
@@ -720,27 +720,27 @@
               });
             }
             if (item.key == item_key || (item.prop_key && item.prop_key == item_key)) {
-              Vue.delete(tree, idx);
+              tree.splice(idx, 1);
             }
           });
         },
         EnumUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.$set(this.ActiveNode, "enum", [{}]);
+            this.ActiveNode["enum"] = [{}];
           }
         },
         EnumListUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.$set(this.ActiveNode, "enum", []);
+            this.ActiveNode["enum"] = [];
           }
         },
         DefaultUpdate: function(e) {
           if (!this.ActiveNode.default) {
-            this.$set(this.ActiveNode, "default", [{}]);
+            this.ActiveNode["default"] = [{}];
           }
         },
         RulesUpdate: function(e) {
-          this.$set(this.ActiveNode, "rules", e);
+          this.ActiveNode["rules"] = e;
         },
         removeField: function() {
           const nodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
@@ -787,7 +787,7 @@
               }
               
               if (propIndex !== -1) {
-                Vue.delete(propsArray, propIndex);
+                propsArray.splice(propIndex, 1);
                 vm.ActiveNode = {};
                 vm.tree_active_items = [];
                 return true;
@@ -932,13 +932,13 @@
               // If pasting into an array/nested_array and the cut item is a prop, add to props
               if ((this.ActiveNode.type === 'array' || this.ActiveNode.type === 'nested_array') && this.cut_fields[i].isProp) {
                 if (!this.ActiveNode.props) {
-                  this.$set(this.ActiveNode, "props", []);
+                  this.ActiveNode["props"] = [];
                 }
                 this.ActiveNode.props.push(this.cut_fields[i].node);
               } else {
                 // Regular paste to items
                 if (!this.ActiveNode.items) {
-                  this.$set(this.ActiveNode, "items", []);
+                  this.ActiveNode["items"] = [];
                 }
                 this.ActiveNode.items.push(this.cut_fields[i].node);
               }
@@ -993,7 +993,7 @@
           }
 
           if (!this.ActiveNode.items) {
-            this.$set(this.ActiveNode, "items", []);
+            this.ActiveNode["items"] = [];
           }
 
           this.ActiveNode.items.push(this.ActiveCoreNode);
@@ -1014,10 +1014,10 @@
             "help_text": ""
           };
 
-          this.$set(parentNode, "items", [
+          parentNode["items"] = [
             ...parentNode.items,
             new_node
-          ]);
+          ];
           
 
           this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1042,7 +1042,7 @@
           
           // Ensure UserTemplate.items exists
           if (!this.UserTemplate.items) {
-            this.$set(this.UserTemplate, "items", []);
+            this.UserTemplate["items"] = [];
           }
           
           // Check if container already exists
@@ -1129,7 +1129,7 @@
           // If parent is array/nested_array, add as prop; otherwise add as child item
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             const propKey = new_node_key;
             const propKeyShort = propKey.split('.').pop();
@@ -1145,7 +1145,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
 
             parentNode.items.push({
@@ -1204,7 +1204,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             newArrayNode.prop_key = new_node_key;
             newArrayNode.key = new_node_key.split('.').pop();
@@ -1212,7 +1212,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newArrayNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1259,7 +1259,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             newNestedNode.prop_key = new_node_key;
             newNestedNode.key = new_node_key.split('.').pop();
@@ -1267,7 +1267,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newNestedNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1292,7 +1292,7 @@
           if (Array.isArray(this.tree_active_items)) {
             const idx = this.tree_active_items.indexOf(oldKey);
             if (idx !== -1) {
-              this.$set(this.tree_active_items, idx, e);
+              this.tree_active_items[idx] = e;
             }
           }
           if (Array.isArray(this.initiallyOpen) && this.initiallyOpen.indexOf(e) === -1) {
@@ -1799,14 +1799,14 @@
                   'label': item
                 });
               });
-              Vue.set(this.ActiveNode, "enum", enum_list);
+              this.ActiveNode["enum"] = enum_list;
               return enum_list;
             }
             return this.ActiveNode.enum || [];
           },
           set: function(newValue) {
             if (!this.ActiveNode) return;
-            Vue.set(this.ActiveNode, "enum", newValue);
+            this.ActiveNode["enum"] = newValue;
           }
         },
         ActiveNodeEnumStoreColumn:{
@@ -1819,7 +1819,7 @@
           },
           set: function(newValue){
             if (!this.ActiveNode) return;
-            Vue.set(this.ActiveNode, "enum_store_column", newValue);
+            this.ActiveNode["enum_store_column"] = newValue;
         }
           
         },
@@ -1991,6 +1991,11 @@
         },
       }
     });
+    tmApp.use(i18n);
+    tmApp.use(store);
+    tmApp.use(vuetify);
+    tmApp.config.globalProperties.CI = window.CI;
+    tmApp.mount('#app');
   </script>
 
 

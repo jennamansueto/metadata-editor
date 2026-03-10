@@ -84,7 +84,10 @@ Vue.component('alert-dialog', {
     }
   },
   mounted() {
-    EventBus.$on('alert', this.show);
+    EventBus.on('alert', this.show);
+  },
+  beforeUnmount() {
+    EventBus.off('alert', this.show);
   },
 });
 

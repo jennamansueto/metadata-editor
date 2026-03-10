@@ -5,13 +5,12 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
 
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
 
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -680,19 +679,19 @@
     </v-app>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <!--
-  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/vue-deepset.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/deepdash/browser/deepdash.standalone.min.js"></script>
-  -->
+  <!-- vue-deepset removed for Vue 3 migration -->
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />
 
@@ -702,6 +701,7 @@
     }
   </style>
 
+  <script>window.onerror=function(m,s,l,c,e){document.title='ERR:L'+l+':'+m;console.error('CAUGHT:',m,'line:',l,'col:',c,'source:',s);if(e&&e.stack)console.error('STACK:',e.stack);return false;}</script>
   <script>
 
     <?php
@@ -728,9 +728,10 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
+      legacy: true
     })
 
     // 1. Define route components.        
@@ -745,7 +746,7 @@
 
     //routes
     const routes = [{
-        path: '<?php echo site_url("editor");?>',
+        path: '/:pathMatch(.*)*',
         component: Home,
         name: 'home'
       },
@@ -756,20 +757,23 @@
       }
     ]
 
-    const router = new VueRouter({
-      routes, 
-      mode: 'history'
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHistory(),
+      routes
     })
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#526bc7',
-            "primary-dark": '#0c1a4d',
-            secondary: '#b0bec5',
-            accent: '#8c9eff',
-            error: '#b71c1c',
+            dark: false,
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c',
+            }
           },
         },
       },
@@ -806,17 +810,8 @@
 
     Vue.mixin(momentMixin);
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify: vuetify,
-      router: router,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -875,7 +870,7 @@
         dialog_project_revision: false,
         dialog_project_revision_options: {},
         dialog_project_revision_key: 0,
-      },
+      } },
       created: async function() {
         //reload projects on window focus
         document.addEventListener("visibilitychange", function() {
@@ -983,7 +978,7 @@
         toggleRevisions: function(project_id) {
           let project = this.Projects.find(x => x.id == project_id);
           if (project) {
-            Vue.set(project, 'versions_show', !project.versions_show);
+            project['versions_show'] = !project.versions_show;
           }
         },
         createProjectRevision: function(project_id) {
@@ -1246,7 +1241,7 @@
 
               for (i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
-                Vue.set(vm.search_filters, facet_name, []);
+                vm.search_filters[facet_name] = [];
               }
               
               vm.ReadFilterQS();
@@ -1261,7 +1256,7 @@
           return axios
             .get(url)
             .then(function(response) {
-              Vue.set(vm.projects.projects[projectIndex], 'size', response.data.result);
+              vm.projects.projects[projectIndex]['size'] = response.data.result;
               
             })
             .catch(function(error) {
@@ -1505,7 +1500,7 @@
           this.loadProjects();
         },
         removeFilter: function(filter_type, value_idx) {
-         this.$delete(this.search_filters[filter_type], value_idx);
+         this.search_filters[filter_type].splice(value_idx, 1);
         },
         getFilterChipColor: function(filter_type) {
           const colorMap = {
@@ -1519,11 +1514,11 @@
         },
         onApplyUserFilter: function(selected_users) {
             if (!this.facets.users_filter) {
-                Vue.set(this.facets, 'users_filter', []);
+                this.facets['users_filter'] = [];
             }
             
             if (!this.search_filters.users_filter) {
-                Vue.set(this.search_filters, 'users_filter', []);
+                this.search_filters['users_filter'] = [];
             }
             
             selected_users.forEach(user => {
@@ -1544,10 +1539,10 @@
         },
         onApplyTagFilter: function(selected_tags) {
             if (!this.facets.tags) {
-                Vue.set(this.facets, 'tags', []);
+                this.facets['tags'] = [];
             }
             if (!this.search_filters.tags) {
-                Vue.set(this.search_filters, 'tags', []);
+                this.search_filters['tags'] = [];
             }
             selected_tags.forEach(tag => {
                 if (!this.facets.tags.find(t => t.id === tag.id)) {
@@ -1837,6 +1832,23 @@
 
       }
     })
+
+    app.use(router);
+    app.use(vuetify);
+    app.use(i18n);
+
+    // Use GlobalLoginPlugin for session handling
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        app.use(GlobalLoginPlugin);
+    }
+
+    // Register global properties
+    app.config.globalProperties.$confirm = $confirm;
+    app.config.globalProperties.$alert = $alert;
+    app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
+    app.config.globalProperties.CI = window.CI;
+
+    vue_app = app.mount('#app');
   </script>
 
   <?php $this->load->view('common/analytics'); ?>

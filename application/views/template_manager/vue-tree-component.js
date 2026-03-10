@@ -264,6 +264,10 @@ Vue.component('nada-treeview', {
       getItemKey: function(item){
         // Handle both key and prop_key
         return item.key || item.prop_key || '';
+      },
+      truncate: function(text, stop, clamp) {
+        if (!text) return '';
+        return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
       }
     },
     template: `
@@ -287,7 +291,7 @@ Vue.component('nada-treeview', {
 
                 <template #label="{ item }" >
                     <span @click="treeClick(item)" :title="item.title" class="tree-item-label" :class="getItemClasses(item)" >
-                        <span v-if="item.type=='resource'" >{{item.title | truncate(23, '...') }}</span>
+                        <span v-if="item.type=='resource'" >{{truncate(item.title, 23, '...') }}</span>
                         <span v-else>{{item.title}} <template v-if="item.title==''">Untitled</template></span>
                         <span v-if="isItemCut(item)">*</span>                        
                     </span>

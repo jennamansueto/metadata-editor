@@ -5,7 +5,7 @@
     <link rel="icon" href="<?php echo base_url();?>favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-    <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
     <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
     <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
 
@@ -14,7 +14,6 @@
 
     <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -162,10 +161,13 @@
 
     </div>
 
-    <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-    <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
+    <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+    <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
+    <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-    <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+    <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
+    <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
+    <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.global.prod.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
     <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
@@ -208,7 +210,7 @@
             { path: '/edit/:id', component: EditCollection, name:"edit" },
             { path: '/manage-users/:id', component: ManageAccess, name:"manage-access" },
             {
-                path: '*',
+                path: '/:pathMatch(.*)*',
                 component: Home,
                 name:"home"
             }
@@ -217,7 +219,8 @@
         // 3. Create the router instance and pass the `routes` option
         // You can pass in additional options here, but let's
         // keep it simple for now.
-        const router = new VueRouter({
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
             routes // short for `routes: routes`
         })
 
@@ -225,38 +228,44 @@
             default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
         }
 
-        const i18n = new VueI18n({
+        const i18n = VueI18n.createI18n({
             locale: 'default', // set locale
             messages: translation_messages, // set locale messages
+            legacy: true
         })
 
-        const vuetify = new Vuetify({
+        const vuetify = Vuetify.createVuetify({
             theme: {
-            themes: {
-                light: {
-                    primary: '#526bc7',
-                    "primary-dark": '#0c1a4d',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
+                themes: {
+                    light: {
+                        dark: false,
+                        colors: {
+                            primary: '#526bc7',
+                            'primary-dark': '#0c1a4d',
+                            secondary: '#b0bec5',
+                            accent: '#8c9eff',
+                            error: '#b71c1c',
+                        }
+                    },
                 },
             },
-            },
         })
+
+        const app = Vue.createApp({
+            data() { return {} }
+        })
+
+        app.use(router);
+        app.use(vuetify);
+        app.use(i18n);
 
         // Use GlobalLoginPlugin for session handling
         if (typeof GlobalLoginPlugin !== 'undefined') {
-            Vue.use(GlobalLoginPlugin);
+            app.use(GlobalLoginPlugin);
         }
 
-        vue_app = new Vue({
-            el: '#app',
-            i18n: i18n,
-            router: router,
-            vuetify: vuetify,
-            data: {                
-            }
-        })
+        app.config.globalProperties.CI = window.CI;
+        vue_app = app.mount('#app');
     </script>
 
     <?php $this->load->view('common/analytics'); ?>

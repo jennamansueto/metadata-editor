@@ -92,7 +92,7 @@ Vue.component('identification-section', {
             console.log(field_xpath,event);
             _.set(this.field_data,field_xpath,event);
             console.log(this.field_data);
-            Vue.set(this.field_data, 0, this.field_data[0]);
+            this.field_data[0] = this.field_data[0];
 
         }    
     }

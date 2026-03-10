@@ -28,7 +28,7 @@ Vue.component('geospatial-feature-import', {
     mounted: function() {
         this.project_id = this.$store.state.project_id;
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clear all intervals
         if (this.pollInterval) {
             clearInterval(this.pollInterval);

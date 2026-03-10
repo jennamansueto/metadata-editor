@@ -18,20 +18,19 @@
 
     </div>
 
-    <!-- development version, includes helpful console warnings -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="<?php echo base_url(); ?>vue-app/assets/vue.compat.global.prod.js"></script>
+    <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
     <script src="<?php echo base_url(); ?>javascript/axios.min.js"></script>
     <script>
         var CI = {
       'base_url': '<?php echo site_url(); ?>'
     };
-        var app = new Vue({
-        el: "#app",
-        data: {
+        var vueApp = Vue.createApp({
+        data() { return {
             msg: "Vuejs Example with CDN",
             email:'',
             password:''
-        },
+        } },
         methods:{
             login: function() {
                 vm = this;
@@ -58,6 +57,7 @@
             },
         }
         });
+        vueApp.mount('#app');
     </script>
   </body>
 </html>

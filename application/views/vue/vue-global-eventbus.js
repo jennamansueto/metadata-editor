@@ -1,21 +1,21 @@
-const EventBus = new Vue();
+const EventBus = mitt();
 
 //Global confirm function
-Vue.prototype.$confirm = function (message) {
+function $confirm(message) {
     return new Promise((resolve, reject) => {
-        EventBus.$emit('confirm', { message, resolve, reject });
+        EventBus.emit('confirm', { message, resolve, reject });
     });
-};
+}
 
 //Global alert function
-Vue.prototype.$alert = function (message, options = {}) {
+function $alert(message, options = {}) {
     return new Promise((resolve) => {
-        EventBus.$emit('alert', { message, ...options, resolve });
+        EventBus.emit('alert', { message, ...options, resolve });
     });
-};
+}
 
 //Global error message extractor
-Vue.prototype.$extractErrorMessage = function (error) {
+function $extractErrorMessage(error) {
     if (error.response?.data?.message) {
         return error.response.data.message;
     }
@@ -23,5 +23,5 @@ Vue.prototype.$extractErrorMessage = function (error) {
         return JSON.stringify(error.response.data);
     }
     return error.message || "An unknown error occurred";
-};
+}
 
