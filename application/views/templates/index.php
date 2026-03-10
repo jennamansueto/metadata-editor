@@ -455,12 +455,8 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
-      i18n,
-      el: '#app',
-      vuetify: vuetify,
-      router: router,
-      data: {
+    const __templatesApp = Vue.createApp({
+      data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -495,7 +491,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
-      },
+      }; },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
         //this.init_tree_data();
@@ -946,10 +942,15 @@
         }
       }
     })
+    __templatesApp.use(i18n)
+    __templatesApp.use(vuetify)
+    __templatesApp.use(router)
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
     Vue.component('VueJsonPretty', VueJsonPretty.default)
+
+    vue_app = __templatesApp.mount('#app')
 
   </script>
 </body>

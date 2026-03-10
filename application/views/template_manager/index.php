@@ -548,11 +548,7 @@
       }
     })
 
-    new Vue({
-      el: "#app",
-      i18n,
-      store,
-      vuetify: new Vuetify(),
+    const __tmApp = Vue.createApp({
       data() {
         return {
           user_template_info: user_template_info,
@@ -1993,6 +1989,10 @@
         },
       }
     });
+    __tmApp.use(i18n);
+    __tmApp.use(store);
+    __tmApp.use(new Vuetify());
+    __tmApp.mount('#app');
   </script>
 
 

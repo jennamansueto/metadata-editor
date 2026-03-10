@@ -1937,23 +1937,22 @@ const router = VueRouter.createRouter({
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
-    vuetify: new Vuetify({
-        theme: {
-            themes: {
-                light: {
-                    primary: '#1976D2',
-                    secondary: '#424242',
-                    accent: '#82B1FF',
-                    error: '#FF5252',
-                    warning: '#FB8C00',
-                    info: '#2196F3',
-                    success: '#4CAF50'
-                }
+const dashboardApp = Vue.createApp({});
+dashboardApp.use(new Vuetify({
+    theme: {
+        themes: {
+            light: {
+                primary: '#1976D2',
+                secondary: '#424242',
+                accent: '#82B1FF',
+                error: '#FF5252',
+                warning: '#FB8C00',
+                info: '#2196F3',
+                success: '#4CAF50'
             }
         }
-    }),
-    router
-});
+    }
+}));
+dashboardApp.use(router);
+dashboardApp.mount('#dashboard-app');
 </script>

@@ -252,14 +252,15 @@
             Vue.use(GlobalLoginPlugin);
         }
 
-        vue_app = new Vue({
-            el: '#app',
-            i18n: i18n,
-            router: router,
-            vuetify: vuetify,
-            data: {                
+        const app = Vue.createApp({
+            data() {
+                return {}
             }
         })
+        app.use(i18n)
+        app.use(router)
+        app.use(vuetify)
+        vue_app = app.mount('#app')
     </script>
 
     <?php $this->load->view('common/analytics'); ?>
