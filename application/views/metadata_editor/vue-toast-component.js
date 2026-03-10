@@ -9,17 +9,22 @@ Vue.component('v-toast', {
     },
     mounted:function(){        
         let vm=this;
-        EventBus.on('onSuccess', function(data) {
+        this._onSuccess = function(data) {
             vm.text=data;
             vm.snackbar=true;
             isSuccess=true;
-          });
-
-          EventBus.on('onFail', function(data) {
+        };
+        this._onFail = function(data) {
             vm.text=data;
             vm.snackbar=true;
             isSuccess=false;
-          });
+        };
+        EventBus.on('onSuccess', this._onSuccess);
+        EventBus.on('onFail', this._onFail);
+    },
+    beforeUnmount:function(){
+        EventBus.off('onSuccess', this._onSuccess);
+        EventBus.off('onFail', this._onFail);
     },
     methods: {       
                 

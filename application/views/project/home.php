@@ -700,6 +700,7 @@
     }
   </style>
 
+  <script>window.onerror=function(m,s,l,c,e){document.title='ERR:L'+l+':'+m;console.error('CAUGHT:',m,'line:',l,'col:',c,'source:',s);if(e&&e.stack)console.error('STACK:',e.stack);}</script>
   <script>
 
     <?php
@@ -756,7 +757,7 @@
     ]
 
     const router = VueRouter.createRouter({
-      history: VueRouter.createWebHashHistory(),
+      history: VueRouter.createWebHistory(),
       routes
     })
 

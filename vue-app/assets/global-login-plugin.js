@@ -39,7 +39,7 @@
             vm._globalSessionHandlerInitialized = true;
           }
         },
-        beforeDestroy: function() {
+        beforeUnmount: function() {
           // Cleanup if needed
           if (this._globalSessionHandlerInitialized && window.GlobalSessionHandler) {
             // Unregister callbacks would require storing the callback reference
