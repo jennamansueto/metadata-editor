@@ -6,6 +6,8 @@ import axios from 'axios';
 import moment from 'moment';
 
 Vue.use(VueRouter);
+Vue.use(Vuetify);
+Vue.use(VueI18n);
 
 const translation_messages = {
     default: window.__SCHEMA_TRANSLATIONS__ || {}
