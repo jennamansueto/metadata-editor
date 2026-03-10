@@ -548,11 +548,8 @@
       }
     })
 
-    Vue.use(i18n);
-    vue_app = new Vue({
-      el: '#app',
+    var app = Vue.createApp({
       vuetify: new Vuetify(),
-      store,
       data() { return {
           user_template_info: user_template_info,
           initiallyOpen: ['template_root'],
@@ -1992,6 +1989,9 @@
         },
       }
     });
+    app.use(i18n);
+    app.use(store);
+    vue_app = app.mount('#app');
   </script>
 
 
