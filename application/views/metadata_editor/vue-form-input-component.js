@@ -154,7 +154,6 @@ Vue.component("form-input", {
                             v-if="isKeywordField"
                             v-model="local"
                             :field="field"
-                            @input="$emit('input', $event)"
                         ></keyword-suggest>
                         <small :id="'field-toggle-' + normalizeClassID(field.key)" class="collapse help-text form-text text-muted mb-2">{{field.help_text}}</small>
                         <table-grid-component 

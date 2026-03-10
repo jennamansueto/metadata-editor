@@ -14,6 +14,7 @@ class Llm extends MY_REST_Controller
 		parent::__construct();
 		$this->load->model('Editor_model');
 		$this->load->model('Configurations_model');
+		$this->load->library('Editor_acl');
 		$this->is_authenticated_or_die();
 	}
 
@@ -62,6 +63,9 @@ class Llm extends MY_REST_Controller
 			return;
 		}
 
+		// Check if user has permission to view this project
+		$this->editor_acl->user_has_project_access($project_id, $permission='view');
+
 		// Load project metadata
 		$project = $this->Editor_model->get_row($project_id);
 
@@ -74,7 +78,11 @@ class Llm extends MY_REST_Controller
 		}
 
 		// Extract indicator metadata fields
-		$metadata = json_decode($project['metadata'], true);
+		// Editor_model::get_row() returns metadata already decoded as an array
+		$metadata = $project['metadata'];
+		if (!is_array($metadata)) {
+			$metadata = json_decode($metadata, true);
+		}
 		if (!$metadata) {
 			$metadata = array();
 		}
