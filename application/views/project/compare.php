@@ -626,6 +626,7 @@
 
   <!-- Vue.js and dependencies -->
   <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.global.prod.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuex.global.prod.js"></script>
@@ -1192,9 +1193,9 @@
     app.use(i18n);
     app.use(vuetify);
     app.config.globalProperties.CI = window.CI;
-    app.config.globalProperties.$confirm = $confirm;
-    app.config.globalProperties.$alert = $alert;
-    app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
+    if (typeof $confirm !== 'undefined') app.config.globalProperties.$confirm = $confirm;
+    if (typeof $alert !== 'undefined') app.config.globalProperties.$alert = $alert;
+    if (typeof $extractErrorMessage !== 'undefined') app.config.globalProperties.$extractErrorMessage = $extractErrorMessage;
     vue_app = app.mount('#app');
   </script>
 

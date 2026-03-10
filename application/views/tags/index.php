@@ -146,6 +146,7 @@
   </div>
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>

@@ -19,6 +19,7 @@
     </div>
 
     <script src="<?php echo base_url(); ?>vue-app/assets/vue.compat.global.prod.js"></script>
+    <script>Vue.configureCompat({ COMPONENT_ASYNC: false, COMPONENT_FUNCTIONAL: false });</script>
     <script src="<?php echo base_url(); ?>javascript/axios.min.js"></script>
     <script>
         var CI = {
