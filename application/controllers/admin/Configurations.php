@@ -268,6 +268,58 @@ class Configurations extends MY_Controller {
 
 
 	/**
+	 * Upload a logo image for the PDF cover page.
+	 */
+	function upload_cover_logo()
+	{
+		$upload_dir = FCPATH . 'files/pdf_cover/';
+		if (!is_dir($upload_dir)) {
+			mkdir($upload_dir, 0755, true);
+		}
+
+		$config_upload = array(
+			'upload_path'   => $upload_dir,
+			'allowed_types' => 'gif|jpg|jpeg|png',
+			'max_size'      => 2048, // 2MB
+			'file_name'     => 'cover_logo_' . time(),
+		);
+
+		$this->load->library('upload', $config_upload);
+
+		if ($this->upload->do_upload('cover_logo')) {
+			$upload_data = $this->upload->data();
+			$logo_path = 'files/pdf_cover/' . $upload_data['file_name'];
+
+			// Remove old logo if exists
+			$old_logo = $this->Configurations_model->get_config_item('pdf_cover_logo');
+			if (!empty($old_logo) && file_exists(FCPATH . $old_logo)) {
+				unlink(FCPATH . $old_logo);
+			}
+
+			$this->Configurations_model->upsert('pdf_cover_logo', $logo_path);
+			$this->session->set_flashdata('message', t('form_update_success'));
+		} else {
+			$this->session->set_flashdata('error', $this->upload->display_errors('', ''));
+		}
+
+		redirect('admin/configurations');
+	}
+
+	/**
+	 * Remove the uploaded PDF cover page logo.
+	 */
+	function remove_cover_logo()
+	{
+		$logo_path = $this->Configurations_model->get_config_item('pdf_cover_logo');
+		if (!empty($logo_path) && file_exists(FCPATH . $logo_path)) {
+			unlink(FCPATH . $logo_path);
+		}
+		$this->Configurations_model->upsert('pdf_cover_logo', '');
+		$this->session->set_flashdata('message', t('form_update_success'));
+		redirect('admin/configurations');
+	}
+
+	/**
 	 * 
 	 * Test email configurations form
 	 * 

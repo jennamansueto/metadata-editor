@@ -106,8 +106,32 @@ class PDF_Report{
 		$mpdf->defaultfooterline = 0; 	// 1 to include line below header/above footer
 		$mpdf->setFooter('{PAGENO}');
 
-		//coverpage
-		$coverpage=$this->ci->load->view('pdf_reports/coverpage',array('project'=>$this->project),TRUE);
+		//coverpage - load customization settings from DB
+		$this->ci->load->model('Configurations_model');
+		$cover_settings = array(
+			'project'              => $this->project,
+			'pdf_cover_logo'           => $this->ci->Configurations_model->get_config_item('pdf_cover_logo'),
+			'pdf_cover_primary_color'  => $this->ci->Configurations_model->get_config_item('pdf_cover_primary_color'),
+			'pdf_cover_text_color'     => $this->ci->Configurations_model->get_config_item('pdf_cover_text_color'),
+			'pdf_cover_secondary_color'=> $this->ci->Configurations_model->get_config_item('pdf_cover_secondary_color'),
+			'pdf_cover_design'         => $this->ci->Configurations_model->get_config_item('pdf_cover_design'),
+		);
+
+		// Apply defaults for any missing settings
+		if (empty($cover_settings['pdf_cover_primary_color']))   $cover_settings['pdf_cover_primary_color']   = '#0969da';
+		if (empty($cover_settings['pdf_cover_text_color']))      $cover_settings['pdf_cover_text_color']      = '#ffffff';
+		if (empty($cover_settings['pdf_cover_secondary_color'])) $cover_settings['pdf_cover_secondary_color'] = '#0969da';
+		if (empty($cover_settings['pdf_cover_design']))          $cover_settings['pdf_cover_design']          = 'default';
+
+		// Convert relative logo path to absolute file path for mPDF
+		if (!empty($cover_settings['pdf_cover_logo'])) {
+			$logo_abs = FCPATH . $cover_settings['pdf_cover_logo'];
+			$cover_settings['pdf_cover_logo_abs'] = file_exists($logo_abs) ? $logo_abs : '';
+		} else {
+			$cover_settings['pdf_cover_logo_abs'] = '';
+		}
+
+		$coverpage=$this->ci->load->view('pdf_reports/coverpage', $cover_settings, TRUE);
 		$mpdf->AddPage();
 		$mpdf->Bookmark(t("cover"),0);
 		$mpdf->WriteHTML( $coverpage );
