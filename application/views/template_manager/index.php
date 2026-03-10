@@ -553,7 +553,7 @@
       el: '#app',
       vuetify: new Vuetify(),
       store,
-      data: {
+      data() { return {
           user_template_info: user_template_info,
           initiallyOpen: ['template_root'],
           tree_active_items: [],
@@ -623,7 +623,7 @@
             }            
           ]          
         }
-      },
+      } },
       created: function() {
         this.init_template();
         this.init_tree();

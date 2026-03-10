@@ -90,8 +90,6 @@ if (typeof Vue !== 'undefined' && Vue.configureCompat) {
 
     // We need to register kebab aliases AFTER Vuetify.install() runs
     // (which happens when vuetify.min.js loads) but BEFORE new Vue() mounts.
-    // Strategy: wrap Vue's internal mount/new Vue to call registerKebabAliases
-    // once, synchronously, the first time an app is created.
     var _aliasesRegistered = false;
     function ensureKebabAliases() {
         if (_aliasesRegistered) return;
@@ -99,18 +97,29 @@ if (typeof Vue !== 'undefined' && Vue.configureCompat) {
         registerKebabAliases();
     }
 
-    // Hook into Vue.mixin to detect when Vuetify installs
+    // Strategy 1: Hook into Vue.mixin to detect when Vuetify installs.
+    // Vuetify.install() calls Vue.mixin() with a beforeCreate hook.
+    // We detect this by checking if Vuetify is defined and VApp is registered.
     var _origMixin = Vue.mixin;
     Vue.mixin = function(mixin) {
         var result = _origMixin.apply(this, arguments);
-        // After Vuetify's install mixin runs, register aliases synchronously
-        if (mixin && mixin.beforeCreate &&
-            typeof Vuetify !== 'undefined' && Vue.$_vuetify_installed) {
+        if (!_aliasesRegistered && typeof Vuetify !== 'undefined' &&
+            Vue.component && Vue.component('VApp')) {
             ensureKebabAliases();
         }
         return result;
     };
 
+    // Strategy 2: Also add a global mixin beforeCreate hook that runs once
+    // on first component creation, as a safety net.
+    Vue.mixin({
+        beforeCreate: function() {
+            if (!_aliasesRegistered && typeof Vuetify !== 'undefined') {
+                ensureKebabAliases();
+            }
+        }
+    });
+
     // Also expose for manual calling if needed
-    window._registerVuetifyKebabAliases = registerKebabAliases;
+    window._registerVuetifyKebabAliases = ensureKebabAliases;
 })();

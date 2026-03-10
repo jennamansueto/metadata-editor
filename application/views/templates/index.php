@@ -460,7 +460,7 @@
       el: '#app',
       vuetify: vuetify,
       router: router,
-      data: {
+      data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -495,7 +495,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
-      },
+      } },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
         //this.init_tree_data();
