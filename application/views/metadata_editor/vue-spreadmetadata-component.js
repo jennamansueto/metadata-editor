@@ -1,5 +1,6 @@
 //spread metadata for variables
-Vue.component('spread-metadata', {
+export default {
+    name: 'spread-metadata',
     props:['variables','value'],
     data: function () {    
         return {
@@ -360,5 +361,4 @@ Vue.component('spread-metadata', {
                 </v-dialog>
             </div>
             `    
-});
-
+};

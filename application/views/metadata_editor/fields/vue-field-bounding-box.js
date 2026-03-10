@@ -1,5 +1,6 @@
 //bounding box field control
-Vue.component('editor-bounding-box-field', {
+export default {
+    name: 'editor-bounding-box-field',
     props: ['value','field'],
     data: function () {    
         return {
@@ -944,5 +945,4 @@ Vue.component('editor-bounding-box-field', {
         </v-dialog>
     </div>
     `
-});
-
+};

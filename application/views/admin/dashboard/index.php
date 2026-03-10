@@ -1039,12 +1039,8 @@
     </v-app>
 </div>
 
-<!-- Vue.js and Vuetify -->
-<script src="<?php echo base_url('vue-app/assets/vue.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/vue-router.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/vuetify.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/axios.min.js'); ?>"></script>
-<script src="<?php echo base_url('vue-app/assets/chart.min.js'); ?>"></script>
+<!-- Vite bundle -->
+<script src="<?php echo base_url('vue-app/assets/dist/dashboard.js'); ?>"></script>
 <script>
 window.DashboardI18n = {
     PAGE_VIEWS: '<?php echo t('Page Views'); ?>',

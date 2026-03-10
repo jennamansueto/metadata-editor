@@ -1,4 +1,5 @@
-Vue.component('v-toast', {
+export default {
+    name: 'v-toast',
     props: [],
     data() {
         return {
@@ -51,5 +52,4 @@ Vue.component('v-toast', {
 
         </div>
     `
-});
-
+};

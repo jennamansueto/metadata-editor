@@ -1,5 +1,6 @@
 // configure-catalog component
-Vue.component('configure-catalog', {
+export default {
+    name: 'configure-catalog',
     props:['value'],
     data: function () {    
         return {          
@@ -353,5 +354,4 @@ Vue.component('configure-catalog', {
 
             </div>          
             `    
-});
-
+};

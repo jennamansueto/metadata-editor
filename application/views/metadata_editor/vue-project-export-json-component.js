@@ -1,5 +1,6 @@
 /// Project export json component
-Vue.component('project-export-json-component', {
+export default {
+    name: 'project-export-json-component',
     props:['value'],
     data () {
         return {
@@ -118,5 +119,4 @@ Vue.component('project-export-json-component', {
                     
             </div>          
             `    
-});
-
+};

@@ -1,5 +1,6 @@
 ///variable edit form
-Vue.component('variable-edit', {
+export default {
+    name: 'variable-edit',
     props:['variable','index_key','multi_key'],
     data: function () {    
         return {
@@ -639,5 +640,4 @@ Vue.component('variable-edit', {
 
         </div>          
         `
-});
-
+};

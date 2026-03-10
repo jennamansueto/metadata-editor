@@ -1,5 +1,6 @@
 /// SDMX CSV Export Options Component
-Vue.component('sdmx-csv-export-options', {
+export default {
+    name: 'sdmx-csv-export-options',
     props:['value'],
     data: function () {    
         return {
@@ -264,4 +265,4 @@ Vue.component('sdmx-csv-export-options', {
             </v-card>
         </div>          
     `    
-});
+};

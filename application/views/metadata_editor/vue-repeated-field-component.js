@@ -1,5 +1,6 @@
 //vue repeated field - simple_array
-Vue.component('repeated-field', {
+export default {
+    name: 'repeated-field',
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {
@@ -98,5 +99,4 @@ Vue.component('repeated-field', {
 
 
         </div>`    
-});
-
+};

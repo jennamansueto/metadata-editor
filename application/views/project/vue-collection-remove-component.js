@@ -1,4 +1,5 @@
-Vue.component('vue-collection-remove-dialog', {
+export default {
+    name: 'vue-collection-remove-dialog',
     props: ['value', 'collections', 'project_id'],
     data() {
         return {        
@@ -115,5 +116,4 @@ Vue.component('vue-collection-remove-dialog', {
         
     </div>
     `
-});
-
+};

@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('simple-array-component', {
+export default {
+    name: 'simple-array-component',
     props:['value','columns','path', 'field'],
     data: function () {    
         return {
@@ -89,4 +90,4 @@ Vue.component('simple-array-component', {
             }
         }
     }
-})
+};

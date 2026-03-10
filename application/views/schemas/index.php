@@ -8,8 +8,6 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet">
 
-  <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -751,23 +749,12 @@
     </div>
   </script>
 
-  <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
-
   <script>
-    <?php
-      echo $this->load->view("vue/vue-global-eventbus.js", null, true);
-      echo $this->load->view("vue/vue-alert-dialog-component.js", null, true);
-      echo $this->load->view("vue/vue-confirm-dialog-component.js", null, true);
-      echo $this->load->view("editor_common/global-site-header-component.js", null, true);
-      echo $this->load->view("editor_common/main-navigation-tabs-component.js", null, true);
-      echo $this->load->view("schemas/vue-schemas-app.js", array('translations'=>$translations), true);
-    ?>
+    window.__SCHEMA_TRANSLATIONS__ = JSON.parse(atob('<?php echo base64_encode(json_encode($translations)); ?>'));
   </script>
+
+  <!-- Vite bundle (after DOM and translations are ready) -->
+  <script src="<?php echo base_url();?>vue-app/assets/dist/schemas.js"></script>
 
 </body>
 </html>

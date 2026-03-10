@@ -1,5 +1,6 @@
 /// import options
-Vue.component('import-options', {
+export default {
+    name: 'import-options',
     props:['value'],
     data: function () {    
         return {
@@ -221,5 +222,4 @@ Vue.component('import-options', {
 
             </div>          
             `    
-});
-
+};

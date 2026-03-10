@@ -1,5 +1,6 @@
 /// datafile view form
-Vue.component('datafile', {
+export default {
+    name: 'datafile',
     props:['file_id','value'],
     data: function () {    
         return {
@@ -70,5 +71,4 @@ Vue.component('datafile', {
 
             </div>          
             `    
-});
-
+};

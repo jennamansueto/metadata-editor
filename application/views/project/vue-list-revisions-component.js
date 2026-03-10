@@ -1,4 +1,5 @@
-Vue.component('vue-list-revisions', {
+export default {
+    name: 'vue-list-revisions',
     props: ['value', 'revisions'],
     data() {
         return {
@@ -65,5 +66,4 @@ Vue.component('vue-list-revisions', {
         
     </div>
     `
-});
-
+};

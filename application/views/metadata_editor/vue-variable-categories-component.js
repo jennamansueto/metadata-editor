@@ -1,5 +1,6 @@
 ///variable categories edit form
-Vue.component('variable-categories', {
+export default {
+    name: 'variable-categories',
     props:['value'],
     data: function () {    
         return {   
@@ -215,6 +216,4 @@ Vue.component('variable-categories', {
             <!--categories-end-->            
         </div>          
         `
-});
-
-
+};

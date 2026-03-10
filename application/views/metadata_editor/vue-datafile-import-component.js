@@ -1,5 +1,6 @@
 /// datafile import form
-Vue.component('datafile-import', {
+export default {
+    name: 'datafile-import',
     data: function () {    
         return {
             files:[],
@@ -125,7 +126,7 @@ Vue.component('datafile-import', {
             this.$store.dispatch('loadVariableGroups',{dataset_id:this.ProjectID}); 
         },
         pingDataService: async function() {
-            vm = this;
+            let vm = this;
             let url = CI.base_url + '/api/data/status/';
 
             let resp = await axios.get(url,{
@@ -533,4 +534,4 @@ Vue.component('datafile-import', {
 
             </div>          
             `    
-})
+};

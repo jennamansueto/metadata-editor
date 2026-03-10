@@ -1,5 +1,6 @@
 //v-login
-Vue.component('v-login', {
+export default {
+    name: 'v-login',
     props: ['value'],
     data() {
         return {
@@ -40,7 +41,7 @@ Vue.component('v-login', {
 
             this.is_loading = true;
             let url = CI.site_url + '/api/editor/is_connected';
-            vm = this;
+            let vm = this;
             console.log("checking isLoggedIn");
             axios.get(url)
                 .then(function(response) {
@@ -102,6 +103,4 @@ Vue.component('v-login', {
             
         </div>
     `
-});
-
-
+};

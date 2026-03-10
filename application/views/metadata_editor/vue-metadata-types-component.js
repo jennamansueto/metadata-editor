@@ -1,5 +1,6 @@
 //metadata types
-const VueMetadataTypes = Vue.component('metadata-types', {
+const componentDef = {
+    name: 'metadata-types',
     props: [],
     data() {
         return {
@@ -126,6 +127,5 @@ const VueMetadataTypes = Vue.component('metadata-types', {
 
         </div>
     `
-});
-
-
+};
+export default componentDef;

@@ -18,9 +18,8 @@
 
     </div>
 
-    <!-- development version, includes helpful console warnings -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script src="<?php echo base_url(); ?>javascript/axios.min.js"></script>
+    <!-- Vite bundle -->
+    <script src="<?php echo base_url();?>vue-app/assets/dist/auth.js"></script>
     <script>
         var CI = {
       'base_url': '<?php echo site_url(); ?>'

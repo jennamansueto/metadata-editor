@@ -1,5 +1,6 @@
 // Indicator DSD CSV Import Component
-Vue.component('indicator-dsd-import', {
+export default {
+    name: 'indicator-dsd-import',
     data() {
         return {
             dataset_id: project_sid,
@@ -1110,4 +1111,4 @@ Vue.component('indicator-dsd-import', {
             </v-card>
         </div>
     `
-})
+};

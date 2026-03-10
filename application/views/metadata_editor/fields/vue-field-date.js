@@ -1,5 +1,6 @@
 //text field control
-Vue.component('editor-date-field', {
+export default {
+    name: 'editor-date-field',
     props: ['value','field'],
     data: function () {    
       return {
@@ -78,4 +79,4 @@ Vue.component('editor-date-field', {
         </v-menu>
     </div>
     `
-  });
+  };

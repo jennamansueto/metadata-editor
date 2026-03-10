@@ -1,5 +1,6 @@
 //vue validation-rules component
-Vue.component('validation-rules-component', {
+export default {
+    name: 'validation-rules-component',
     props:['value'],
     data: function () {    
         return {
@@ -225,4 +226,4 @@ Vue.component('validation-rules-component', {
             </v-simple-table>
 
             </div>  `    
-});
+};

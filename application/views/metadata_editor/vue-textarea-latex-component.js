@@ -1,4 +1,5 @@
-Vue.component('v-textarea-latex', {
+export default {
+    name: 'v-textarea-latex',
     props: ['value'],
     data() {
         return {
@@ -113,5 +114,4 @@ Vue.component('v-textarea-latex', {
             <div ref="output" v-show="is_preview==true" class="border elevation-1" style="padding:15px;width:100%;max-height:400px;overflow:auto;white-space: pre-wrap;"></div>
         </div>
     `
-});
-
+};

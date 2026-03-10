@@ -1,4 +1,5 @@
-Vue.component('datafiles', {
+export default {
+    name: 'datafiles',
     data() {
         return {
             showChildren: true,
@@ -855,4 +856,4 @@ Vue.component('datafiles', {
         
         </div>
     `
-})
+};

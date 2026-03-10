@@ -1,4 +1,5 @@
-Vue.component('vue-template-share', {
+export default {
+    name: 'vue-template-share',
     props: ['value','users','template_id'],
     data() {
         return {            
@@ -324,5 +325,4 @@ Vue.component('vue-template-share', {
         
     </div>
     `
-});
-
+};

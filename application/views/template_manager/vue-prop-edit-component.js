@@ -1,5 +1,6 @@
 ///prop edit componennt
-Vue.component('prop-edit', {
+export default {
+    name: 'prop-edit',
     props:['value','parent'],
     data: function () {    
         return {          
@@ -165,6 +166,5 @@ Vue.component('prop-edit', {
         return value.indexOf('additional.')==0;
       },
     },
-    template: `<?php require_once 'vue-prop-edit-component-template.php';?>`    
-});
-
+    template: '#prop-edit-template'    
+};

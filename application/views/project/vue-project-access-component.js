@@ -1,4 +1,5 @@
-Vue.component('vue-project-access-dialog', {
+export default {
+    name: 'vue-project-access-dialog',
     props: ['value', 'project_access'],
     data() {
         return {            
@@ -107,5 +108,4 @@ Vue.component('vue-project-access-dialog', {
         
     </div>
     `
-});
-
+};

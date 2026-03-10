@@ -1,5 +1,6 @@
 ///// nested-section
-Vue.component('nested-section', {
+export default {
+    name: 'nested-section',
     props:['value','columns','path','title'],
     data: function () {    
         return {
@@ -233,4 +234,4 @@ Vue.component('nested-section', {
             return field.type;
         }
     }
-})
+};

@@ -1,4 +1,5 @@
-Vue.component('dialog-datafile-replace', {
+export default {
+    name: 'dialog-datafile-replace',
     props:['value','file_id'],
     data() {
         return {
@@ -153,5 +154,4 @@ Vue.component('dialog-datafile-replace', {
         
         </div>
     `
-});
-
+};

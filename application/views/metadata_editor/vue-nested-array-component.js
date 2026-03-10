@@ -1,5 +1,6 @@
 ///// nested-array-component.js
-Vue.component('nested-array', {
+export default {
+    name: 'nested-array',
     props:['value','columns','path','title','field'],
     data: function () {    
         return {
@@ -178,4 +179,4 @@ Vue.component('nested-array', {
 
 
             </div>  `    
-})
+};

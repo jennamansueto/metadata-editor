@@ -1,5 +1,6 @@
 ///variable info edit form
-Vue.component('variable-info', {
+export default {
+    name: 'variable-info',
     props:['value'],
     data: function () {    
         return {   
@@ -178,6 +179,4 @@ Vue.component('variable-info', {
             
         </div>          
         `
-});
-
-
+};

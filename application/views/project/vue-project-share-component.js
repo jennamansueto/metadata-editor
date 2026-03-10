@@ -1,4 +1,5 @@
-Vue.component('vue-project-share', {
+export default {
+    name: 'vue-project-share',
     props: ['value','users','project_id'],
     data() {
         return {            
@@ -69,7 +70,6 @@ Vue.component('vue-project-share', {
         },
         addAccess: async function() {
             let vm = this;
-            vm = this;
             let form_data = {
                 'permissions': this.user_access,
                 'users': this.getSelectedUsersList()
@@ -319,5 +319,4 @@ Vue.component('vue-project-share', {
         
     </div>
     `
-});
-
+};

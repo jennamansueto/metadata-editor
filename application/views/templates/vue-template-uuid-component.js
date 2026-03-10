@@ -1,4 +1,5 @@
-Vue.component('vue-template-uuid', {
+export default {
+    name: 'vue-template-uuid',
     props: ['value','template_id'],
     data() {
         return {            
@@ -131,5 +132,4 @@ Vue.component('vue-template-uuid', {
         
     </div>
     `
-});
-
+};

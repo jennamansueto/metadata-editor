@@ -1,5 +1,6 @@
 /// project generate pdf documentation
-Vue.component('generate-pdf', {
+export default {
+    name: 'generate-pdf',
     props:['value'],
     data: function () {    
         return {            
@@ -228,5 +229,4 @@ Vue.component('generate-pdf', {
         `;
         document.head.appendChild(style);
     }
-});
-
+};

@@ -1,5 +1,6 @@
 //
-Vue.component('identification-section', {
+export default {
+    name: 'identification-section',
     props:['value','columns','path'],
     data: function () {    
         return {
@@ -96,4 +97,4 @@ Vue.component('identification-section', {
 
         }    
     }
-})
+};

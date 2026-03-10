@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form-preview', {
+export default {
+    name: 'v-form-preview',
     props: ['title', 'items', 'depth', 'css_class','path', 'value'],
     data() {
         return {
@@ -251,6 +252,4 @@ Vue.component('v-form-preview', {
             
         </div>
     `
-});
-
-
+};

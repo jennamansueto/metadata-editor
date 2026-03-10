@@ -1,5 +1,6 @@
 //variables
-Vue.component('variables', {
+export default {
+    name: 'variables',
     props:['file_id'],
     data() {
         return {
@@ -1309,4 +1310,4 @@ Vue.component('variables', {
             </v-dialog>
         </div>
     `
-})
+};

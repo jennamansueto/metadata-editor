@@ -1,5 +1,6 @@
 //external resources
-const VueExternalResources = Vue.component('external-resources', {
+const componentDef = {
+    name: 'external-resources',
     props: ['index', 'id'],
     data() {
         return {
@@ -355,6 +356,5 @@ const VueExternalResources = Vue.component('external-resources', {
             </v-card>
         </div>
     `
-})
-
-
+};
+export default componentDef;

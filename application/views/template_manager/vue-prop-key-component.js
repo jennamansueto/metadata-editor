@@ -1,5 +1,6 @@
 ///vue component for prop key field
-Vue.component('vue-prop-key-field', {
+export default {
+    name: 'vue-prop-key-field',
     props:['value', 'parent'],
     data: function () {    
         return {
@@ -103,5 +104,4 @@ Vue.component('vue-prop-key-field', {
 
         </div>          
             `    
-});
-
+};

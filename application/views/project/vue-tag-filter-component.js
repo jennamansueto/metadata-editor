@@ -1,4 +1,5 @@
-Vue.component('vue-tag-filter', {
+export default {
+    name: 'vue-tag-filter',
     props: ['value'],
     data() {
         return {
@@ -112,4 +113,4 @@ Vue.component('vue-tag-filter', {
             </v-card>
         </v-dialog>
     `
-});
+};

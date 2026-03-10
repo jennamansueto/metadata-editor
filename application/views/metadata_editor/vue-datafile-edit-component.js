@@ -1,5 +1,6 @@
 /// datafile add/edit form
-const VueDatafileEdit= Vue.component('datafile-edit', {
+const componentDef = {
+    name: 'datafile-edit',
     data: function () {    
         return {
             form_local: {},
@@ -193,4 +194,5 @@ const VueDatafileEdit= Vue.component('datafile-edit', {
 
             </div>          
             `    
-})
+};
+export default componentDef;

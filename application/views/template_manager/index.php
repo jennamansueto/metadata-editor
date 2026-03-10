@@ -9,16 +9,8 @@
   <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
-  
-  <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
-
-  <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
+  <!-- Vite bundle -->
+  <script src="<?php echo base_url();?>vue-app/assets/dist/template-manager.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
@@ -348,14 +340,9 @@
       return Array.from(new Set(output));
     }
 
-    <?php echo include_once("vue-field-key-component.js"); ?>
-    <?php echo include_once("vue-field-custom-key-component.js"); ?>
-    <?php echo include_once("vue-prop-key-component.js"); ?>
-    <?php echo include_once("vue-tree-component.js"); ?>
-    <?php echo include_once("vue-tree-field-component.js"); ?>
-    <?php echo include_once("vue-table-grid-component.js"); ?>
-    <?php echo include_once("vue-validation-rules-component.js"); ?>
-    <?php echo include_once("vue-prop-edit-component.js"); ?>
+    <?php
+    // All component JS files are now imported via the Vite bundle (template-manager.js)
+    ?>
 
 
     const translation_messages = {
@@ -893,7 +880,7 @@
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, nodeKey);
 
           //unselect cut field
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               if (cutNodeKey == nodeKey) {
@@ -922,7 +909,7 @@
           const activeNodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, activeNodeKey);
 
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               
@@ -955,7 +942,7 @@
           
           let active_container_key = this.getNodeContainerKey(this.UserTreeItems, itemKey);
 
-          for (i = 0; i < this.cut_fields.length; i++) {
+          for (let i = 0; i < this.cut_fields.length; i++) {
             if (active_container_key == this.cut_fields[i].container) {
               const cutNodeKey = this.cut_fields[i].node.key || this.cut_fields[i].node.prop_key;
               if (itemKey == cutNodeKey) {
@@ -1362,17 +1349,17 @@
           return findInTree(this.UserTreeItems);
         },
         moveUp: function() {
-          parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
-          nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
+          let parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
+          let nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
           if (nodeIdx > 0) {
             this.array_move(parentNode.items, nodeIdx, nodeIdx - 1);
           }
         },
         moveDown: function() {
-          parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
-          nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
+          let parentNode = this.findNodeParent(this.UserTemplate, this.ActiveNode.key);
+          let nodeIdx = this.findNodePosition(parentNode, this.ActiveNode.key);
 
-          parentNodeItemsCount = parentNode.items.length - 1;
+          let parentNodeItemsCount = parentNode.items.length - 1;
 
           if (nodeIdx > -1 && nodeIdx < parentNodeItemsCount) {
             this.array_move(parentNode.items, nodeIdx, nodeIdx + 1);
@@ -1392,7 +1379,7 @@
             return false;
           }
 
-          for (index = 0; index < node.items.length; index++) {
+          for (let index = 0; index < node.items.length; index++) {
             let item = node.items[index];
             if (item.key && item.key == key) {
               return index;
@@ -1421,7 +1408,7 @@
           return exists;
         },
         findNodeParent: function(tree, node_key) {
-          found = '';
+          let found = '';
           for (var i = 0; i < tree.items.length; i++) {
             let item = tree.items[i];
             if (item.key && item.key == node_key) {
@@ -1430,7 +1417,7 @@
             }
 
             if (item.items) {
-              result = this.findNodeParent(item, node_key);
+              let result = this.findNodeParent(item, node_key);
               if (result != '') {
                 return result;
               }
@@ -1522,7 +1509,7 @@
           // Note: Root and description nodes are virtual and not saved
           this.$store.state.user_template.items = this.UserTreeItems;
 
-          formData = this.user_template_info;
+          let formData = this.user_template_info;
           formData.template = this.UserTemplate;
 
           axios.post(url,

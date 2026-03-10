@@ -10,25 +10,13 @@
   <link rel="stylesheet" href="<?php echo base_url(); ?>themes/nada52/css/bootstrap.min.css">
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
 
-  <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
-
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.js"></script>
   <link href="<?php echo base_url();?>vue-app/assets/vue-json-pretty.min.css" rel="stylesheet">
+
+  <!-- Vite bundle -->
+  <script src="<?php echo base_url();?>vue-app/assets/dist/templates.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 
@@ -398,16 +386,9 @@
   <script>
   
     
-    <?php echo $this->load->view("metadata_editor/vue-login-component.js", null, true); ?>
-    <?php include_once("vue-template-revision-history.js"); ?>
-
-    <?php include_once("vue-template-share-component.js"); ?>
-    <?php include_once("vue-template-share-common-component.js"); ?>
-    <?php include_once("vue-template-acl-common-component.js"); ?>
-    <?php include_once("vue-template-acl-component.js"); ?>
-    <?php include_once("vue-template-uuid-component.js"); ?>
-    <?php echo $this->load->view("editor_common/global-site-header-component.js", null, true);?>
-    <?php echo $this->load->view("editor_common/main-navigation-tabs-component.js", null, true);?>
+    <?php
+    // All component JS files are now imported via the Vite bundle (templates.js)
+    ?>
   
 
     const translation_messages = {
@@ -452,7 +433,7 @@
         Vue.use(GlobalLoginPlugin);
     }
 
-    vue_app = new Vue({
+    const vue_app = new Vue({
       i18n,
       el: '#app',
       vuetify: vuetify,
@@ -946,7 +927,7 @@
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    // VueJsonPretty is already registered by the Vite bundle (templates.js)
 
   </script>
 </body>

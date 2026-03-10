@@ -1,4 +1,5 @@
-Vue.component('validation-report', {
+export default {
+    name: 'validation-report',
     data: function () {
         return {
             loading_schema: false,
@@ -1673,5 +1674,4 @@ Vue.component('validation-report', {
             </v-card>
         </div>
     `
-});
-
+};

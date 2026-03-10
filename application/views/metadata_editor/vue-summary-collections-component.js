@@ -1,5 +1,6 @@
 ///Collections for the project
-Vue.component('vue-summary-collections', {
+export default {
+    name: 'vue-summary-collections',
     props:[],
     data: function () {    
         return {
@@ -42,7 +43,7 @@ Vue.component('vue-summary-collections', {
             });            
         },
         getCollectionsList: async function() {
-            vm = this;
+            let vm = this;
             let url = CI.base_url + '/api/collections/tree';
             let response = await axios.get(url);
   
@@ -158,5 +159,4 @@ Vue.component('vue-summary-collections', {
 
     </div>          
     `    
-});
-
+};

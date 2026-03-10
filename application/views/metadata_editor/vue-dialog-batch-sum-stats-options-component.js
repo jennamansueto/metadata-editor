@@ -2,7 +2,8 @@
  * Batch set summary stats options by interval type (discrete or continuous).
  * Applies to all variables in the current file that match the selected type.
  */
-Vue.component('dialog-batch-sum-stats-options', {
+export default {
+    name: 'dialog-batch-sum-stats-options',
     props: {
         value: { type: Boolean, default: false },
         file_id: { type: [String, Number], default: null },
@@ -178,4 +179,4 @@ Vue.component('dialog-batch-sum-stats-options', {
             </v-card>
         </v-dialog>
     `
-});
+};

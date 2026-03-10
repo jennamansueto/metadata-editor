@@ -1,253 +1,9 @@
-<script>
-        Vue.use(Vuex)
-        Vue.use(VueDeepSet)     
+        // Vue.use(Vuex), Vue.use(VueDeepSet), window.bus, Vue.mixin (global mixin),
+        // and all component imports are now handled by the Vite bundle (metadata-editor.js)
 
-        window.bus = new Vue();//todo remove?
-
-        Vue.mixin({
-            methods: {
-                normalizeClassID: function(class_id){
-                    return class_id.replace(/\./g, "-");
-                },
-                nestedArrayToStringValue: function(arr, output='') 
-                {
-                    let vm=this;
-                    if (Array.isArray(arr)) {
-                        arr.forEach(function (item) {
-                        output = vm.nestedArrayToStringValue(item, output);
-                        });
-                    } else {
-                        if (typeof arr === 'object') {
-                        let keys = Object.keys(arr);
-                        keys.forEach(function (key) {
-                            if (typeof arr[key] === 'object'){
-                            output = vm.nestedArrayToStringValue(arr[key], output);
-                            }else{
-                            output+= " " + arr[key];
-                            }            
-                        });
-                        }
-                    }
-                    return output.trim();
-                },
-                copyToClipBoard: function(textToCopy){
-                    const tmpTextField = document.createElement("textarea")
-                    tmpTextField.textContent = textToCopy
-                    tmpTextField.setAttribute("style","position:absolute; right:200%;")
-                    document.body.appendChild(tmpTextField)
-                    tmpTextField.select()
-                    tmpTextField.setSelectionRange(0, 99999) /*For mobile devices*/
-                    document.execCommand("copy")
-                    tmpTextField.remove();
-                },
-
-                pasteFromClipBoard: async function() 
-                {
-                    const text = await navigator.clipboard.readText();
-                    return text;                    
-                },
-                CSVToArray: function ( strData, strDelimiter )
-                {
-                    //source: https://gist.github.com/bennadel/9753411#file-code-1-htm
-                    
-                    // Check to see if the delimiter is defined. If not,
-                    // then default to comma.
-                    strDelimiter = (strDelimiter || ",");
-
-                    // Create a regular expression to parse the CSV values.
-                    var objPattern = new RegExp(
-                        (
-                            // Delimiters.
-                            "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
-
-                            // Quoted fields.
-                            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
-
-                            // Standard fields.
-                            "([^\"\\" + strDelimiter + "\\r\\n]*))"
-                        ),
-                        "gi"
-                        );
-
-
-                    // Create an array to hold our data. Give the array
-                    // a default empty first row.
-                    var arrData = [[]];
-
-                    // Create an array to hold our individual pattern
-                    // matching groups.
-                    var arrMatches = null;
-
-
-                    // Keep looping over the regular expression matches
-                    // until we can no longer find a match.
-                    while (arrMatches = objPattern.exec( strData )){
-
-                        // Get the delimiter that was found.
-                        var strMatchedDelimiter = arrMatches[ 1 ];
-
-                        // Check to see if the given delimiter has a length
-                        // (is not the start of string) and if it matches
-                        // field delimiter. If id does not, then we know
-                        // that this delimiter is a row delimiter.
-                        if (
-                            strMatchedDelimiter.length &&
-                            strMatchedDelimiter !== strDelimiter
-                            ){
-
-                            // Since we have reached a new row of data,
-                            // add an empty row to our data array.
-                            arrData.push( [] );
-
-                        }
-
-                        var strMatchedValue;
-
-                        // Now that we have our delimiter out of the way,
-                        // let's check to see which kind of value we
-                        // captured (quoted or unquoted).
-                        if (arrMatches[ 2 ]){
-
-                            // We found a quoted value. When we capture
-                            // this value, unescape any double quotes.
-                            strMatchedValue = arrMatches[ 2 ].replace(
-                                new RegExp( "\"\"", "g" ),
-                                "\""
-                                );
-
-                        } else {
-
-                            // We found a non-quoted value.
-                            strMatchedValue = arrMatches[ 3 ];
-
-                        }
-
-
-                        // Now that we have our value string, let's add
-                        // it to the data array.
-                        arrData[ arrData.length - 1 ].push( strMatchedValue );
-                    }
-
-                    // Return the parsed data.
-                    return( arrData );
-                }
-            }
-        })
-        
         <?php
-            echo $this->load->view("vue/vue-global-eventbus.js",null,true);
-            echo $this->load->view("vue/vue-alert-dialog-component.js",null,true);
-            echo $this->load->view("editor_common/global-site-header-component.js", null, true);
-            echo $this->load->view("metadata_editor/vue-project-export-json-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-template-validation-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-template-apply-defaults-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-toast-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-login-component.js",null,true);
-            echo $this->load->view("metadata_editor/fields/vue-field-date.js",null,true);
-            echo $this->load->view("metadata_editor/fields/vue-field-bounding-box.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-spreadmetadata-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-form-main-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-form-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-form-preview-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-nested-section-preview-component.js",null,true);
-            
-            echo $this->load->view("metadata_editor/vue-files-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-external-resources-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-external-resources-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-resumable-file-upload-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-external-resources-create-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-datafiles-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-datafile-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-datafile-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-datafile-import-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-datafile-data-explorer-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-datafile-export-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-batch-export-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-batch-sum-stats-options-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-variable-edit-documentation-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variables-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variables-validation-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variable-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variable-weights-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variable-categories-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variable-info-edit-component.js",null,true);
-
-            //tree view component
-            echo $this->load->view("metadata_editor/vue-form-tree.js",null,true);
-
-            //metadata grid component
-            echo $this->load->view("metadata_editor/vue-grid-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-grid-preview-component.js",null,true);
-
-            //nested
-            echo $this->load->view("metadata_editor/vue-nested-section-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-form-input-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-nested-array-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-simple-array-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-table-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-geospatial-identification-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-import-options-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-publish-options-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-sdmx-csv-export-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-project-package-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-external-resources-import-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-configure-catalog-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-summary-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-summary-files-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-summary-sharing-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-thumbnail-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-table-grid-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-nested-section-subsection-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-repeated-field-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-form-section-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-generate-pdf-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-variable-groups-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-variable-selection-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-weight-variable-selection-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-datafile-replace-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-enum-selection-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-page-preview-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-gallery-component.js",null,true);
-
-            echo $this->load->view("project/vue-project-share-component.js", null, true);
-            echo $this->load->view("project/vue-collection-share-component.js", null, true);
-            echo $this->load->view("metadata_editor/vue-summary-collections-component.js", null, true);
-            echo $this->load->view("metadata_editor/vue-project-tags-component.js", null, true);
-            echo $this->load->view("metadata_editor/vue-textarea-latex-component.js", null, true);
-            echo $this->load->view("metadata_editor/vue-project-history-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-admin-metadata-history-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-metadata-type-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-metadata-types-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-schema-array-field-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-schema-object-field-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-admin-metadata-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-dialog-admin-metadata-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-summary-templates-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-json-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-validation-report-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-features-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-import-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-characteristics-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-data-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-geospatial-feature-description-component.js",null,true);
-
-            echo $this->load->view("metadata_editor/vue-indicator-dsd-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-indicator-dsd-edit-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-indicator-dsd-import-component.js",null,true);
-            echo $this->load->view("metadata_editor/vue-indicator-dsd-chart-component.js",null,true);
+            // All component JS files are now imported via the Vite bundle (metadata-editor.js)
+            // The following load->view() calls have been removed and replaced with ES module imports.
         ?>
 
         <?php if (empty($metadata)):?>
@@ -486,14 +242,14 @@
                     return state.data_files;
                 },
                 getDataFileById: (state) => (fid) => {
-                    for(i=0;i<state.data_files.length;i++){
+                    for(let i=0;i<state.data_files.length;i++){
                         if(state.data_files[i].file_id==fid){
                             return state.data_files[i];
                         }
                     }
                 },
                 getDataFileNameById: (state) => (fid) => {
-                    for(i=0;i<state.data_files.length;i++){
+                    for(let i=0;i<state.data_files.length;i++){
                         if(state.data_files[i].file_id==fid){
                             return state.data_files[i].file_name;
                         }
@@ -509,8 +265,8 @@
                     var max_file_id=0;
                     let datafiles=state.data_files;
                     
-                    for(i=0;i<datafiles.length;i++){
-                        file_id=datafiles[i].file_id;
+                    for(let i=0;i<datafiles.length;i++){
+                        let file_id=datafiles[i].file_id;
                         if (parseInt(file_id.substr(1))>max_file_id){
                             max_file_id=file_id.substr(1);
                         }
@@ -523,11 +279,11 @@
                     let variables=state.variables;
                     let datafile_names=Object.keys(variables);
 
-                    for(k=0;k<datafile_names.length;k++){
-                        fid=datafile_names[k];
+                    for(let k=0;k<datafile_names.length;k++){
+                        let fid=datafile_names[k];
                         
-                        for(i=0;i<variables[fid].length;i++){
-                            variable=variables[fid][i];
+                        for(let i=0;i<variables[fid].length;i++){
+                            let variable=variables[fid][i];
                             if(parseInt(variable.vid.substr(1))>max_var){
                                 max_var=variable.vid.substr(1);
                             }
@@ -1083,13 +839,5 @@
             message: 'Invalid value. To fix, delete the field value and then type/select a new value'
         });
 
-    Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
-    Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
-
-    const { Splitpanes, Pane } = splitpanes;
-
-
-    Vue.component("pane", Pane);
-    Vue.component("splitpanes", Splitpanes);
-    //Vue.component("draggable", draggable);
-</script>
+    // Vue.component registrations for ValidationProvider, ValidationObserver,
+    // splitpanes, and pane are now in the Vite bundle (metadata-editor.js)

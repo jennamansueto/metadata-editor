@@ -1,5 +1,6 @@
 //vue schema object field component
-Vue.component('schema-object-field', {
+export default {
+    name: 'schema-object-field',
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {
@@ -168,5 +169,4 @@ Vue.component('schema-object-field', {
            
 
             </div>  `    
-});
-
+};

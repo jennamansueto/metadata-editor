@@ -1,5 +1,6 @@
 /// Geospatial gallery component
-Vue.component('geospatial-gallery', {
+export default {
+    name: 'geospatial-gallery',
     props:['value'],
     data: function () {    
         return {            
@@ -59,5 +60,4 @@ Vue.component('geospatial-gallery', {
 
             </div>
             `    
-});
-
+};

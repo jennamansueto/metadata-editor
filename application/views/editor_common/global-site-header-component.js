@@ -1,4 +1,5 @@
-Vue.component('vue-global-site-header', {
+export default {
+    name: 'vue-global-site-header',
     data() {
         return {
             languages: [],
@@ -140,5 +141,4 @@ Vue.component('vue-global-site-header', {
             </v-app-bar>
         </div>
     `
-});
-
+};

@@ -1,5 +1,6 @@
 /// Geospatial feature edit component
-Vue.component('geospatial-feature-edit', {
+export default {
+    name: 'geospatial-feature-edit',
     props: ['feature_name', 'feature_id', 'value'],
     data: function () {    
         return {
@@ -992,4 +993,4 @@ Vue.component('geospatial-feature-edit', {
             </div>
         </div>
     `
-});
+};

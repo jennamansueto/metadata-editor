@@ -1,5 +1,6 @@
 // Global alert dialog component
-Vue.component('alert-dialog', {
+export default {
+    name: 'alert-dialog',
   template: `
     <v-dialog v-model="visible" max-width="500" persistent>
       <v-card>
@@ -86,5 +87,4 @@ Vue.component('alert-dialog', {
   mounted() {
     EventBus.$on('alert', this.show);
   },
-});
-
+};

@@ -24,7 +24,8 @@
  * - @chunk-retry: Emitted when a chunk upload is being retried
  *   - payload: { chunkNumber, attempt, maxAttempts, delay, error }
  */
-const VueResumableFileUpload = Vue.component('resumable-file-upload', {
+const componentDef = {
+    name: 'resumable-file-upload',
     props: {
         projectId: {
             type: [String, Number],
@@ -681,4 +682,5 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
             </div>
         </div>
     `
-});
+};
+export default componentDef;

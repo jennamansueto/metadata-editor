@@ -1,5 +1,6 @@
 //vue table component
-Vue.component('table-component', {
+export default {
+    name: 'table-component',
     props:['value','columns','path', 'field'],
     data: function () {    
         return {
@@ -125,4 +126,4 @@ Vue.component('table-component', {
             </div>
 
             </div>  `    
-})
+};

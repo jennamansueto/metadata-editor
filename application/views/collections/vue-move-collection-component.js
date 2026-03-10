@@ -1,4 +1,5 @@
-Vue.component('vue-move-collection', {
+export default {
+    name: 'vue-move-collection',
     props: ['value'],
     data() {
         return {
@@ -162,5 +163,4 @@ Vue.component('vue-move-collection', {
         
         </div>
         `
-});
-
+};

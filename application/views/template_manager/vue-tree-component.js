@@ -1,5 +1,6 @@
 /// view treeview component
-Vue.component('nada-treeview', {
+export default {
+    name: 'nada-treeview',
     props:['value','initially_open','tree_active_items','cut_fields'],
     data: function () {    
         return {
@@ -331,5 +332,4 @@ Vue.component('nada-treeview', {
 
             </div>          
             `    
-});
-
+};

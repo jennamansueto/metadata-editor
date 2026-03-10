@@ -1,5 +1,6 @@
 /// Template apply defaults component
-Vue.component('template-apply-defaults-component', {
+export default {
+    name: 'template-apply-defaults-component',
     props:['value'],
     data () {
         return {
@@ -223,5 +224,4 @@ Vue.component('template-apply-defaults-component', {
                     
             </div>          
             `    
-});
-
+};

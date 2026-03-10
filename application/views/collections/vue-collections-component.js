@@ -1,4 +1,5 @@
-Vue.component('vue-collections-component', {
+export default {
+    name: 'vue-collections-component',
     props: ['value'],
     data() {
         return {     
@@ -377,5 +378,4 @@ Vue.component('vue-collections-component', {
                 
     </div>
     `
-});
-
+};

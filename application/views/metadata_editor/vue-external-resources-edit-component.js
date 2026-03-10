@@ -1,5 +1,6 @@
 //external resources
-const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
+const componentDef = {
+    name: 'external-resources-edit',
     props: ['index'],
     data() {
         return {
@@ -596,6 +597,7 @@ const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
         </section>
         </div>
     `
-});
+};
+export default componentDef;
 
 
