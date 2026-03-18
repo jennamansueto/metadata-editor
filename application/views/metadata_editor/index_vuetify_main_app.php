@@ -1019,6 +1019,9 @@
         if (VeeValidate.Form) window.AppComponents['VeeForm'] = VeeValidate.Form;
         if (VeeValidate.Field) window.AppComponents['VeeField'] = VeeValidate.Field;
         if (VeeValidate.ErrorMessage) window.AppComponents['ErrorMessage'] = VeeValidate.ErrorMessage;
+        // Register under old names for backward compat with templates using <validation-provider> / <validation-observer>
+        if (VeeValidate.Field) window.AppComponents['validation-provider'] = VeeValidate.Field;
+        if (VeeValidate.Form) window.AppComponents['validation-observer'] = VeeValidate.Form;
     }
     window.AppComponents['pane'] = Pane;
     window.AppComponents['splitpanes'] = Splitpanes;

@@ -151,7 +151,7 @@ window.AppComponents['vue-project-tags'] = {
                         </div>
                         <div class="mb-2">
                             <template v-for="t in project_tags">
-                                <v-chip :key="'tag-' + t.id" size="small" class="mr-1 mb-1" :close="effectiveCanEdit" @click:close="removeTag(t)">
+                                <v-chip :key="'tag-' + t.id" size="small" class="mr-1 mb-1" :closable="effectiveCanEdit" @click:close="removeTag(t)">
                                     {{ t.tag }}
                                 </v-chip>
                             </template>
