@@ -964,7 +964,7 @@ window.AppComponents['variables'] = {
                 if (variable_ && !variable_.var_invalrng){
                     variable_['var_invalrng'] = {
                         "values":[]
-                    });
+                    };
                 }
                 return variable_;
             }

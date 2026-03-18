@@ -1474,11 +1474,12 @@ const SystemStatusSection = {
     }
 };
 
-// MIGRATE: app.component('dashboard-overview', DashboardOverview);
-// MIGRATE: app.component('analytics-section', AnalyticsSection);
-// MIGRATE: app.component('api-logs-section', ApiLogsSection);
-// MIGRATE: app.component('activity-section', ActivitySection);
-// MIGRATE: app.component('system-status-section', SystemStatusSection);
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dashboard-overview'] = DashboardOverview;
+window.AppComponents['analytics-section'] = AnalyticsSection;
+window.AppComponents['api-logs-section'] = ApiLogsSection;
+window.AppComponents['activity-section'] = ActivitySection;
+window.AppComponents['system-status-section'] = SystemStatusSection;
 
 const DashboardHome = {
     template: '#dashboard-home-template',

@@ -60,7 +60,6 @@ window.AppComponents['editor-date-field'] = {
               :value="Value"
               clearable
               readonly
-              v-bind="attrs"
               v-bind="activatorProps"
               dense
               solo

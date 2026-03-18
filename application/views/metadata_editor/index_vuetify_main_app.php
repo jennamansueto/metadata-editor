@@ -1007,7 +1007,7 @@
                 if (!isValid && (actualType !== expectedType)) {
                     return `Expected ${expectedType}, found ${actualType}. To fix, delete the field value and then type/select a new value.`;
                 }
-                return isValid || true;
+                return isValid || 'Invalid value. To fix, delete the field value and then type/select a new value';
             });
         }
 

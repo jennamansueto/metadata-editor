@@ -298,7 +298,6 @@ window.AppComponents['vue-collections-component'] = {
                                                 <v-btn
                                                 color="primary"
                                                 dark
-                                                v-bind="attrs"
                                                 v-bind="activatorProps"
                                                 icon
                                                 >

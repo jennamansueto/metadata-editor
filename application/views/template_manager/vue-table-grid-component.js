@@ -230,7 +230,6 @@ window.AppComponents['table-grid-component'] = {
                             light
                             icon
                             x-small
-                            v-bind="attrs"
                             v-bind="activatorProps"
                         >
                             <v-icon>mdi-dots-vertical</v-icon>

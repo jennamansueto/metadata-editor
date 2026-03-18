@@ -93,7 +93,6 @@ window.AppComponents['vue-global-site-header'] = {
                         <v-btn
                         text
                         dark
-                        v-bind="attrs"
                         v-bind="activatorProps"
                         >
                         <v-icon>mdi mdi-translate</v-icon> {{current_language.title}}
@@ -115,7 +114,6 @@ window.AppComponents['vue-global-site-header'] = {
                     <v-btn
                      text
                     dark
-                    v-bind="attrs"
                     v-bind="activatorProps"
                     >
                     <v-icon>mdi-account-circle</v-icon> {{CI.user_info.username}}

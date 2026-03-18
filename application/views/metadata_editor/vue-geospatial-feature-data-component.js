@@ -313,7 +313,6 @@ window.AppComponents['geospatial-feature-data'] = {
                                                                             class="ml-1" 
                                                                             @click="showCharacteristicInfo(getHeaderMetadata(header.value))"
                                                                             style="cursor: pointer;"
-                                                                            v-bind="attrs"
                                                                             v-bind="activatorProps"
                                                                         >
                                                                             mdi-information-outline

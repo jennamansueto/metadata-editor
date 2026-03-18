@@ -709,7 +709,7 @@
               item.props.forEach((prop, propIdx) => {
                 const propKey = prop.prop_key || prop.key;
                 if (propKey === item_key) {
-                  delete item.props[propIdx];
+                  item.props.splice(propIdx, 1);
                 }
                 // Recursively check nested props
                 if (prop.props) {
@@ -780,12 +780,12 @@
               if (propIndex === -1 && propKeyToDelete && propKeyToDelete.includes('.')) {
                 const keyPart = propKeyToDelete.split('.').pop();
                 propIndex = propsArray.findIndex(p => {
-                  return (p.key === keyPart) || (p.key === activeNodeKey;
+                  return (p.key === keyPart) || (p.key === activeNodeKey);
                 });
               }
               
               if (propIndex !== -1) {
-                delete propsArray[propIndex];
+                propsArray.splice(propIndex, 1);
                 vm.ActiveNode = {};
                 vm.tree_active_items = [];
                 return true;

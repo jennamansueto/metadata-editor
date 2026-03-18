@@ -35,7 +35,6 @@
                         small 
                         @click="cancelProject"
                         style="margin-left:15px;margin-top:5px"
-                        v-bind="attrs"
                         v-bind="activatorProps"                        
                     >
                         <v-icon start>mdi-restore-alert</v-icon>            
@@ -81,7 +80,6 @@
         <template v-slot:activator="{ props: activatorProps }">
             
             <v-btn 
-                v-bind="attrs"
                 v-bind="activatorProps"
                 icon
                 large

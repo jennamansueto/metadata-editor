@@ -37,10 +37,9 @@ window.AppComponents['v-toast'] = {
                     >
                     {{ text }}
 
-                    <template v-slot:action="{ attrs }">
+                    <template v-slot:actions>
                         <v-btn                        
-                        text
-                        v-bind="attrs"
+                        variant="text"
                         @click="snackbar = false"
                         >
                         Close
