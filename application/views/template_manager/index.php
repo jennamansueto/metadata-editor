@@ -570,6 +570,7 @@
           tree: [],
 
           tab: '',
+          editContentTab: 0,
           field_data_types: [
             "string",
             "number",

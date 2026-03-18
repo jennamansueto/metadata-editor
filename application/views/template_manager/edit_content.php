@@ -352,14 +352,14 @@
 </div>
 
 <template v-if="ActiveNode && ActiveNode.type!=='section_container' && ActiveNode.type!=='section' && !ActiveNodeIsProp && !ActiveNodeIsInsideNestedArray && ActiveNode.key">
-    <v-tabs background-color="transparent" class="mb-5" :key="ActiveNode.key">
+    <v-tabs v-model="editContentTab" background-color="transparent" class="mb-5" :key="ActiveNode.key">
         <v-tab v-if="ActiveNode.key && isControlField(ActiveNode.type) == true">{{$t("display")}}</v-tab>
         <v-tab v-if="!ActiveArrayNodeIsNested"><span v-if="ActiveNodeEnumCount>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("controlled_vocabulary")}}</v-tab>
         <v-tab v-if="!ActiveArrayNodeIsNested || (ActiveNode && isControlField(ActiveNode.type) == true)"><span v-if="ActiveNode && ActiveNode.default"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("default")}}</v-tab>
         <v-tab v-if="ActiveNode && isControlField(ActiveNode.type)"><span v-if="ActiveNode && ActiveNode.rules && Object.keys(ActiveNode.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
         <v-tab>{{$t("json")}}</v-tab>
     </v-tabs>
-    <v-window>
+    <v-window v-model="editContentTab">
         <v-window-item class="p-3 tab-display" v-if="ActiveNode.key && isControlField(ActiveNode.type) == true">
             <!--display-->
             <div v-if="ActiveNode.type!='simple_array'" class="mb-3">

@@ -42,7 +42,7 @@
             </div>
 
             <div class="mt-2" >
-                <v-text-field variant="outlined" clearable density="compact" label="" v-model:value="tree_search" placeholder="Search..." prepend-inner-icon="mdi-magnify" ></v-text-field>
+                <v-text-field variant="outlined" clearable density="compact" label="" v-model="tree_search" placeholder="Search..." prepend-inner-icon="mdi-magnify" ></v-text-field>
             </div>
             </div>
 

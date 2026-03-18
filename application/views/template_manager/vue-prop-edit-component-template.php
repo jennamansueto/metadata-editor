@@ -70,14 +70,14 @@
     </div>
     <!-- Only show tabs for non-section props - sections should work like regular sections -->
     <template v-if="prop.type!=='section' && prop.type!=='section_container'">
-        <v-tabs background-color="transparent" class="mb-5" :key="prop.prop_key">
+        <v-tabs v-model="propEditTab" background-color="transparent" class="mb-5" :key="prop.prop_key">
             <v-tab  v-if="isField(prop.type) || prop.type=='simple_array'">{{$t("display")}}</v-tab>
             <v-tab><span v-if="prop.enum && prop.enum.length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("controlled_vocabulary")}}</v-tab>
             <v-tab>{{$t("default")}}<span v-if="prop.default"><v-icon style="color:green;">mdi-circle-medium</v-icon></span></v-tab>
             <v-tab v-if="isField(prop.type)"><span v-if="prop.rules && Object.keys(prop.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
             <v-tab>{{$t("json")}}</v-tab>
         </v-tabs>
-        <v-window>
+        <v-window v-model="propEditTab">
             <v-window-item class="p-3"  v-if="isField(prop.type)  || prop.type=='simple_array'">
 
                 <!--display-->

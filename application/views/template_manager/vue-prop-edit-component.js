@@ -17,6 +17,7 @@ window.AppComponents['prop-edit'] = {
             "dropdown",
             "dropdown-custom"
           ],
+          propEditTab: 0,
           enum_store_options:[
             {
               "value":"both",
