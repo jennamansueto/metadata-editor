@@ -771,7 +771,7 @@ window.AppComponents['datafiles'] = {
 
                         <div v-if="dialog.download_links">
                             <div v-for="link in dialog.download_links">
-                                <v-btn color="primary" variant="outlined" block variant="text"><a :href="link.url">{{link.title}}</a></v-btn>                                
+                                <v-btn color="primary" variant="outlined" block><a :href="link.url">{{link.title}}</a></v-btn>                                
                             </div>
                         </div>
 

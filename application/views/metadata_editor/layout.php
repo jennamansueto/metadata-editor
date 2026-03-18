@@ -19,21 +19,21 @@
             <div class="editor-sidebar-header-icons d-flex justify-center align-center mb-5">
                 
                 <div class="text-center pa-2" >
-                    <v-btn variant="text" variant="outlined" title="Show mandatory fields" :class="{ active: show_fields_mandatory }" @click="toggleFields('mandatory')">
+                    <v-btn variant="outlined" title="Show mandatory fields" :class="{ active: show_fields_mandatory }" @click="toggleFields('mandatory')">
                         <v-icon class="icon">mdi-check-circle</v-icon>
                     </v-btn>
                     <div class="text-capitalize"><small>{{$t('required')}}</small></div>
                 </div>
 
                 <div class="text-center pa-2" >
-                    <v-btn variant="text" variant="outlined" title="Show recommended fields" :class="{ active: show_fields_recommended }" @click="toggleFields('recommended')">
+                    <v-btn variant="outlined" title="Show recommended fields" :class="{ active: show_fields_recommended }" @click="toggleFields('recommended')">
                         <v-icon class="icon">mdi-circle-half-full</v-icon>
                     </v-btn>
                     <div class="text-capitalize"><small>{{$t('recommended')}}</small></div>
                 </div>
 
                 <div class="text-center pa-2" >
-                    <v-btn variant="text" variant="outlined" title="Show empty fields" :class="{ active: show_fields_empty }" @click="toggleFields('empty')">
+                    <v-btn variant="outlined" title="Show empty fields" :class="{ active: show_fields_empty }" @click="toggleFields('empty')">
                         <v-icon class="icon">mdi-circle-outline</v-icon>
                     </v-btn>
                     <div class="text-capitalize"><small>{{$t('empty')}}</small></div>

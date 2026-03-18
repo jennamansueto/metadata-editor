@@ -367,7 +367,7 @@ window.AppComponents['geospatial-features'] = {
                 <v-card>
                     <v-card-title>{{$t("geospatial_features")}}</v-card-title>
                     <v-card-text>
-                        <v-alert variant="tonal" variant="outlined" color="warning" icon="mdi-alert">
+                        <v-alert variant="outlined" color="warning" icon="mdi-alert">
                             {{$t("geospatial_features_only_available_for_geospatial_projects")}}
                         </v-alert>
                     </v-card-text>
@@ -528,7 +528,7 @@ window.AppComponents['geospatial-features'] = {
                             </table>
                             
                             <div v-if="geospatialFeatures.length === 0" class="text-center mt-5">
-                                <v-alert variant="tonal" variant="outlined" color="info" icon="mdi-information">
+                                <v-alert variant="outlined" color="info" icon="mdi-information">
                                     {{$t("no_geospatial_features")}}
                                 </v-alert>
                             </div>

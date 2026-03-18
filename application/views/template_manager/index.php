@@ -718,7 +718,7 @@
               });
             }
             if (item.key == item_key || (item.prop_key && item.prop_key == item_key)) {
-              delete tree[idx];
+              tree.splice(idx, 1);
             }
           });
         },
