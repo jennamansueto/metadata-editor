@@ -65,13 +65,13 @@ window.AppComponents['form-main'] = {
 
             <!-- form-section -->
             <div v-if="activeFormFieldDisplayType()=='section_container'"  class="form-section m-3" >
-                <v-form-preview                         
+                <nada-form-preview                         
                         :items="formField.items" 
                         :title="formField.title"
                         :path="formField.key"
                         :field="formField"
                     >
-                </v-form-preview>
+                </nada-form-preview>
             </div>
             <!-- end-form-section -->
 

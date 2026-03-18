@@ -48,11 +48,11 @@ window.AppComponents['page-preview'] = {
                 </v-btn>
             </div>
 
-            <v-form-preview
+            <nada-form-preview
                     :items="TemplateItems" 
                     title="Preview"
                 >
-            </v-form-preview>
+            </nada-form-preview>
 
             
             <div v-if="is_loading" class="text-center">

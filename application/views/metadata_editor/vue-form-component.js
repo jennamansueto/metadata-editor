@@ -1,6 +1,6 @@
 //v-form
 window.AppComponents = window.AppComponents || {};
-window.AppComponents['v-form'] = {
+window.AppComponents['nada-form'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'field','active_section'],
     data() {
         return {
@@ -67,7 +67,7 @@ window.AppComponents['v-form'] = {
                     
                     <template>
                         <div style="font-size:18px;font-weight:bold;" class="section-container-title">{{item.title}} - {{item.key}}</div>                        
-                                <v-form
+                                <nada-form
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -75,7 +75,7 @@ window.AppComponents['v-form'] = {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form>                        
+                                </nada-form>                        
                     </template>                    
                 </div>
                 <!-- end-form-section-container -->
@@ -89,7 +89,7 @@ window.AppComponents['v-form'] = {
                                 {{item.title}}
                             </v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <v-form
+                                <nada-form
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -97,7 +97,7 @@ window.AppComponents['v-form'] = {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form>
+                                </nada-form>
                             </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>

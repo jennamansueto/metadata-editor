@@ -1,6 +1,6 @@
 //v-form
 window.AppComponents = window.AppComponents || {};
-window.AppComponents['v-form-preview'] = {
+window.AppComponents['nada-form-preview'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'value'],
     data() {
         return {
@@ -139,7 +139,7 @@ window.AppComponents['v-form-preview'] = {
                     
                     <template>
                         <div  class="section-container-title">{{item.title}}</div>                        
-                                <v-form-preview
+                                <nada-form-preview
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -147,7 +147,7 @@ window.AppComponents['v-form-preview'] = {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form-preview>
+                                </nada-form-preview>
                     </template>                    
                 </div>
                 <!-- end-form-section-container -->
@@ -162,7 +162,7 @@ window.AppComponents['v-form-preview'] = {
                                 <h5>{{item.title}}</h5>
                             </div>
                             <div class="card-body">
-                                <v-form-preview
+                                <nada-form-preview
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -170,7 +170,7 @@ window.AppComponents['v-form-preview'] = {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form-preview>
+                                </nada-form-preview>
                             </div>
                             
                         </div>

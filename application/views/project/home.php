@@ -1835,6 +1835,11 @@
     app.use(router);
     app.mixin(momentMixin);
 
+    // Use GlobalLoginPlugin for session handling
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        app.use(GlobalLoginPlugin);
+    }
+
     // Register global properties
     if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
     if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
