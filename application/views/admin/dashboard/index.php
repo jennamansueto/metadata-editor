@@ -1199,7 +1199,7 @@ const AnalyticsSection = {
             const ctx = canvas.getContext('2d');
             this.trafficChart = new ChartLib(ctx, {
                 type: 'line',
-                data: {
+                data() { return {
                     labels,
                     datasets: [{
                         label: '<?php echo t('Page Views'); ?>',
@@ -1268,7 +1268,7 @@ const AnalyticsSection = {
             const ctx = canvas.getContext('2d');
             this.hourlyChart = new ChartLib(ctx, {
                 type: 'line',
-                data: {
+                data() { return {
                     labels,
                     datasets: [{
                         label: '<?php echo t('Page Views'); ?>',
@@ -1926,22 +1926,21 @@ const ApiLogsAggregates = {
     }
 };
 
-const router = new VueRouter({
-    mode: 'hash',
+const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes: [
         { path: '/', component: DashboardHome },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
-        { path: '*', redirect: '/' }
+        { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
-    vuetify: new Vuetify({
-        theme: {
-            themes: {
-                light: {
+const vuetify = Vuetify.createVuetify({
+    theme: {
+        themes: {
+            light: {
+                colors: {
                     primary: '#1976D2',
                     secondary: '#424242',
                     accent: '#82B1FF',
@@ -1952,7 +1951,29 @@ new Vue({
                 }
             }
         }
-    }),
-    router
+    }
 });
+
+const app = Vue.createApp({
+    data() {
+        return {}
+    }
+});
+
+app.use(vuetify);
+app.use(router);
+
+// Register global properties
+if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+// Register components
+if (window.AppComponents) {
+    for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+    }
+}
+
+app.mount('#dashboard-app');
 </script>

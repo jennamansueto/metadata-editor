@@ -626,6 +626,7 @@
 
   <!-- Vue.js and dependencies -->
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuex.min.js"></script>
@@ -642,7 +643,8 @@
       default: <?php echo json_encode($translations, JSON_HEX_APOS); ?>
     };
     
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default',
       fallbackLocale: 'default',
       messages: translation_messages
@@ -650,28 +652,27 @@
 
 
     // Vuetify setup
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#1976D2',
-            secondary: '#424242',
-            accent: '#82B1FF',
-            error: '#FF5252',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FFC107'
+            colors: {
+              primary: '#1976D2',
+              secondary: '#424242',
+              accent: '#82B1FF',
+              error: '#FF5252',
+              info: '#2196F3',
+              success: '#4CAF50',
+              warning: '#FFC107'
+            }
           }
         }
       }
     });
 
     // Vue app
-    const vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         // Get project IDs from URL query string
         project1_id: new URLSearchParams(window.location.search).get('project1'),
         project2_id: new URLSearchParams(window.location.search).get('project2'),
@@ -1187,6 +1188,23 @@
         }
       }
     });
+
+    app.use(vuetify);
+    app.use(i18n);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
 </body>

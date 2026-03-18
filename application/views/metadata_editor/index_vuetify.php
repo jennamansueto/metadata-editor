@@ -94,7 +94,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
@@ -127,62 +127,54 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default',
       messages: translation_messages,
       //show warnings in console
-      silentTranslationWarn: false
+      silentTranslationWarn: false,
+      legacy: true
     })
 
-    Vue.filter('truncate', function (text, stop, clamp) {
+    // Filters converted to global properties (Vue 3 removed filters)
+    const $filters = {
+      truncate(text, stop, clamp) {
         return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
-    });
-
-    Vue.filter('kb', val => {
-      return Math.floor(val/1024);  
-    });
-
-    Vue.filter('mb', val => {
-      return (val / (1024*1024)).toFixed(2);
-    });
-
-    Vue.filter('kbmb', val => {
-      if (val<1024*1024){
-        return Math.floor(val/1024) + ' KB';  
+      },
+      kb(val) {
+        return Math.floor(val/1024);
+      },
+      mb(val) {
+        return (val / (1024*1024)).toFixed(2);
+      },
+      kbmb(val) {
+        if (val<1024*1024){
+          return Math.floor(val/1024) + ' KB';
+        }
+        return (val / (1024*1024)).toFixed(2) + ' MB';
       }
+    };
 
-      return (val / (1024*1024)).toFixed(2) + ' MB';
-    });
-
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
             theme: {
             themes: {
                 light: {
-                    primary: '#526bc7',
-                    "primary-dark": '#0c1a4d',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
-                    success: '#4caf50',
-                    info: '#2196f3',
-                    warning: '#ff9800',
+                    colors: {
+                        primary: '#526bc7',
+                        'primary-dark': '#0c1a4d',
+                        secondary: '#b0bec5',
+                        accent: '#8c9eff',
+                        error: '#b71c1c',
+                        success: '#4caf50',
+                        info: '#2196f3',
+                        warning: '#ff9800',
+                    },
                 },
             },
             },
         })
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app=new Vue({
-      el: '#app',
-      i18n,
-      vuetify: vuetify,
-      router:router,
-      store,
-      data:{          
+    const vue_app = Vue.createApp({
+      data() { return {          
           active_section:null,
           active_form_field:null,
           schema_validator: null,
@@ -235,7 +227,7 @@
 
         apply_defaults_dialog:false,
         apply_defaults_dialog_key:0
-      },
+      }},
       created: async function(){
         await this.$store.dispatch('initData',{dataset_id:this.dataset_id});
         await this.$store.dispatch('initTreeItems');
@@ -1360,7 +1352,42 @@
     }
     })
 
-    // MIGRATE: app.component('VueJsonPretty', VueJsonPretty.default);
+    // Register plugins
+    vue_app.use(vuetify);
+    vue_app.use(router);
+    vue_app.use(store);
+    vue_app.use(i18n);
+
+    // Use GlobalLoginPlugin for session handling
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        vue_app.use(GlobalLoginPlugin);
+    }
+
+    // Register global properties
+    vue_app.config.globalProperties.$filters = $filters;
+    vue_app.config.globalProperties.$confirm = window.__globalConfirm;
+    vue_app.config.globalProperties.$alert = window.__globalAlert;
+    vue_app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Apply global mixin
+    if (window.__globalMixin) {
+        vue_app.mixin(window.__globalMixin);
+    }
+
+    // Register all components from window.AppComponents
+    if (window.AppComponents) {
+        for (const [name, component] of Object.entries(window.AppComponents)) {
+            vue_app.component(name, component);
+        }
+    }
+
+    // Register VueJsonPretty
+    if (typeof VueJsonPretty !== 'undefined') {
+        vue_app.component('VueJsonPretty', VueJsonPretty.default || VueJsonPretty);
+    }
+
+    // Mount the app
+    vue_app.mount('#app');
   </script>
 
   <script>

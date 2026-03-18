@@ -4,20 +4,23 @@
     default: JSON.parse(atob(translationsJsonBase64))
   };
 
-  const i18n = new VueI18n({
+  const i18n = VueI18n.createI18n({
+      legacy: true,
     locale: 'default',
     messages: translation_messages
   });
 
-  const vuetify = new Vuetify({
+  const vuetify = Vuetify.createVuetify({
     theme: {
       themes: {
         light: {
-          primary: '#526bc7',
-          'primary-dark': '#0c1a4d',
-          secondary: '#b0bec5',
-          accent: '#8c9eff',
-          error: '#b71c1c'
+          colors: {
+            primary: '#526bc7',
+            'primary-dark': '#0c1a4d',
+            secondary: '#b0bec5',
+            accent: '#8c9eff',
+            error: '#b71c1c'
+          }
         }
       }
     }
@@ -1234,16 +1237,12 @@
     { path: '/mappings/:uid', name: 'schema-mappings', component: SchemaMappings, props: route => ({ schemaUid: route.params.uid }) }
   ];
 
-  const router = new VueRouter({
-    mode: 'hash',
+  const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes
   });
 
-  new Vue({
-    el: '#app',
-    i18n,
-    vuetify,
-    router,
+  const app = Vue.createApp({
     data() {
       return {
         baseApiRoot,
@@ -1274,4 +1273,22 @@
       }
     }
   });
+
+  app.use(vuetify);
+  app.use(i18n);
+  app.use(router);
+
+  // Register global properties
+  if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+  if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+  if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+  // Register components
+  if (window.AppComponents) {
+    for (const [name, component] of Object.entries(window.AppComponents)) {
+      app.component(name, component);
+    }
+  }
+
+  app.mount('#app');
 })();

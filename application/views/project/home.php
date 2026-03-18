@@ -690,7 +690,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
   <!--
-  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/vue-deepset.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/mitt.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/deepdash/browser/deepdash.standalone.min.js"></script>
   -->
 
@@ -728,7 +728,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -756,23 +757,25 @@
       }
     ]
 
-    const router = new VueRouter({
-      routes, 
-      mode: 'history'
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
+      routes
     })
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#526bc7',
-            "primary-dark": '#0c1a4d',
-            secondary: '#b0bec5',
-            accent: '#8c9eff',
-            error: '#b71c1c',
-          },
-        },
-      },
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c',
+            }
+          }
+        }
+      }
     });
 
 
@@ -804,19 +807,8 @@
         }
       }
 
-    Vue.mixin(momentMixin);
-
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify: vuetify,
-      router: router,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -1836,7 +1828,26 @@
         }
 
       }
-    })
+    });
+
+    app.use(vuetify);
+    app.use(i18n);
+    app.use(router);
+    app.mixin(momentMixin);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
   <?php $this->load->view('common/analytics'); ?>

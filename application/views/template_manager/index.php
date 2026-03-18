@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   
@@ -362,12 +363,13 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     });
 
-    Vue.mixin({
+    window.__globalMixin = {
       methods: {
                 
                 copyToClipBoard: function(textToCopy){
@@ -474,7 +476,7 @@
             }
     })
 
-    const store = new Vuex.Store({
+    const store = Vuex.createStore({
       state: {
         active_node: {},
         active_core_node: {},
@@ -544,13 +546,9 @@
           return Array.from(new Set(output));
         }
       }
-    })
+    });
 
-    new Vue({
-      el: "#app",
-      i18n,
-      store,
-      vuetify: new Vuetify(),
+    const app = Vue.createApp({
       data() {
         return {
           user_template_info: user_template_info,
@@ -1991,6 +1989,41 @@
         },
       }
     });
+
+    const vuetify = Vuetify.createVuetify({
+      theme: {
+        themes: {
+          light: {
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c'
+            }
+          }
+        }
+      }
+    });
+
+    app.use(vuetify);
+    app.use(i18n);
+    app.use(store);
+    if (window.__globalMixin) app.mixin(window.__globalMixin);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
 

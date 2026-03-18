@@ -1,5 +1,6 @@
 //form input component
-Vue.component("form-input", {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['form-input'] = {
   props: ["value", "field", "title"],
   data: function () {
     return {};
@@ -445,4 +446,4 @@ Vue.component("form-input", {
       return rules;
     },
   },
-});
+};
