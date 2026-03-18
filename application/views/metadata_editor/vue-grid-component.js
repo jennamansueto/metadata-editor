@@ -11,7 +11,7 @@ window.AppComponents['grid-component'] = {
     },
     watch: { 
         field_data: function(newVal, oldVal) {
-            this.$vueSet (this.$store.state.formData, this.key_path, newVal);
+            _.set(this.$store.state.formData, this.key_path, newVal);
         }
     
     },

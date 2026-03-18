@@ -14,7 +14,7 @@ window.AppComponents['form-section'] = {
             return this.columns;
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
     },
     methods:{

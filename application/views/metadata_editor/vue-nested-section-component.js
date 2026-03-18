@@ -12,7 +12,7 @@ window.AppComponents['nested-section'] = {
     watch: { 
         field_data: function(newVal, oldVal) {
             console.log("watch field_data",this.key_path,JSON.stringify(newVal), JSON.stringify(oldVal));
-            this.$vueSet (this.formData, this.key_path, newVal);
+            _.set(this.formData, this.key_path, newVal);
         }
     },
     mounted: function () {
@@ -27,7 +27,7 @@ window.AppComponents['nested-section'] = {
             return this.columns;
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
         
     },  

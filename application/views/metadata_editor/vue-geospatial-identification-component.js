@@ -12,7 +12,7 @@ window.AppComponents['identification-section'] = {
         field_data: function(newVal, oldVal) {
             console.log('=========Prop changed: ', newVal, ' | was: ', oldVal)
             console.log('=========key path:',this.key_path);
-            this.$vueSet (this.$store.state.formData, this.key_path, newVal);
+            _.set(this.$store.state.formData, this.key_path, newVal);
         }
     },
     mounted: function () {

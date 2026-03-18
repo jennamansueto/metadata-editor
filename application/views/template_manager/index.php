@@ -2016,6 +2016,13 @@
     if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
     if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
 
+    // Register $filters for template components that use filter syntax
+    app.config.globalProperties.$filters = {
+      truncate(text, stop, clamp) {
+        return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
+      }
+    };
+
     // Register components
     if (window.AppComponents) {
       for (const [name, component] of Object.entries(window.AppComponents)) {

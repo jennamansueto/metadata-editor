@@ -41,7 +41,7 @@ window.AppComponents['form-main'] = {
     },
     computed: {
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         },
         activeSection()
         {

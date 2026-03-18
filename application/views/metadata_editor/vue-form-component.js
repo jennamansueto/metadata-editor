@@ -45,7 +45,7 @@ window.AppComponents['v-form'] = {
             }
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         },
         formTextFieldStyle(){            
             return this.$store.state.formTextFieldStyle;

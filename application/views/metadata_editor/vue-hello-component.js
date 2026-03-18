@@ -39,7 +39,7 @@ window.AppComponents['hello'] = {
             }
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
     },
     template: `

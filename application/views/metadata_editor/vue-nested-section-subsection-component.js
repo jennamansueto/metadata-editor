@@ -23,7 +23,7 @@ window.AppComponents['nested-section-subsection'] = {
             return this.columns;
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
     },
     methods:{
