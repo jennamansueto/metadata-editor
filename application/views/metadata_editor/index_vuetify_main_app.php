@@ -1016,8 +1016,8 @@
     // Store component references globally for registration in entry points
     window.AppComponents = window.AppComponents || {};
     if (typeof VeeValidate !== 'undefined') {
-        if (VeeValidate.Form) window.AppComponents['VForm'] = VeeValidate.Form;
-        if (VeeValidate.Field) window.AppComponents['VField'] = VeeValidate.Field;
+        if (VeeValidate.Form) window.AppComponents['VeeForm'] = VeeValidate.Form;
+        if (VeeValidate.Field) window.AppComponents['VeeField'] = VeeValidate.Field;
         if (VeeValidate.ErrorMessage) window.AppComponents['ErrorMessage'] = VeeValidate.ErrorMessage;
     }
     window.AppComponents['pane'] = Pane;

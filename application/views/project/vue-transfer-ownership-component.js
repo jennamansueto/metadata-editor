@@ -91,7 +91,7 @@ window.AppComponents['vue-transfer-ownership'] = {
                     <v-autocomplete
                         v-model="selected_user"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         :items="users"
                         solo
                         chips
@@ -117,7 +117,7 @@ window.AppComponents['vue-transfer-ownership'] = {
 
                         <template v-slot:item="data">
                             <template v-if="typeof data.item !== 'object'">
-                                <v-list-item-content v-text="data.item">
+                                <span v-text="data.item"></span>
                             </template>
                             <template v-else>
                                 

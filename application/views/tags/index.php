@@ -98,7 +98,7 @@
                         :headers="headers"
                         :items="tags"
                         :server-items-length="totalTags"
-                        :items-per-page.sync="itemsPerPage"
+                        v-model:items-per-page="itemsPerPage"
                         v-model:page="page"
                         :loading="loading"
                         class="tags-table"

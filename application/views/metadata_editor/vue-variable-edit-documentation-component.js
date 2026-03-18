@@ -213,7 +213,7 @@ window.AppComponents['variable-edit-documentation'] = {
                 <template>
                     <v-navigation-drawer
                         v-model="drawer"
-                        :mini-variant.sync="drawer_mini" permanent bottom>
+                        v-model:rail="drawer_mini" permanent bottom>
                         <v-list-item class="px-2">
                             <v-app-bar-nav-icon></v-app-bar-nav-icon>
                                 <v-list-item-title>{{$t('settings')}}</v-list-item-title>                            

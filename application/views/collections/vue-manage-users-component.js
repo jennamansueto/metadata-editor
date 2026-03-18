@@ -362,7 +362,7 @@ window.AppComponents['vue-collection-access-manager'] = {
                             <v-autocomplete
                                 v-model="selected_users"
                                 :loading="is_loading"
-                                :search-input.sync="search"
+                                v-model:search="search"
                                 :items="users"
                                 solo
                                 chips
@@ -389,7 +389,7 @@ window.AppComponents['vue-collection-access-manager'] = {
 
                                 <template v-slot:item="data">
                                     <template v-if="typeof data.item !== 'object'">
-                                        <v-list-item-content v-text="data.item">
+                                        <span v-text="data.item"></span>
                                     </template>
                                     <template v-else>
                                         
@@ -467,7 +467,7 @@ window.AppComponents['vue-collection-access-manager'] = {
                         <v-autocomplete
                             v-model="selected_users"
                             :loading="is_loading"
-                            :search-input.sync="search"
+                            v-model:search="search"
                             :items="users"
                             solo
                             chips
@@ -494,7 +494,7 @@ window.AppComponents['vue-collection-access-manager'] = {
 
                             <template v-slot:item="data">
                                 <template v-if="typeof data.item !== 'object'">
-                                    <v-list-item-content v-text="data.item">
+                                    <span v-text="data.item"></span>
                                 </template>
                                 <template v-else>
                                     

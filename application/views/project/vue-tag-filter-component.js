@@ -72,7 +72,7 @@ window.AppComponents['vue-tag-filter'] = {
                     <v-autocomplete
                         v-model="selected_tags"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         @change="search=''"
                         :items="tags"
                         solo

@@ -190,7 +190,7 @@ window.AppComponents['vue-template-share-common'] = {
                     <v-autocomplete
                         v-model="selected_users"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         @input="search=null"
                         :items="users"
                         solo
@@ -218,7 +218,7 @@ window.AppComponents['vue-template-share-common'] = {
 
                         <template v-slot:item="data">
                             <template v-if="typeof data.item !== 'object'">
-                                <v-list-item-content v-text="data.item">
+                                <span v-text="data.item"></span>
                             </template>
                             <template v-else>
                                 

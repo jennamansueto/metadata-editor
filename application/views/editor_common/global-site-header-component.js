@@ -91,7 +91,7 @@ window.AppComponents['vue-global-site-header'] = {
                 <v-menu offset-y style="z-index: 2000;" >
                     <template v-slot:activator="{ props: activatorProps }">
                         <v-btn
-                        text
+                        variant="text"
                         dark
                         v-bind="activatorProps"
                         >
@@ -112,7 +112,7 @@ window.AppComponents['vue-global-site-header'] = {
                 <v-menu offset-y style="z-index: 2000;" >
                 <template v-slot:activator="{ props: activatorProps }">
                     <v-btn
-                     text
+                     variant="text"
                     dark
                     v-bind="activatorProps"
                     >

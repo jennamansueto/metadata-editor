@@ -67,7 +67,7 @@ window.AppComponents['vue-user-filter'] = {
                     <v-autocomplete
                         v-model="selected_users"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         @change="search=''"
                         :items="users"
                         solo

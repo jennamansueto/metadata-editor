@@ -7,9 +7,9 @@
   'use strict';
 
   var GlobalLoginPlugin = {
-    install: function(Vue, options) {
+    install: function(app, options) {
       // Global mixin to provide login dialog state and methods
-      Vue.mixin({
+      app.mixin({
         data: function() {
           return {
             login_dialog: false,
@@ -39,7 +39,7 @@
             vm._globalSessionHandlerInitialized = true;
           }
         },
-        beforeDestroy: function() {
+        beforeUnmount: function() {
           // Cleanup if needed
           if (this._globalSessionHandlerInitialized && window.GlobalSessionHandler) {
             // Unregister callbacks would require storing the callback reference
