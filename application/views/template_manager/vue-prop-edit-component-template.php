@@ -76,7 +76,8 @@
             <v-tab>{{$t("default")}}<span v-if="prop.default"><v-icon style="color:green;">mdi-circle-medium</v-icon></span></v-tab>
             <v-tab v-if="isField(prop.type)"><span v-if="prop.rules && Object.keys(prop.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
             <v-tab>{{$t("json")}}</v-tab>
-
+        </v-tabs>
+        <v-window>
             <v-window-item class="p-3"  v-if="isField(prop.type)  || prop.type=='simple_array'">
 
                 <!--display-->
@@ -213,7 +214,7 @@
                     </div>
                 </div>
             </v-window-item>
-        </v-tabs>
+        </v-window>
     </template>
 </div>
     

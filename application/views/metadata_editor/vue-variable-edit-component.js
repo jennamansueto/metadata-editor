@@ -487,7 +487,8 @@ window.AppComponents['variable-edit'] = {
                     {{$t('weights')}} <span v-if="variable.var_wgt_id"><v-icon style="color:green;">mdi-circle-medium</v-icon></span></v-tab>
                 <v-tab key="documentation" href="#documentation">{{$t('documentation')}}</v-tab>
                 <v-tab key="json" href="#json">{{$t('json')}}</v-tab>
-
+            </v-tabs>
+            <v-window v-model="active_tab">
                 <v-window-item key="statistics" value="statistics">
                 
                     <!-- statistics tab -->
@@ -635,7 +636,7 @@ window.AppComponents['variable-edit'] = {
                     ></variable-edit-documentation>    
 
                 </v-window-item>
-            </v-tabs>
+            </v-window>
         </template>
 
         </div>          

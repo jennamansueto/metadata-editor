@@ -358,7 +358,8 @@
         <v-tab v-if="!ActiveArrayNodeIsNested || (ActiveNode && isControlField(ActiveNode.type) == true)"><span v-if="ActiveNode && ActiveNode.default"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("default")}}</v-tab>
         <v-tab v-if="ActiveNode && isControlField(ActiveNode.type)"><span v-if="ActiveNode && ActiveNode.rules && Object.keys(ActiveNode.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
         <v-tab>{{$t("json")}}</v-tab>
-
+    </v-tabs>
+    <v-window>
         <v-window-item class="p-3 tab-display" v-if="ActiveNode.key && isControlField(ActiveNode.type) == true">
             <!--display-->
             <div v-if="ActiveNode.type!='simple_array'" class="mb-3">
@@ -534,7 +535,7 @@
                 </div>
             </div>
         </v-window-item>
-    </v-tabs>
+    </v-window>
 
 </template>
 

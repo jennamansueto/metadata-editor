@@ -868,7 +868,7 @@ window.AppComponents['variables'] = {
             }
 
             for (let i=0;i<this.edit_items.length;i++){
-                Vue.set (this.variables, this.edit_items[i], variable);
+                this.variables[this.edit_items[i]] = variable;
             }
         },
         onVariableKeydown: function(event,idx,field_name){
