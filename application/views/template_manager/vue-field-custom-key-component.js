@@ -1,5 +1,6 @@
 ///vue component for editing custom KEY field
-Vue.component('vue-custom-key-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-custom-key-field'] = {
     props:['value','field'],
     data: function () {    
         return {

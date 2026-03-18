@@ -1,5 +1,6 @@
 /// JSON Edit Component
-Vue.component('json-edit', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['json-edit'] = {
     props: ['value'],
     data: function () {
         return {
@@ -73,13 +74,13 @@ Vue.component('json-edit', {
                 <v-tab>Preview</v-tab>
                 <v-tab>Edit JSON</v-tab>
             </v-tabs>
-            <v-tabs-items v-model="activeTab">
-                <v-tab-item>
+            <v-window v-model="activeTab">
+                <v-window-item>
                     <div class="bg-light p-2">
                     <pre>{{ removeEmptyValues(localValue) }}</pre>
                     </div>
-                </v-tab-item>
-                <v-tab-item>
+                </v-window-item>
+                <v-window-item>
                     <div class="bg-light p-2">
                     <v-textarea
                         v-model="localValue"
@@ -90,11 +91,11 @@ Vue.component('json-edit', {
                         @input="validateJSON(localValue)"
                     ></v-textarea>
                     </div>
-                    <v-btn @click="update" small outlined color="primary">{{$t("update")}}</v-btn>
-                    <v-btn @click="resetValue" small outlined color="default">Reset</v-btn>
+                    <v-btn @click="update" size="small" variant="outlined" color="primary">{{$t("update")}}</v-btn>
+                    <v-btn @click="resetValue" size="small" variant="outlined" color="default">Reset</v-btn>
                     <div v-if="errorMessage" class="error text-white p-1">{{ errorMessage }}</div>
-                </v-tab-item>
-            </v-tabs-items>
+                </v-window-item>
+            </v-window>
         </div>
     `
 });

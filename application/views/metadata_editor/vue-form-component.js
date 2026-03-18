@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nada-form'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'field','active_section'],
     data() {
         return {
@@ -44,7 +45,7 @@ Vue.component('v-form', {
             }
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         },
         formTextFieldStyle(){            
             return this.$store.state.formTextFieldStyle;
@@ -66,7 +67,7 @@ Vue.component('v-form', {
                     
                     <template>
                         <div style="font-size:18px;font-weight:bold;" class="section-container-title">{{item.title}} - {{item.key}}</div>                        
-                                <v-form
+                                <nada-form
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -74,7 +75,7 @@ Vue.component('v-form', {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form>                        
+                                </nada-form>                        
                     </template>                    
                 </div>
                 <!-- end-form-section-container -->
@@ -84,11 +85,11 @@ Vue.component('v-form', {
                     <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                                 {{item.title}}
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
-                                <v-form
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <nada-form
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -96,8 +97,8 @@ Vue.component('v-form', {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form>
-                            </v-expansion-panel-content>
+                                </nada-form>
+                            </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </template>

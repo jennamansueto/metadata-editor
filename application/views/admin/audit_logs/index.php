@@ -101,6 +101,7 @@
 </style>
 
 <script src="<?php echo base_url(); ?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/vuetify.min.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.min.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
@@ -154,34 +155,49 @@
         }
     };
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
         locale: 'default',
         messages: translation_messages,
     });
 
     // Set up Vuetify
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
         theme: {
             themes: {
                 light: {
-                    primary: '#526bc7',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
+                    colors: {
+                        primary: '#526bc7',
+                        secondary: '#b0bec5',
+                        accent: '#8c9eff',
+                        error: '#b71c1c',
+                    },
                 },
             },
         },
     });
 
     // Initialize Vue app
-    new Vue({
-        el: "#app",
-        i18n,
-        vuetify: vuetify,
+    const app = Vue.createApp({
         data() {
-            return {
-                // App data if needed
-            }
+            return {}
         }
     });
+
+    app.use(vuetify);
+    app.use(i18n);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+        for (const [name, component] of Object.entries(window.AppComponents)) {
+            app.component(name, component);
+        }
+    }
+
+    app.mount('#app');
 </script>

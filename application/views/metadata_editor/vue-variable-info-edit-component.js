@@ -1,5 +1,6 @@
 ///variable info edit form
-Vue.component('variable-info', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variable-info'] = {
     props:['value'],
     data: function () {    
         return {   

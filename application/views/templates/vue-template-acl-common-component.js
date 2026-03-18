@@ -1,4 +1,5 @@
-Vue.component('vue-template-acl-common', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-template-acl-common'] = {
     props: ['value','users','template_id'],
     data() {
         return {            
@@ -194,7 +195,7 @@ Vue.component('vue-template-acl-common', {
                     <v-autocomplete
                         v-model="selected_users"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         @input="search=null"
                         :items="users"
                         solo
@@ -222,13 +223,13 @@ Vue.component('vue-template-acl-common', {
 
                         <template v-slot:item="data">
                             <template v-if="typeof data.item !== 'object'">
-                                <v-list-item-content v-text="data.item"></v-list-item-content>
+                                <span v-text="data.item"></span>
                             </template>
                             <template v-else>
-                                <v-list-item-content>
+                                
                                 <v-list-item-title v-html="data.item.username"></v-list-item-title>
                                 <v-list-item-subtitle v-html="data.item.email"></v-list-item-subtitle>
-                                </v-list-item-content>
+                                
                             </template>
                         </template>
                   </v-autocomplete>
@@ -263,7 +264,7 @@ Vue.component('vue-template-acl-common', {
 
                     <div class="table-responsive mt-3" style="max-height:200px;overflow:auto;" v-if="shared_users!=''">
                     
-                        <v-simple-table style="font-size:small;">
+                        <v-table style="font-size:small;">
                             <thead>
                             <tr>
                                 <th>Username</th>
@@ -289,11 +290,11 @@ Vue.component('vue-template-acl-common', {
                                     </select>
                                 </td>
                                 <td>
-                                    <v-btn icon small color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
+                                    <v-btn icon size="small" color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
                                 </td>
                             </tr>
                             </tbody>
-                        </v-simple-table>
+                        </v-table>
                     </div>
                     <div v-else>
                         <div class="text-center m-3" >No users have access to this template</div>

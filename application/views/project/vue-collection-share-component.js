@@ -1,4 +1,5 @@
-Vue.component('vue-collection-share', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-collection-share'] = {
     props: ['value','projects','collections'],
     data() {
         return {

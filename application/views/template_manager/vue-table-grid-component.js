@@ -1,5 +1,6 @@
 //vue table-grid component
-Vue.component('table-grid-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['table-grid-component'] = {
     props:['value','columns', 'field','enums'],
     data: function () {    
         return {
@@ -224,52 +225,51 @@ Vue.component('table-grid-component', {
                     <th>
                     <!--options -->
                     <v-menu bottom left>
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props: activatorProps }">
                         <v-btn
                             light
                             icon
                             x-small
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="activatorProps"
                         >
                             <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                         </template>
 
                         <v-card dense>
-                        <v-list dense>
-                        <v-list-item @click="copyTsv" dense>
+                        <v-list density="compact">
+                        <v-list-item @click="copyTsv" density="compact">
                             <v-list-item-icon>
                                 <v-icon>mdi-content-copy</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>{{$t("copy")}}</v-list-item-title>
-                            </v-list-item-content>
+                            
                         </v-list-item>
                         <v-list-item @click="pasteTsv('replace')">
                             <v-list-item-icon>
                                 <v-icon>mdi-content-paste</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>{{$t("paste_replace")}}</v-list-item-title>
-                            </v-list-item-content>                            
+                                                        
                         </v-list-item>
                         <v-list-item @click="pasteTsv('append')">
                             <v-list-item-icon>
                                 <v-icon>mdi-file-replace</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>{{$t("paste_append")}}</v-list-item-title>
-                            </v-list-item-content> 
+                             
                         </v-list-item>
 
                         <v-list-item @click="undoPaste()" :disabled="!undo_paste">
                             <v-list-item-icon>
                                 <v-icon>mdi-arrow-u-left-top</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>{{$t("undo_paste")}}</v-list-item-title>
-                            </v-list-item-content> 
+                             
                         </v-list-item>
 
                         </v-list>

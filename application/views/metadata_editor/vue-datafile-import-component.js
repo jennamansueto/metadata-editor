@@ -1,5 +1,6 @@
 /// datafile import form
-Vue.component('datafile-import', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['datafile-import'] = {
     data: function () {    
         return {
             files:[],
@@ -311,8 +312,7 @@ Vue.component('datafile-import', {
             return false;
         },
         removeFile(file_idx){
-            Vue.delete(this.files,file_idx);      
-            this.files.splice(file_idx, 0);
+            this.files.splice(file_idx, 1);
         },        
         handleFileUpload(event)
         {
@@ -375,7 +375,7 @@ Vue.component('datafile-import', {
 
                         <v-card class="files-container mt-3 mb-3 elevation-2" v-if="files.length>0" >
                             <h5 class="mb-1 pt-2 pl-3">{{files.length}} {{$t("selected")}}</h5>
-                            <v-simple-table class="table-striped">
+                            <v-table class="table-striped">
                             <template v-slot:default>
                                 <thead>
                                     <tr>
@@ -392,13 +392,13 @@ Vue.component('datafile-import', {
                                 <tbody>
                                     <tr v-for="(file,file_index) in files" :key="file.name">
                                     <td>{{ file.name }}</td>
-                                    <td>{{ file.size | kbmb }}</td>
+                                    <td>{{ $filters.kbmb(file.size) }}</td>
                                     <td><button class="float-right" @click="removeFile(file_index)" :title="$t('Remove')"><i class="fas fa-trash"></i></button></td>
                                     </tr>
                                 </tbody>
                                 </template>
                             
-                            </v-simple-table>
+                            </v-table>
 
                         </v-card>
 
@@ -524,7 +524,7 @@ Vue.component('datafile-import', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="dialogClose()">
+                    <v-btn color="primary" variant="text" @click="dialogClose()">
                     {{$t("close")}}
                     </v-btn>
                     </v-card-actions>

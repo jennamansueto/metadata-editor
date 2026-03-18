@@ -1,4 +1,5 @@
-Vue.component('page-preview', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['page-preview'] = {
     props: [],
     data() {
         return {
@@ -42,16 +43,16 @@ Vue.component('page-preview', {
         <div class="vue-page-preview-component m-3 mt-5 ">
 
             <div class="float-right mt-1">
-                <v-btn text @click="downloadHtml" color="primary">
+                <v-btn variant="text" @click="downloadHtml" color="primary">
                     <v-icon>mdi-download</v-icon> HTML
                 </v-btn>
             </div>
 
-            <v-form-preview
+            <nada-form-preview
                     :items="TemplateItems" 
                     title="Preview"
                 >
-            </v-form-preview>
+            </nada-form-preview>
 
             
             <div v-if="is_loading" class="text-center">

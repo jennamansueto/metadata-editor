@@ -1,4 +1,5 @@
-Vue.component('vue-collection-remove-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-collection-remove-dialog'] = {
     props: ['value', 'collections', 'project_id'],
     data() {
         return {        
@@ -9,7 +10,7 @@ Vue.component('vue-collection-remove-dialog', {
         removeCollectionFromList: function(collection_id){
             let index = this.collections.findIndex(x => x.id === collection_id);
             if (index > -1) {
-                Vue.delete(this.collections, index);
+                this.collections.splice(index, 1);
             }
         },
         removeFromCollection: async function(project_id, collection_id) {
@@ -80,7 +81,7 @@ Vue.component('vue-collection-remove-dialog', {
                     <v-card-text>
                         
                         <template v-for="collection in collections">
-                            <v-chip small color="#dce3f7" class="m-2" close @click:close="removeFromCollection(collection.sid,collection.id)">
+                            <v-chip size="small" color="#dce3f7" class="m-2" closable @click:close="removeFromCollection(collection.sid,collection.id)">
                             {{collection.title}}                                      
                             </v-chip>
                         </template>

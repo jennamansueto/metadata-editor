@@ -1,5 +1,6 @@
 //vue repeated field - simple_array
-Vue.component('repeated-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['repeated-field'] = {
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {
@@ -93,7 +94,7 @@ Vue.component('repeated-field', {
         </table>
 
         <div class="d-flex justify-content-center" v-if="!isReadOnly()">                
-            <v-btn @click="addRow" class="m-2" text small ><v-icon>mdi-plus</v-icon>{{ $t("add_row") }}</v-btn>
+            <v-btn @click="addRow" class="m-2" variant="text" size="small" ><v-icon>mdi-plus</v-icon>{{ $t("add_row") }}</v-btn>
         </div>
 
 

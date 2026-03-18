@@ -1,5 +1,6 @@
 /// thumbnail
-Vue.component('project-thumbnail', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['project-thumbnail'] = {
     data: function () {    
         return {
             show_dialog:false,

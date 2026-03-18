@@ -127,8 +127,8 @@
         <v-card>
           <v-card-title class="d-flex align-center justify-space-between">
             <span class="text-h6">{{$t('core_field_mappings')}} - {{ schemaTitle }}</span>
-            <v-btn text small color="primary" @click="$router.back()">
-              <v-icon left small>mdi-arrow-left</v-icon>
+            <v-btn variant="text" size="small" color="primary" @click="$router.back()">
+              <v-icon start size="small">mdi-arrow-left</v-icon>
               {{$t('back_to_schemas')}}
             </v-btn>            
           </v-card-title>
@@ -140,7 +140,7 @@
             <v-progress-linear indeterminate color="primary" v-if="loading"></v-progress-linear>
 
             <v-form v-if="!loading" ref="form" v-model="valid" lazy-validation>
-              <v-simple-table dense class="mapping-table">
+              <v-table dense class="mapping-table">
                 <thead>
                   <tr>
                     <th class="text-left" style="width: 200px;">{{$t('core_field')}}</th>
@@ -249,7 +249,7 @@
                     </td>
                     <td>
                       <div>
-                        <v-simple-table dense v-if="Object.keys(form.core_fields.attributes || {}).length > 0" class="mb-2">
+                        <v-table dense v-if="Object.keys(form.core_fields.attributes || {}).length > 0" class="mb-2">
                           <thead>
                             <tr>
                               <th class="text-left" style="width: 200px;">{{$t('attribute_key')}}</th>
@@ -288,12 +288,12 @@
                                   color="error"
                                   @click="removeAttribute(key)"
                                 >
-                                  <v-icon small>mdi-delete</v-icon>
+                                  <v-icon size="small">mdi-delete</v-icon>
                                 </v-btn>
                               </td>
                             </tr>
                           </tbody>
-                        </v-simple-table>
+                        </v-table>
                         <v-btn
                           small
                           outlined
@@ -301,14 +301,14 @@
                           @click="addAttribute"
                           class="mt-2"
                         >
-                          <v-icon left small>mdi-plus</v-icon>
+                          <v-icon start size="small">mdi-plus</v-icon>
                           {{$t('add_attribute')}}
                         </v-btn>
                       </div>
                     </td>
                   </tr>
                 </tbody>
-              </v-simple-table>
+              </v-table>
 
               <v-alert
                 v-if="formErrorMessage"
@@ -324,7 +324,7 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="$router.back()">{{$t('cancel')}}</v-btn>
+            <v-btn variant="text" color="primary" @click="$router.back()">{{$t('cancel')}}</v-btn>
             <v-btn color="primary" :loading="saving" :disabled="!valid" @click="submit">
               {{$t('save_mappings')}}
             </v-btn>
@@ -371,8 +371,8 @@
         <v-card>
           <v-card-title class="d-flex align-center justify-space-between">
             <span class="text-h6">{{$t('schemas')}}</span>
-            <v-btn color="primary" small outlined @click="$router.push({ name: 'create-schema' })">
-              <v-icon left small>mdi-plus</v-icon>
+            <v-btn color="primary" size="small" variant="outlined" @click="$router.push({ name: 'create-schema' })">
+              <v-icon start size="small">mdi-plus</v-icon>
               {{$t('create_schema')}}
             </v-btn>
           </v-card-title>
@@ -443,40 +443,40 @@
               <template v-slot:item.actions="{ item }">
                 <div class="d-flex justify-end">
                   <v-menu bottom min-width="200" offset-y>
-                    <template v-slot:activator="{ attrs, on }">
-                      <v-btn icon small v-bind="attrs" v-on="on">
-                        <v-icon small>mdi-dots-vertical</v-icon>
+                    <template v-slot:activator="{ props: activatorProps }">
+                      <v-btn icon size="small" v-bind="activatorProps">
+                        <v-icon size="small">mdi-dots-vertical</v-icon>
                       </v-btn>
                     </template>
-                    <v-list dense>
+                    <v-list density="compact">
                       <v-list-item @click="previewSchema(item)">
                         <v-list-item-icon>
-                          <v-icon small>mdi-eye</v-icon>
+                          <v-icon size="small">mdi-eye</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{$t('preview_schema')}}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="editSchemaMappings(item)" :disabled="item.is_core">
                         <v-list-item-icon>
-                          <v-icon small>mdi-source-fork</v-icon>
+                          <v-icon size="small">mdi-source-fork</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{$t('edit_core_mappings')}}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="regenerateTemplate(item)" :disabled="item.is_core">
                         <v-list-item-icon>
-                          <v-icon small>mdi-refresh</v-icon>
+                          <v-icon size="small">mdi-refresh</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{$t('regenerate_template')}}</v-list-item-title>
                       </v-list-item>
                       <v-divider class="my-1" v-if="!item.is_core"></v-divider>
                       <v-list-item @click="editSchema(item)" :disabled="item.is_core">
                         <v-list-item-icon>
-                          <v-icon small>mdi-pencil</v-icon>
+                          <v-icon size="small">mdi-pencil</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{$t('edit')}}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="deleteSchema(item)" :disabled="item.is_core">
                         <v-list-item-icon>
-                          <v-icon small>mdi-delete</v-icon>
+                          <v-icon size="small">mdi-delete</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{$t('delete')}}</v-list-item-title>
                       </v-list-item>
@@ -546,7 +546,7 @@
 
               <v-divider class="my-6"></v-divider>
 
-              <v-card outlined class="mt-4">
+              <v-card variant="outlined" class="mt-4">
                 <v-card-title class="py-3">
                   <span class="text-subtitle-1 font-weight-medium">{{$t('main_schema_file')}}</span>
                 </v-card-title>
@@ -562,7 +562,7 @@
                     {{$t(isCreate ? 'main_schema_hint' : 'replace_main_schema')}}
                   </div>
 
-                  <v-simple-table v-if="mainFileRows.length" class="mt-4">
+                  <v-table v-if="mainFileRows.length" class="mt-4">
                     <thead>
                       <tr>
                         <th>{{$t('file_name')}}</th>
@@ -589,7 +589,7 @@
                             color="error"
                             @click="removeMainFile"
                           >
-                            <v-icon small>mdi-close</v-icon>
+                            <v-icon size="small">mdi-close</v-icon>
                           </v-btn>
                           <v-btn
                             v-else-if="row.download_url"
@@ -604,7 +604,7 @@
                         </td>
                       </tr>
                     </tbody>
-                  </v-simple-table>
+                  </v-table>
                   <div v-else-if="!fileManifestLoading" class="text-caption grey--text mt-3">
                     {{$t('no_schema_files_found')}}
                   </div>
@@ -620,7 +620,7 @@
                 </v-card-text>
               </v-card>
 
-              <v-card outlined class="mt-6">
+              <v-card variant="outlined" class="mt-6">
                 <v-card-title class="py-3">
                   <span class="text-subtitle-1 font-weight-medium">{{$t('related_schema_files')}}</span>
                 </v-card-title>
@@ -638,7 +638,7 @@
                   </div>
 
                   <div v-if="associatedFileRows.length" class="mt-4">
-                    <v-simple-table>
+                    <v-table>
                       <thead>
                         <tr>
                           <th>{{$t('file_name')}}</th>
@@ -665,7 +665,7 @@
                               color="error"
                               @click="removeAssociatedFile(row.staged)"
                             >
-                              <v-icon small>mdi-close</v-icon>
+                              <v-icon size="small">mdi-close</v-icon>
                             </v-btn>
                             <template v-else>
                               <v-btn
@@ -692,7 +692,7 @@
                           </td>
                         </tr>
                       </tbody>
-                    </v-simple-table>
+                    </v-table>
                   </div>
                   <div v-else-if="!fileManifestLoading" class="text-caption grey--text mt-3">
                     {{$t('no_schema_files_found')}}
@@ -741,7 +741,7 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="cancel">{{$t('cancel')}}</v-btn>
+            <v-btn variant="text" color="primary" @click="cancel">{{$t('cancel')}}</v-btn>
             <v-btn color="primary" :loading="uploading" :disabled="isSaveDisabled" @click="submit">
               {{ submitButtonText }}
             </v-btn>
@@ -754,6 +754,7 @@
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>

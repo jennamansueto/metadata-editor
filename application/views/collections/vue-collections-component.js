@@ -1,4 +1,5 @@
-Vue.component('vue-collections-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-collections-component'] = {
     props: ['value'],
     data() {
         return {     
@@ -293,12 +294,11 @@ Vue.component('vue-collections-component', {
                                     <div class="col-1">
                                     <!-- collection actions -->
                                         <v-menu offset-y>
-                                            <template v-slot:activator="{ on, attrs }">
+                                            <template v-slot:activator="{ props: activatorProps }">
                                                 <v-btn
                                                 color="primary"
                                                 dark
-                                                v-bind="attrs"
-                                                v-on="on"
+                                                v-bind="activatorProps"
                                                 icon
                                                 >
                                                 <v-icon>mdi-dots-vertical</v-icon>
@@ -306,13 +306,13 @@ Vue.component('vue-collections-component', {
                                             </template>
                                             <v-list>
                                                 <v-list-item>
-                                                    <v-list-item-title @click="dialog_copy_collection=true"><v-btn text>{{$t('Copy collection')}}</v-btn></v-list-item-title>
+                                                    <v-list-item-title @click="dialog_copy_collection=true"><v-btn variant="text">{{$t('Copy collection')}}</v-btn></v-list-item-title>
                                                 </v-list-item>
                                                 <v-list-item>
-                                                    <v-list-item-title @click="dialog_move_collection=true"><v-btn text>{{$t('Move collection')}}</v-btn></v-list-item-title>
+                                                    <v-list-item-title @click="dialog_move_collection=true"><v-btn variant="text">{{$t('Move collection')}}</v-btn></v-list-item-title>
                                                 </v-list-item>
                                                 <v-list-item>
-                                                    <v-list-item-title @click="refreshCollectionsTree"><v-btn text>{{$t('Refresh tree')}}</v-btn></v-list-item-title>
+                                                    <v-list-item-title @click="refreshCollectionsTree"><v-btn variant="text">{{$t('Refresh tree')}}</v-btn></v-list-item-title>
                                                 </v-list-item>
                                             </v-list>
                                         </v-menu>
@@ -352,16 +352,16 @@ Vue.component('vue-collections-component', {
                 >
                     <v-list>
                         <v-list-item v-if="getCollectionPermissions(action_menu_id).can_edit">
-                            <v-list-item-title @click="editCollectionById(action_menu_id)"><v-btn text>{{$t('edit')}}</v-btn></v-list-item-title>
+                            <v-list-item-title @click="editCollectionById(action_menu_id)"><v-btn variant="text">{{$t('edit')}}</v-btn></v-list-item-title>
                         </v-list-item>
                         <v-list-item v-if="getCollectionPermissions(action_menu_id).can_admin">    
-                            <v-list-item-title @click="addChildCollectionById(action_menu_id)"><v-btn text>{{$t('Add sub-collection')}}</v-btn></v-list-item-title>
+                            <v-list-item-title @click="addChildCollectionById(action_menu_id)"><v-btn variant="text">{{$t('Add sub-collection')}}</v-btn></v-list-item-title>
                         </v-list-item>
                         <v-list-item v-if="getCollectionPermissions(action_menu_id).can_manage_access">
-                            <v-list-item-title @click="ManageCollectionAccess(action_menu_id)"><v-btn text>{{$t('Manage access')}}</v-btn></v-list-item-title>
+                            <v-list-item-title @click="ManageCollectionAccess(action_menu_id)"><v-btn variant="text">{{$t('Manage access')}}</v-btn></v-list-item-title>
                         </v-list-item>
                         <v-list-item v-if="getCollectionPermissions(action_menu_id).can_delete">
-                            <v-list-item-title @click="DeleteCollection(action_menu_id)"><v-btn text>{{$t('delete')}}</v-btn></v-list-item-title>
+                            <v-list-item-title @click="DeleteCollection(action_menu_id)"><v-btn variant="text">{{$t('delete')}}</v-btn></v-list-item-title>
                         </v-list-item>
           
                     </v-list>

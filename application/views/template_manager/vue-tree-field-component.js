@@ -1,5 +1,6 @@
 /// view treeview component
-Vue.component('nada-treeview-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nada-treeview-field'] = {
     props:['value', 'showSectionContainersOnly'],
     data: function () {    
         return {
@@ -483,7 +484,7 @@ Vue.component('nada-treeview-field', {
           
           // Fallback: directly add to UserTemplate if parent method not available
           if (!this.UserTemplate || !this.UserTemplate.items) {
-            this.$set(this.UserTemplate, "items", []);
+            this.UserTemplate["items"] = [];
           }
           
           const exists = this.UserTemplate.items.some(i => i && i.key === item.key);
@@ -524,7 +525,7 @@ Vue.component('nada-treeview-field', {
           
           this.selected_item = item;
           if (!activeNode.items) {
-            this.$set(activeNode, "items", []);
+            activeNode["items"] = [];
           }
           
           // Clone the item to avoid reference issues
@@ -553,12 +554,12 @@ Vue.component('nada-treeview-field', {
                     
           // Ensure items array exists
           if (!actualNode.items) {
-            this.$set(actualNode, "items", []);
+            actualNode["items"] = [];
           }
           
           // Use Vue.set to add the item at the new index to ensure reactivity
           const newIndex = actualNode.items.length;
-          this.$set(actualNode.items, newIndex, itemToAdd);
+          actualNode.items[newIndex] = itemToAdd;
           
           // Also update activeNode if it's different
           if (actualNode !== activeNode && activeNode.items) {
@@ -583,7 +584,7 @@ Vue.component('nada-treeview-field', {
 
               this.selected_item = item;
               if (!activeNode.items) {
-                this.$set(activeNode, "items", []);
+                activeNode["items"] = [];
               }
               
               // Clone the item to avoid reference issues
@@ -596,7 +597,7 @@ Vue.component('nada-treeview-field', {
             } else if (item.isProp) {
               // This is a prop (from props array) - add to props
               if (!activeNode.props) {
-                this.$set(activeNode, "props", []);
+                activeNode["props"] = [];
               }
               
               // Check if prop already exists
@@ -636,7 +637,7 @@ Vue.component('nada-treeview-field', {
 
               this.selected_item = item;
               if (!activeNode.items) {
-                this.$set(activeNode, "items", []);
+                activeNode["items"] = [];
               }
               
               // Clone the item and remove temporary properties
@@ -649,7 +650,7 @@ Vue.component('nada-treeview-field', {
           } else {
             // For array or nested_array props: add to props array
             if (!activeNode.props) {
-              this.$set(activeNode, "props", []);
+              activeNode["props"] = [];
             }
             
             // Check if prop already exists
@@ -753,7 +754,7 @@ Vue.component('nada-treeview-field', {
                 <v-treeview                   
                     color="warning"
                     open-all
-                    :open.sync="initiallyOpen" 
+                    v-model:open="initiallyOpen" 
                     :items="filteredItems" 
                     activatable dense 
                     item-key="key" 
@@ -819,7 +820,7 @@ Vue.component('nada-treeview-field', {
                 <div v-if="activeNode.key" class="p-3">
                 
                   <div><strong>{{$t("description")}}</strong></div>
-                  <v-simple-table dense>
+                  <v-table dense>
                     <tbody>
                     <tr>
                       <td><strong>{{$t("field")}}</strong></td>
@@ -838,12 +839,12 @@ Vue.component('nada-treeview-field', {
                       <td><div style="white-space: pre-wrap;">{{activeNode.help_text}}</div></td>
                     </tr>                    
                     </tbody>
-                  </v-simple-table>
+                  </v-table>
 
                   <div v-if="activeNode.props" >
                       <strong>{{$t("array_properties")}}</strong>
                       
-                          <v-simple-table dense>
+                          <v-table dense>
                             <thead>
                             <tr>
                               <th>{{$t("key")}}</th>
@@ -860,7 +861,7 @@ Vue.component('nada-treeview-field', {
                             <td><div style="white-space: pre-wrap;">{{prop.help_text}}</div></td>
                           </tr>
                           </tbody>
-                          </v-simple-table>
+                          </v-table>
                     </div>
                 
                 </div>

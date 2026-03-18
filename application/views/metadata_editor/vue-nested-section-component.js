@@ -1,5 +1,6 @@
 ///// nested-section
-Vue.component('nested-section', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nested-section'] = {
     props:['value','columns','path','title'],
     data: function () {    
         return {
@@ -11,7 +12,7 @@ Vue.component('nested-section', {
     watch: { 
         field_data: function(newVal, oldVal) {
             console.log("watch field_data",this.key_path,JSON.stringify(newVal), JSON.stringify(oldVal));
-            this.$vueSet (this.formData, this.key_path, newVal);
+            _.set(this.formData, this.key_path, newVal);
         }
     },
     mounted: function () {
@@ -26,7 +27,7 @@ Vue.component('nested-section', {
             return this.columns;
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
         
     },  
@@ -63,10 +64,10 @@ Vue.component('nested-section', {
                                 <template>
                                     <v-expansion-panels :value="0">
                                         <v-expansion-panel>
-                                        <v-expansion-panel-header>
+                                        <v-expansion-panel-title>
                                             {{column.title}}
-                                        </v-expansion-panel-header>
-                                        <v-expansion-panel-content>
+                                        </v-expansion-panel-title>
+                                        <v-expansion-panel-text>
                                             
                                             <nested-section-subsection 
                                                 :value="getData(index+'.'+column.key)"
@@ -75,7 +76,7 @@ Vue.component('nested-section', {
                                                 :path="path + '.' + index">
                                             </nested-section-subsection> 
 
-                                        </v-expansion-panel-content>
+                                        </v-expansion-panel-text>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
                                 </template>
@@ -198,7 +199,7 @@ Vue.component('nested-section', {
         },
         setData: function (field_xpath,event){
             _.set(this.field_data,field_xpath,event);
-            Vue.set(this.field_data, 0, this.field_data[0]);
+            this.field_data[0] = this.field_data[0];
         },
         toggleChildren(index) {
             if (!this.active_sections.includes(index)) {

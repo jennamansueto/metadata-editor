@@ -1,5 +1,6 @@
 // Global confirm dialog component
-Vue.component('confirm-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['confirm-dialog'] = {
   template: `
     <v-dialog v-model="dialogVisible" persistent max-width="600">
       <v-card>
@@ -7,8 +8,8 @@ Vue.component('confirm-dialog', {
         <v-card-text class="text-center pt-5 pb-5"><span class="h5">{{ message }}</span></v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="confirm">Confirm</v-btn>
-          <v-btn color="red darken-1" text @click="cancel">Cancel</v-btn>
+          <v-btn color="green darken-1" variant="text" @click="confirm">Confirm</v-btn>
+          <v-btn color="red darken-1" variant="text" @click="cancel">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -48,9 +49,9 @@ Vue.component('confirm-dialog', {
     },
   },
   mounted() {
-    EventBus.$on('confirm', this.showConfirmDialog);
+    EventBus.on('confirm', this.showConfirmDialog);
   },
-  beforeDestroy() {
-    EventBus.$off('confirm', this.showConfirmDialog);
+  beforeUnmount() {
+    EventBus.off('confirm', this.showConfirmDialog);
   },
 });

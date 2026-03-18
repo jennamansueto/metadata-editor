@@ -1,4 +1,5 @@
-Vue.component('vue-tree-list', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-tree-list'] = {
     props: ['value','parent_path','path_level','permissions','getPermissionsFunction'],
     data() {
         return {

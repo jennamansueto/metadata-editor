@@ -92,7 +92,7 @@
                   <v-expansion-panels v-model="facet_panel" multiple class="">
 
                     <v-expansion-panel v-for="(facet_values,facet_key) in facets" :key="facet_key">
-                      <v-expansion-panel-header class="capitalize">
+                      <v-expansion-panel-title class="capitalize">
                         <div v-if="facet_key=='collection'" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-right: 12px;">
                           <span>{{$t(facet_key)}}</span>
                           <v-switch
@@ -108,10 +108,10 @@
                           ></v-switch>
                         </div>
                         <span v-else>{{$t(facet_key)}}</span>
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
                         <div v-if="(!facet_values || facet_values.length === 0) && facet_key !== 'users_filter' && facet_key !== 'tags'" class="py-2">
-                          <v-chip small outlined disabled>N/A</v-chip>
+                          <v-chip size="small" outlined disabled>N/A</v-chip>
                         </div>
                         <div v-else-if="facet_key=='collection'">
                           
@@ -172,7 +172,7 @@
                                 color="primary"
                                 block
                             >
-                              <v-icon small left>mdi-tag-plus</v-icon>
+                              <v-icon size="small" start>mdi-tag-plus</v-icon>
                               {{$t('add_tag')}}
                             </v-btn>
                           </div>
@@ -203,12 +203,12 @@
                                 color="primary"
                                 block
                             >
-                              <v-icon small left>mdi-account-plus</v-icon>
+                              <v-icon size="small" start>mdi-account-plus</v-icon>
                               {{$t('add_user')}}
                             </v-btn>
                           </div>
                         </div>
-                      </v-expansion-panel-content>
+                      </v-expansion-panel-text>
                     </v-expansion-panel>
                   </v-expansion-panels>
                 </div>
@@ -233,8 +233,8 @@
                     <h3 class="mt-3">{{$t("my_projects")}}</h3>                      
                     </div>
                     <div class="">
-                      <v-btn small color="primary"  @click="dialog_create_project=true">{{$t("create_project")}}</v-btn>        
-                      <v-btn small color="primary"  @click="dialog_import_project=true">{{$t("import")}}</v-btn>
+                      <v-btn size="small" color="primary"  @click="dialog_create_project=true">{{$t("create_project")}}</v-btn>        
+                      <v-btn size="small" color="primary"  @click="dialog_import_project=true">{{$t("import")}}</v-btn>
                     </div>
                   </div>
 
@@ -294,7 +294,7 @@
                     
                     <template v-for="(filter_values, filter_type) in search_filters">
                       <template v-for="(filter_value,idx) in filter_values">                        
-                        <v-chip @click:close="removeFilter(filter_type,idx)" small :color="getFilterChipColor(filter_type)" close class="mr-1 mb-1">
+                        <v-chip @click:close="removeFilter(filter_type,idx)" size="small" :color="getFilterChipColor(filter_type)" closable class="mr-1 mb-1">
                         {{getFacetTitleById(filter_type,filter_value)}}                                     
                         </v-chip>
                       </template>
@@ -346,17 +346,17 @@
                           </th>
                           <th style="width:80px;">
                             <v-menu offset-y :disabled="selected_projects.length==0">
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon v-bind="attrs" v-on="on">
+                              <template v-slot:activator="{ props: activatorProps }">
+                                <v-btn icon v-bind="activatorProps">
                                   <v-icon>mdi-dots-vertical</v-icon>
                                 </v-btn>
                               </template>
                               <v-list>
                                 <v-list-item @click="addProjectsToCollection">
-                                  <v-icon left small>mdi-folder-plus</v-icon>
+                                  <v-icon start size="small">mdi-folder-plus</v-icon>
                                   {{$t('add_to_collection')}}</v-list-item>
                                 <v-list-item v-if="selected_projects.length === 2" @click="compareSelectedProjects">
-                                  <v-icon left small>mdi-compare</v-icon>
+                                  <v-icon start size="small">mdi-compare</v-icon>
                                   {{$t('compare_projects')}}
                                 </v-list-item>                                
                               </v-list>
@@ -401,12 +401,12 @@
                             
                             <div class="text-small mt-2" v-if="project.collections && project.collections.length>0">
                               <template v-for="(collection,idx) in project.collections" v-if="idx<3">
-                                <v-chip outlined small color="primary"  @click.stop="manageProjectCollections(project.id)" class="mr-1" >
+                                <v-chip outlined size="small" color="primary"  @click.stop="manageProjectCollections(project.id)" class="mr-1" >
                                   {{collection.title}}                                      
                                 </v-chip>
                               </template>
                               <template v-if="project.collections.length>3">
-                                <v-chip outlined small color="primary" class="mr-1" @click.stop="manageProjectCollections(project.id)">
+                                <v-chip outlined size="small" color="primary" class="mr-1" @click.stop="manageProjectCollections(project.id)">
                                   +{{project.collections.length-3}} {{$t('more')}}
                                 </v-chip>
                               </template>
@@ -414,20 +414,20 @@
 
                             <div class="text-small mt-2" v-if="project.tags && project.tags.length>0" @click.stop="manageProjectTags(project.id)">
                               <template v-for="(tag,idx) in project.tags" v-if="idx<5">
-                                <v-chip outlined small  class="mr-1" color="grey">
+                                <v-chip outlined size="small"  class="mr-1" color="grey">
                                   {{tag.tag}}
                                 </v-chip>
                               </template>
                               <template v-if="project.tags.length>3">
-                                <v-chip outlined small  class="mr-1" color="grey">
+                                <v-chip outlined size="small"  class="mr-1" color="grey">
                                   +{{project.tags.length-3}} {{$t('more')}}
                                 </v-chip>
                               </template>
                             </div>
 
                             <div class="mt-2" v-if="project.versions && project.versions.length>0">
-                              <v-btn color="primary" outlined x-small dark @click.stop="toggleRevisions(project.id)" :title="project.versions.length">
-                                <v-icon x-small left>mdi-content-copy</v-icon> {{$t('versions')}} <span class="ml-1">{{project.versions.length}}</span>
+                              <v-btn color="primary" variant="outlined" size="x-small" dark @click.stop="toggleRevisions(project.id)" :title="project.versions.length">
+                                <v-icon x-small start>mdi-content-copy</v-icon> {{$t('versions')}} <span class="ml-1">{{project.versions.length}}</span>
                               </v-btn>
                             </div>
 
@@ -524,7 +524,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="dialog_create_project = false">
+              <v-btn color="primary" variant="text" @click="dialog_create_project = false">
                 {{$t("close")}}
               </v-btn>
             </v-card-actions>
@@ -614,10 +614,10 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="secondary" text @click="dialog_import_project = false">
+              <v-btn color="secondary" variant="text" @click="dialog_import_project = false">
               {{$t("close")}}
               </v-btn>
-              <v-btn color="primary" text @click="importProject" :disabled="!this.import_file || this.import_project_loading">
+              <v-btn color="primary" variant="text" @click="importProject" :disabled="!this.import_file || this.import_project_loading">
               {{$t("import")}}
               </v-btn>
             </v-card-actions>
@@ -638,38 +638,38 @@
 
         <v-list>          
           <v-list-item>
-            <v-list-item-title @click="ShareProject(menu_active_project_id)"><v-btn text>{{$t('share')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="ShareProject(menu_active_project_id)"><v-btn variant="text">{{$t('share')}}</v-btn></v-list-item-title>
           </v-list-item>          
           <v-list-item>
-            <v-list-item-title @click="addProjectToCollection(menu_active_project_id)"><v-btn text>{{$t('add_to_collection')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="addProjectToCollection(menu_active_project_id)"><v-btn variant="text">{{$t('add_to_collection')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title @click="show_project_menu = false; manageProjectTags(menu_active_project_id)"><v-btn text>{{$t('tags')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="show_project_menu = false; manageProjectTags(menu_active_project_id)"><v-btn variant="text">{{$t('tags')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title @click="viewAccessPermissions(menu_active_project_id)"><v-btn text>{{$t('view_access')}}</v-btn></v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title @click="createProjectRevision(menu_active_project_id)"><v-btn text>{{$t('Create version')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="viewAccessPermissions(menu_active_project_id)"><v-btn variant="text">{{$t('view_access')}}</v-btn></v-list-item-title>
           </v-list-item>
 
           <v-list-item>
-            <v-list-item-title @click="transferOwnership(menu_active_project_id)" ><v-btn text>{{$t('transfer_ownership')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="createProjectRevision(menu_active_project_id)"><v-btn variant="text">{{$t('Create version')}}</v-btn></v-list-item-title>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-title @click="transferOwnership(menu_active_project_id)" ><v-btn variant="text">{{$t('transfer_ownership')}}</v-btn></v-list-item-title>
           </v-list-item>
           
           <v-list-item>
-            <v-list-item-title @click="DeleteProject(menu_active_project_id)"><v-btn text>{{$t('delete')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="DeleteProject(menu_active_project_id)"><v-btn variant="text">{{$t('delete')}}</v-btn></v-list-item-title>
           </v-list-item>
 
           <v-divider></v-divider>
           
           <v-list-item>
-            <v-list-item-title @click="ExportProjectJSON(menu_active_project_id)"><v-btn text>{{$t('export_json')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="ExportProjectJSON(menu_active_project_id)"><v-btn variant="text">{{$t('export_json')}}</v-btn></v-list-item-title>
           </v-list-item>
 
           <v-list-item>
-            <v-list-item-title @click="ExportProjectPackage(menu_active_project_id)"><v-btn text>{{$t('export_package_zip')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="ExportProjectPackage(menu_active_project_id)"><v-btn variant="text">{{$t('export_package_zip')}}</v-btn></v-list-item-title>
           </v-list-item>
 
         </v-list>
@@ -690,7 +690,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
   <!--
-  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/vue-deepset.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-deepset@0.6.3/mitt.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/deepdash/browser/deepdash.standalone.min.js"></script>
   -->
 
@@ -728,7 +728,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -756,23 +757,25 @@
       }
     ]
 
-    const router = new VueRouter({
-      routes, 
-      mode: 'history'
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHistory(),
+      routes
     })
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#526bc7',
-            "primary-dark": '#0c1a4d',
-            secondary: '#b0bec5',
-            accent: '#8c9eff',
-            error: '#b71c1c',
-          },
-        },
-      },
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c',
+            }
+          }
+        }
+      }
     });
 
 
@@ -804,19 +807,8 @@
         }
       }
 
-    Vue.mixin(momentMixin);
-
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify: vuetify,
-      router: router,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -983,7 +975,7 @@
         toggleRevisions: function(project_id) {
           let project = this.Projects.find(x => x.id == project_id);
           if (project) {
-            Vue.set(project, 'versions_show', !project.versions_show);
+            project['versions_show'] = !project.versions_show;
           }
         },
         createProjectRevision: function(project_id) {
@@ -1246,7 +1238,7 @@
 
               for (i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
-                Vue.set(vm.search_filters, facet_name, []);
+                vm.search_filters[facet_name] = [];
               }
               
               vm.ReadFilterQS();
@@ -1261,7 +1253,7 @@
           return axios
             .get(url)
             .then(function(response) {
-              Vue.set(vm.projects.projects[projectIndex], 'size', response.data.result);
+              vm.projects.projects[projectIndex]['size'] = response.data.result;
               
             })
             .catch(function(error) {
@@ -1505,7 +1497,7 @@
           this.loadProjects();
         },
         removeFilter: function(filter_type, value_idx) {
-         this.$delete(this.search_filters[filter_type], value_idx);
+         this.search_filters[filter_type].splice(value_idx, 1);
         },
         getFilterChipColor: function(filter_type) {
           const colorMap = {
@@ -1519,11 +1511,11 @@
         },
         onApplyUserFilter: function(selected_users) {
             if (!this.facets.users_filter) {
-                Vue.set(this.facets, 'users_filter', []);
+                this.facets['users_filter'] = [];
             }
             
             if (!this.search_filters.users_filter) {
-                Vue.set(this.search_filters, 'users_filter', []);
+                this.search_filters['users_filter'] = [];
             }
             
             selected_users.forEach(user => {
@@ -1544,10 +1536,10 @@
         },
         onApplyTagFilter: function(selected_tags) {
             if (!this.facets.tags) {
-                Vue.set(this.facets, 'tags', []);
+                this.facets['tags'] = [];
             }
             if (!this.search_filters.tags) {
-                Vue.set(this.search_filters, 'tags', []);
+                this.search_filters['tags'] = [];
             }
             selected_tags.forEach(tag => {
                 if (!this.facets.tags.find(t => t.id === tag.id)) {
@@ -1836,7 +1828,31 @@
         }
 
       }
-    })
+    });
+
+    app.use(vuetify);
+    app.use(i18n);
+    app.use(router);
+    app.mixin(momentMixin);
+
+    // Use GlobalLoginPlugin for session handling
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        app.use(GlobalLoginPlugin);
+    }
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
   <?php $this->load->view('common/analytics'); ?>

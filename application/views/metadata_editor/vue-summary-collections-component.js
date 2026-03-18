@@ -1,5 +1,6 @@
 ///Collections for the project
-Vue.component('vue-summary-collections', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-summary-collections'] = {
     props:[],
     data: function () {    
         return {
@@ -141,7 +142,7 @@ Vue.component('vue-summary-collections', {
                 </div>
                 
                 <template v-for="collection in project_collections">
-                    <v-chip small color="#dce3f7" class="mr-1" close @click:close="removeFromCollection(collection.id)">
+                    <v-chip size="small" color="#dce3f7" class="mr-1" closable @click:close="removeFromCollection(collection.id)">
                         {{collection.title}}                                      
                     </v-chip>
                 </template>

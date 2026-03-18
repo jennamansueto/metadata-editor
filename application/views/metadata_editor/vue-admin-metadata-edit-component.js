@@ -1,5 +1,5 @@
 //Edit admin metadata
-const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
+const VueAdminMetadataEdit = {
     props: ['index', 'id'],
     data() {
         return {
@@ -32,7 +32,7 @@ const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
             return _.get(this.metadata_model,key);
         },
         updateModelJson: function(val){
-            this.$set(this,'metadata_model',val);
+            this['metadata_model'] = val;
         },
         update: function (key, value){
             if (key.indexOf(".") !== -1 && this.metadata_model[key]){
@@ -286,14 +286,14 @@ const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
                         <div style="font-weight:normal">{{$t("Edit")}} - <span v-if="MetadataTemplateRaw">{{MetadataTemplateRaw.name}}</span></div>
 
                         <div v-if="HasEditAccess">
-                            <v-btn  small outlined color="primary" class="mr-2" @click="navigateToChangeLog">{{$t("Change log")}}</v-btn>
-                            <v-btn  small outlined color="red" class="mr-5" @click="deleteMetadata" >{{$t("delete")}}</v-btn>
-                            <v-btn color="primary" small @click="saveMetadata" >{{$t("save")}} <span v-if="is_dirty">*</span></v-btn>
-                            <v-btn  small>{{$t("cancel")}}</v-btn>
+                            <v-btn size="small" variant="outlined" color="primary" class="mr-2" @click="navigateToChangeLog">{{$t("Change log")}}</v-btn>
+                            <v-btn size="small" variant="outlined" color="red" class="mr-5" @click="deleteMetadata" >{{$t("delete")}}</v-btn>
+                            <v-btn color="primary" size="small" @click="saveMetadata" >{{$t("save")}} <span v-if="is_dirty">*</span></v-btn>
+                            <v-btn size="small">{{$t("cancel")}}</v-btn>
                         </div>
                         <div v-else>
-                            <v-btn  small class="mr-2" @click="navigateToChangeLog">{{$t("Change log")}}</v-btn>
-                            <v-btn  small outlined color="red">{{$t("read_only")}}</v-btn>
+                            <v-btn size="small" class="mr-2" @click="navigateToChangeLog">{{$t("Change log")}}</v-btn>
+                            <v-btn size="small" variant="outlined" color="red">{{$t("read_only")}}</v-btn>
                         </div>
                     </v-card-title>
                 </v-card>

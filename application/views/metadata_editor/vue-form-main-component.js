@@ -1,5 +1,6 @@
 //vue-main-form-component ///////////////////////////////////////////////////
-Vue.component('form-main', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['form-main'] = {
     props: ['title', 'items', 'depth', 'css_class','path'],
     data() {
         return {
@@ -40,7 +41,7 @@ Vue.component('form-main', {
     },
     computed: {
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         },
         activeSection()
         {
@@ -64,13 +65,13 @@ Vue.component('form-main', {
 
             <!-- form-section -->
             <div v-if="activeFormFieldDisplayType()=='section_container'"  class="form-section m-3" >
-                <v-form-preview                         
+                <nada-form-preview                         
                         :items="formField.items" 
                         :title="formField.title"
                         :path="formField.key"
                         :field="formField"
                     >
-                </v-form-preview>
+                </nada-form-preview>
             </div>
             <!-- end-form-section -->
 

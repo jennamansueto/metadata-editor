@@ -1,5 +1,5 @@
 //metadata types
-const VueMetadataTypes = Vue.component('metadata-types', {
+const VueMetadataTypes = {
     props: [],
     data() {
         return {
@@ -96,7 +96,7 @@ const VueMetadataTypes = Vue.component('metadata-types', {
                 
             <v-card-text class="mb-5" >
 
-            <v-simple-table>
+            <v-table>
                 <template v-slot:default>
                     <thead>
                         <tr>
@@ -117,7 +117,7 @@ const VueMetadataTypes = Vue.component('metadata-types', {
                         </tr>
                     </tbody>
                 </template>
-            </v-simple-table>
+            </v-table>
             
             </v-card-text>
             </v-card>

@@ -1,5 +1,6 @@
 /// Project summary page
-Vue.component('summary-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['summary-component'] = {
     data () {
         return {
           validation_errors: "",
@@ -226,7 +227,7 @@ Vue.component('summary-component', {
                                 <h6>{{$t("Data and Documentation")}}</h6>
 
                                 <div v-if="project_disk_usage.size_formatted">
-                                    <v-chip color="light" small style="font-size:small">{{$t("Disk usage")}}: {{project_disk_usage.size_formatted}}</v-chip>
+                                    <v-chip color="light" size="small" style="font-size:small">{{$t("Disk usage")}}: {{project_disk_usage.size_formatted}}</v-chip>
                                 </div>
 
                             </v-card-title>
@@ -272,14 +273,14 @@ Vue.component('summary-component', {
                                                         <template v-for="(item, index) in ProjectTemplates">
                                                         <v-list-item :key="item.uid">
                                                             <template v-slot:default="{ active }">
-                                                            <v-list-item-content>
+                                                            
                                                                 <v-list-item-title><strong>{{item.name}}</strong></v-list-item-title>
                                                                 <v-list-item-subtitle>
                                                                     {{item.uid}}
                                                                     <span v-if="item.version">| Version: {{item.version}}</span>  
                                                                     <span v-if="item.lang">| Language: {{item.lang}}</span>
                                                                 </v-list-item-subtitle>                                                                
-                                                            </v-list-item-content>
+                                                            
 
                                                             <v-list-item-action>
                                                                 <v-list-item-action-text v-text="item.action"></v-list-item-action-text>

@@ -78,7 +78,7 @@
                     <div class="stats-number success--text">{{ stats.users.active }}</div>
                     <div class="stats-label"><?php echo t('Active Users'); ?></div>
                     <div class="stats-change success--text" v-if="stats.users.this_month > 0">
-                        <v-icon small color="success">mdi-arrow-up</v-icon>
+                        <v-icon size="small" color="success">mdi-arrow-up</v-icon>
                         {{ stats.users.this_month }} <?php echo t('new users'); ?>
                     </div>
                 </v-card-text>
@@ -143,7 +143,7 @@
                                         <div class="text-caption grey--text">{{ user.email }}</div>
                                     </div>
                                 </div>
-                                <v-chip small color="primary" outlined>
+                                <v-chip size="small" color="primary" outlined>
                                     {{ user.page_views }}
                                 </v-chip>
                             </div>
@@ -163,7 +163,7 @@
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
-                        <v-simple-table dense fixed-header style="max-height:400px;overflow:auto;">
+                        <v-table dense fixed-header style="max-height:400px;overflow:auto;">
                             <thead>
                                 <tr>
                                     <th class="text-left" style="width:50%;"><?php echo t('Page'); ?></th>
@@ -190,7 +190,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </v-simple-table>
+                        </v-table>
                     </v-card-text>
                 </v-card>
                 <v-card class="mt-4" v-else>
@@ -207,7 +207,7 @@
                         <?php echo t('Today\'s Traffic'); ?>
                         <v-spacer></v-spacer>
                         <v-chip x-small color="success" outlined>
-                            <v-icon x-small left>mdi-circle</v-icon>
+                            <v-icon x-small start>mdi-circle</v-icon>
                             <?php echo t('Live'); ?>
                         </v-chip>
                     </v-card-title>
@@ -234,7 +234,7 @@
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
-                        <v-simple-table dense fixed-header style="max-height:300px;overflow:auto;">
+                        <v-table dense fixed-header style="max-height:300px;overflow:auto;">
                             <thead>
                                 <tr>
                                     <th><?php echo t('Page'); ?></th>
@@ -256,7 +256,7 @@
                                     </tr>
                                 </template>
                             </tbody>
-                        </v-simple-table>
+                        </v-table>
                     </v-card-text>
                 </v-card>
                 
@@ -351,7 +351,7 @@
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text v-if="hasData && topEndpoints.length > 0">
-                    <v-simple-table dense>
+                    <v-table dense>
                         <template v-slot:default>
                             <thead>
                                 <tr>
@@ -377,7 +377,7 @@
                                 </tr>
                             </tbody>
                         </template>
-                    </v-simple-table>
+                    </v-table>
                 </v-card-text>
                 <v-card-text v-else class="text-center py-8 grey--text">
                     <?php echo t('No endpoint data available.'); ?>
@@ -391,7 +391,7 @@
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text v-if="hasData && topUsers.length > 0">
-                    <v-simple-table dense>
+                    <v-table dense>
                         <template v-slot:default>
                             <thead>
                                 <tr>
@@ -414,7 +414,7 @@
                                 </tr>
                             </tbody>
                         </template>
-                    </v-simple-table>
+                    </v-table>
                 </v-card-text>
                 <v-card-text v-else class="text-center py-8 grey--text">
                     <?php echo t('No user or API key data available.'); ?>
@@ -435,9 +435,9 @@
                     <v-icon class="mr-2" color="primary">mdi-clock-outline</v-icon>
                     <?php echo t('Recent Activity'); ?>
                     <v-spacer></v-spacer>
-                    <v-btn text small color="primary" href="<?php echo site_url('admin/audit_logs'); ?>">
+                    <v-btn variant="text" size="small" color="primary" href="<?php echo site_url('admin/audit_logs'); ?>">
                         <?php echo t('View all'); ?>
-                        <v-icon right small>mdi-open-in-new</v-icon>
+                        <v-icon end size="small">mdi-open-in-new</v-icon>
                     </v-btn>
                 </v-card-title>
                 <v-divider></v-divider>
@@ -452,7 +452,7 @@
                                     {{ item.type === 'project' ? 'mdi-folder' : 'mdi-history' }}
                                 </v-icon>
                             </v-list-item-icon>
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>
                                     <span v-if="item.project_title">
                                         {{ item.project_title }}
@@ -464,7 +464,7 @@
                                 <v-list-item-subtitle>
                                     {{ formatTimeUnix(item.timestamp) }} • {{ item.user }}
                                 </v-list-item-subtitle>
-                            </v-list-item-content>
+                            
                         </v-list-item>
                     </v-list>
                     <div v-else class="text-center py-8">
@@ -481,9 +481,9 @@
                     <v-icon class="mr-2" color="success">mdi-account-group</v-icon>
                     <?php echo t('User Overview'); ?>
                     <v-spacer></v-spacer>
-                    <v-btn text small color="primary" href="<?php echo site_url('admin/users'); ?>">
+                    <v-btn variant="text" size="small" color="primary" href="<?php echo site_url('admin/users'); ?>">
                         <?php echo t('Manage users'); ?>
-                        <v-icon right small>mdi-open-in-new</v-icon>
+                        <v-icon end size="small">mdi-open-in-new</v-icon>
                     </v-btn>
                 </v-card-title>
                 <v-divider></v-divider>
@@ -621,7 +621,7 @@
 
                     <div class="text-caption grey--text mb-1"><?php echo t('Recent Jobs'); ?></div>
                     <div v-if="hasFastApiJobs" class="mb-3" style="max-height:300px;overflow:auto;">
-                        <v-simple-table dense>
+                        <v-table dense>
                             <template v-slot:default>
                                 <thead>
                                     <tr>
@@ -640,7 +640,7 @@
                                     </tr>
                                 </tbody>
                             </template>
-                        </v-simple-table>
+                        </v-table>
                     </div>
                     <div v-else class="text-body-2 grey--text mb-3"><?php echo t('No active jobs.'); ?></div>
 
@@ -685,7 +685,7 @@
                         </v-col>
                         <v-col cols="12">
                             <div class="text-caption grey--text">
-                                <v-icon small>mdi-folder-outline</v-icon>
+                                <v-icon size="small">mdi-folder-outline</v-icon>
                                 <?php echo t('Storage Path'); ?>: {{ diskSpace.storage_path }}
                             </div>
                         </v-col>
@@ -708,17 +708,17 @@
                 <div>
                     <h1 class="text-h4 font-weight-medium"><?php echo t('Dashboard'); ?></h1>
                     <p class="text-caption grey--text mt-1" v-if="lastUpdated">
-                        <v-icon small>mdi-clock-outline</v-icon>
+                        <v-icon size="small">mdi-clock-outline</v-icon>
                         <?php echo t('Last updated'); ?>: {{ lastUpdated }}
                     </p>
                 </div>
                 <div class="d-flex align-center">
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
-                        <v-icon left>mdi-traffic-light</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
+                        <v-icon start>mdi-traffic-light</v-icon>
                     <?php echo t('API Log Aggregates'); ?>
                     </v-btn>
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
-                        <v-icon left>mdi-table</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
+                        <v-icon start>mdi-table</v-icon>
                         <?php echo t('Analytics Aggregates'); ?>
                     </v-btn>
                     <v-btn 
@@ -745,7 +745,7 @@
         <template v-else>
             <v-row class="mt-4">
                 <v-col cols="12">
-                    <v-alert type="info" outlined>
+                    <v-alert type="info" variant="outlined">
                         <?php echo t('Analytics data is not available. Please ensure tracking is configured.'); ?>
                     </v-alert>
                 </v-col>
@@ -792,12 +792,12 @@
                     </p>
                 </div>
                 <div class="d-flex align-center">
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/' }" href="#/">
-                        <v-icon left>mdi-view-dashboard-outline</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/' }" href="#/">
+                        <v-icon start>mdi-view-dashboard-outline</v-icon>
                         <?php echo t('Back to Dashboard'); ?>
                     </v-btn>
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
-                        <v-icon left>mdi-traffic-light</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
+                        <v-icon start>mdi-traffic-light</v-icon>
                     <?php echo t('API Log Aggregates'); ?>
                     </v-btn>
                     <v-btn color="primary" icon @click="refreshStatus" :loading="loadingStatus" :disabled="loadingStatus">
@@ -818,10 +818,10 @@
                     <v-card-text>
                         <v-skeleton-loader type="table-heading, text, table-tbody" v-if="loadingStatus"></v-skeleton-loader>
                         <div v-else>
-                            <v-alert type="error" dense outlined v-if="statusError">
+                            <v-alert type="error" density="compact" variant="outlined" v-if="statusError">
                                 {{ statusError }}
                             </v-alert>
-                            <v-simple-table>
+                            <v-table>
                                 <tbody>
                                     <tr>
                                         <th class="text-left"><?php echo t('Last Aggregated Date'); ?></th>
@@ -844,7 +844,7 @@
                                         </td>
                                     </tr>
                                 </tbody>
-                            </v-simple-table>
+                            </v-table>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -856,10 +856,10 @@
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
-                        <v-alert type="success" dense outlined v-if="successMessage">
+                        <v-alert type="success" density="compact" variant="outlined" v-if="successMessage">
                             {{ successMessage }}
                         </v-alert>
-                        <v-alert type="error" dense outlined v-if="runError">
+                        <v-alert type="error" density="compact" variant="outlined" v-if="runError">
                             {{ runError }}
                         </v-alert>
 
@@ -871,12 +871,12 @@
                         </v-form>
                         <div class="d-flex align-center mt-4">
                             <v-btn color="primary" @click="runAggregation" :loading="running" :disabled="running">
-                                <v-icon left>mdi-play</v-icon>
+                                <v-icon start>mdi-play</v-icon>
                                 <?php echo t('Start Aggregation'); ?>
                             </v-btn>
                             <v-spacer></v-spacer>
-                            <v-btn text color="primary" :to="{ path: '/' }" href="#/">
-                                <v-icon left>mdi-view-dashboard-outline</v-icon>
+                            <v-btn variant="text" color="primary" :to="{ path: '/' }" href="#/">
+                                <v-icon start>mdi-view-dashboard-outline</v-icon>
                                 <?php echo t('Back to Dashboard'); ?>
                             </v-btn>
                         </div>
@@ -917,12 +917,12 @@
                     </p>
                 </div>
                 <div class="d-flex align-center">
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/' }" href="#/">
-                        <v-icon left>mdi-view-dashboard-outline</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/' }" href="#/">
+                        <v-icon start>mdi-view-dashboard-outline</v-icon>
                         <?php echo t('Back to Dashboard'); ?>
                     </v-btn>
-                    <v-btn class="mr-2" text color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
-                        <v-icon left>mdi-table</v-icon>
+                    <v-btn class="mr-2" variant="text" color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
+                        <v-icon start>mdi-table</v-icon>
                         <?php echo t('Analytics Aggregates'); ?>
                     </v-btn>
                     <v-btn color="primary" icon @click="refreshStatus" :loading="loadingStatus" :disabled="loadingStatus">
@@ -943,14 +943,14 @@
                     <v-card-text>
                         <v-skeleton-loader type="table-heading, text, table-tbody" v-if="loadingStatus"></v-skeleton-loader>
                         <div v-else>
-                            <v-alert type="error" dense outlined v-if="statusError">
+                            <v-alert type="error" density="compact" variant="outlined" v-if="statusError">
                                 {{ statusError }}
                             </v-alert>
-                            <v-alert type="info" dense outlined v-if="statusData && statusData.available === false">
+                            <v-alert type="info" density="compact" variant="outlined" v-if="statusData && statusData.available === false">
                                 {{ statusData.message || '<?php echo t('API logs tables are unavailable.'); ?>' }}
                             </v-alert>
                             <template v-if="statusData && statusData.available">
-                                <v-simple-table>
+                                <v-table>
                                     <tbody>
                                         <tr>
                                             <th class="text-left"><?php echo t('Last Aggregated Date'); ?></th>
@@ -973,7 +973,7 @@
                                             <td>{{ statusDisplay.userRows }}</td>
                                         </tr>
                                     </tbody>
-                                </v-simple-table>
+                                </v-table>
                             </template>
                         </div>
                     </v-card-text>
@@ -986,21 +986,21 @@
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
-                        <v-alert type="success" dense outlined v-if="successMessage">
+                        <v-alert type="success" density="compact" variant="outlined" v-if="successMessage">
                             {{ successMessage }}
                         </v-alert>
-                        <v-alert type="error" dense outlined v-if="runError">
+                        <v-alert type="error" density="compact" variant="outlined" v-if="runError">
                             {{ runError }}
                         </v-alert>
 
                         <div class="d-flex align-center mt-4">
                             <v-btn color="primary" @click="runAggregation" :loading="running" :disabled="running">
-                                <v-icon left>mdi-play</v-icon>
+                                <v-icon start>mdi-play</v-icon>
                                 <?php echo t('Start Aggregation'); ?>
                             </v-btn>
                             <v-spacer></v-spacer>
-                            <v-btn text color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
-                                <v-icon left>mdi-table</v-icon>
+                            <v-btn variant="text" color="primary" :to="{ path: '/analytics-aggregates' }" href="#/analytics-aggregates">
+                                <v-icon start>mdi-table</v-icon>
                                 <?php echo t('Analytics Aggregates'); ?>
                             </v-btn>
                         </div>
@@ -1327,7 +1327,7 @@ const AnalyticsSection = {
             return 'error';
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.destroyCharts();
     }
 };
@@ -1474,11 +1474,12 @@ const SystemStatusSection = {
     }
 };
 
-Vue.component('dashboard-overview', DashboardOverview);
-Vue.component('analytics-section', AnalyticsSection);
-Vue.component('api-logs-section', ApiLogsSection);
-Vue.component('activity-section', ActivitySection);
-Vue.component('system-status-section', SystemStatusSection);
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dashboard-overview'] = DashboardOverview;
+window.AppComponents['analytics-section'] = AnalyticsSection;
+window.AppComponents['api-logs-section'] = ApiLogsSection;
+window.AppComponents['activity-section'] = ActivitySection;
+window.AppComponents['system-status-section'] = SystemStatusSection;
 
 const DashboardHome = {
     template: '#dashboard-home-template',
@@ -1689,7 +1690,7 @@ const DashboardHome = {
         this.loadDashboardStats();
         this.startLiveRefresh();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopLiveRefresh();
     },
     methods: {
@@ -1926,22 +1927,21 @@ const ApiLogsAggregates = {
     }
 };
 
-const router = new VueRouter({
-    mode: 'hash',
+const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes: [
         { path: '/', component: DashboardHome },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
-        { path: '*', redirect: '/' }
+        { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
 });
 
-new Vue({
-    el: '#dashboard-app',
-    vuetify: new Vuetify({
-        theme: {
-            themes: {
-                light: {
+const vuetify = Vuetify.createVuetify({
+    theme: {
+        themes: {
+            light: {
+                colors: {
                     primary: '#1976D2',
                     secondary: '#424242',
                     accent: '#82B1FF',
@@ -1952,7 +1952,29 @@ new Vue({
                 }
             }
         }
-    }),
-    router
+    }
 });
+
+const app = Vue.createApp({
+    data() {
+        return {}
+    }
+});
+
+app.use(vuetify);
+app.use(router);
+
+// Register global properties
+if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+// Register components
+if (window.AppComponents) {
+    for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+    }
+}
+
+app.mount('#dashboard-app');
 </script>

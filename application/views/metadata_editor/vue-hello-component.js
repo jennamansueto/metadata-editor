@@ -1,4 +1,5 @@
-Vue.component('hello', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['hello'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'field'],
     data() {
         return {
@@ -38,7 +39,7 @@ Vue.component('hello', {
             }
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
     },
     template: `

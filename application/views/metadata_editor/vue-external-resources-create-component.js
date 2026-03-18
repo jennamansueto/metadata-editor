@@ -1,5 +1,5 @@
 //external resources
-const VueExternalResourcesCreate= Vue.component('external-resources-create', {
+const VueExternalResourcesCreate = {
     props: ['index'],
     data() {
         return {
@@ -353,7 +353,7 @@ const VueExternalResourcesCreate= Vue.component('external-resources-create', {
             if (obj.key.indexOf(".") !== -1 && this.Resource[obj.key]){
                 delete this.Resource[obj.key];
             }
-            Vue.set(this.Resource,obj.key,obj.value);
+            this.Resource[obj.key] = obj.value;
         },
     },
     computed: {
@@ -424,7 +424,7 @@ const VueExternalResourcesCreate= Vue.component('external-resources-create', {
                                 :loading="is_saving || is_uploading">
                                 {{$t("Save")}} <span v-if="is_dirty || (attachment_type=='file' && file && file instanceof File && !uploadedFileName)">*</span>
                             </v-btn>
-                            <v-btn @click="cancelSave" small :disabled="is_saving">{{$t("cancel")}}</v-btn>
+                            <v-btn @click="cancelSave" size="small" :disabled="is_saving">{{$t("cancel")}}</v-btn>
                         </div>
                     </v-card-title>
 

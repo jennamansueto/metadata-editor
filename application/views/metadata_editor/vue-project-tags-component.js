@@ -1,5 +1,6 @@
 // Manage Project tags
-Vue.component('vue-project-tags', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-project-tags'] = {
     props: {
         projectId: { type: [Number, String], default: null },
         canEdit: { type: Boolean, default: null }
@@ -150,7 +151,7 @@ Vue.component('vue-project-tags', {
                         </div>
                         <div class="mb-2">
                             <template v-for="t in project_tags">
-                                <v-chip :key="'tag-' + t.id" small class="mr-1 mb-1" :close="effectiveCanEdit" @click:close="removeTag(t)">
+                                <v-chip :key="'tag-' + t.id" size="small" class="mr-1 mb-1" :closable="effectiveCanEdit" @click:close="removeTag(t)">
                                     {{ t.tag }}
                                 </v-chip>
                             </template>
@@ -177,7 +178,7 @@ Vue.component('vue-project-tags', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="dialog_add_tags = false">{{ $t('cancel') }}</v-btn>
+                        <v-btn variant="text" @click="dialog_add_tags = false">{{ $t('cancel') }}</v-btn>
                         <v-btn color="primary" :disabled="!dialog_tag_input || !dialog_tag_input.trim() || dialog_loading" :loading="dialog_loading" @click="addTagsFromDialog">
                             {{ $t('Add') }}
                         </v-btn>

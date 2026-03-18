@@ -75,7 +75,7 @@
                           :disabled="loading"
                           @click="confirmRemoveUnused"
                         >
-                          <v-icon left small>mdi-tag-remove-outline</v-icon>
+                          <v-icon start size="small">mdi-tag-remove-outline</v-icon>
                           {{ $t('remove_unused_tags') }}
                         </v-btn>
                       </div>
@@ -98,8 +98,8 @@
                         :headers="headers"
                         :items="tags"
                         :server-items-length="totalTags"
-                        :items-per-page.sync="itemsPerPage"
-                        :page.sync="page"
+                        v-model:items-per-page="itemsPerPage"
+                        v-model:page="page"
                         :loading="loading"
                         class="tags-table"
                         dense
@@ -117,15 +117,15 @@
                         <template v-slot:item.actions="{ item }">
                           <div class="d-flex justify-end">
                             <v-menu bottom min-width="160" offset-y>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon small v-bind="attrs" v-on="on">
-                                  <v-icon small>mdi-dots-vertical</v-icon>
+                              <template v-slot:activator="{ props: activatorProps }">
+                                <v-btn icon size="small" v-bind="activatorProps">
+                                  <v-icon size="small">mdi-dots-vertical</v-icon>
                                 </v-btn>
                               </template>
-                              <v-list dense>
+                              <v-list density="compact">
                                 <v-list-item @click="confirmDelete(item)">
                                   <v-list-item-icon>
-                                    <v-icon small color="error">mdi-delete</v-icon>
+                                    <v-icon size="small" color="error">mdi-delete</v-icon>
                                   </v-list-item-icon>
                                   <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                                 </v-list-item>
@@ -147,6 +147,7 @@
 
   <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
 
@@ -163,16 +164,20 @@
   <script>
     (function() {
       const translations = <?php echo json_encode(isset($translations) ? $translations : array(), JSON_UNESCAPED_UNICODE); ?>;
-      const i18n = new VueI18n({ locale: 'default', messages: { default: translations } });
-      const vuetify = new Vuetify({
+      const i18n = VueI18n.createI18n({
+        legacy: true, locale: 'default', messages: { default: translations }
+      });
+      const vuetify = Vuetify.createVuetify({
         theme: {
           themes: {
             light: {
-              primary: '#526bc7',
-              'primary-dark': '#0c1a4d',
-              secondary: '#b0bec5',
-              accent: '#8c9eff',
-              error: '#b71c1c'
+              colors: {
+                primary: '#526bc7',
+                'primary-dark': '#0c1a4d',
+                secondary: '#b0bec5',
+                accent: '#8c9eff',
+                error: '#b71c1c'
+              }
             }
           }
         }
@@ -180,10 +185,7 @@
 
       const apiBase = (CI && CI.site_url ? CI.site_url : '').replace(/\/?$/, '/') + 'api/tags';
 
-      new Vue({
-        el: '#app',
-        i18n,
-        vuetify,
+      const app = Vue.createApp({
         data() {
           return {
             navTabsModel: 4,
@@ -242,12 +244,12 @@
                 this.tags = [];
                 this.totalTags = 0;
                 const msg = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (err.message || 'Failed to load tags');
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.loading = false; });
           },
           confirmDelete(item) {
-            EventBus.$emit('confirm', {
+            EventBus.emit('confirm', {
               message: (this.$t('confirm_delete_tag')),
               resolve: (ok) => {
                 if (ok) this.deleteTag(item.id);
@@ -261,19 +263,19 @@
               .then(res => {
                 if (res.data && res.data.status === 'success') {
                   this.loadTags();
-                  EventBus.$emit('alert', { message: this.$t('tag_deleted') || 'Tag deleted.' });
+                  EventBus.emit('alert', { message: this.$t('tag_deleted') || 'Tag deleted.' });
                 } else {
-                  EventBus.$emit('alert', { message: (res.data && res.data.message) || 'Delete failed.' });
+                  EventBus.emit('alert', { message: (res.data && res.data.message) || 'Delete failed.' });
                 }
               })
               .catch(err => {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message || 'Delete failed.';
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.loading = false; });
           },
           confirmRemoveUnused() {
-            EventBus.$emit('confirm', {
+            EventBus.emit('confirm', {
               message: this.$t('confirm_remove_unused_tags') || 'Remove all tags that are not used by any project?',
               resolve: (ok) => {
                 if (ok) this.removeUnused();
@@ -288,19 +290,36 @@
                 if (res.data && res.data.status === 'success') {
                   this.loadTags();
                   const n = (res.data.deleted != null) ? res.data.deleted : 0;
-                  EventBus.$emit('alert', { message: (this.$t('unused_tags_removed') || '{n} unused tag(s) removed.').replace('{n}', n) });
+                  EventBus.emit('alert', { message: (this.$t('unused_tags_removed') || '{n} unused tag(s) removed.').replace('{n}', n) });
                 } else {
-                  EventBus.$emit('alert', { message: (res.data && res.data.message) || 'Request failed.' });
+                  EventBus.emit('alert', { message: (res.data && res.data.message) || 'Request failed.' });
                 }
               })
               .catch(err => {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message || 'Request failed.';
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.removingUnused = false; });
           }
         }
       });
+
+      app.use(vuetify);
+      app.use(i18n);
+
+      // Register global properties
+      if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+      if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+      if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+      // Register components
+      if (window.AppComponents) {
+        for (const [name, component] of Object.entries(window.AppComponents)) {
+          app.component(name, component);
+        }
+      }
+
+      app.mount('#app');
     })();
   </script>
 </body>

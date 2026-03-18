@@ -1,5 +1,6 @@
 //v-login
-Vue.component('v-login', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['v-login'] = {
     props: ['value'],
     data() {
         return {

@@ -1,4 +1,5 @@
-Vue.component('vue-user-filter', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-user-filter'] = {
     props: ['value'],
     data() {
         return {
@@ -66,7 +67,7 @@ Vue.component('vue-user-filter', {
                     <v-autocomplete
                         v-model="selected_users"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         @change="search=''"
                         :items="users"
                         solo
@@ -92,17 +93,17 @@ Vue.component('vue-user-filter', {
                             </v-chip>
                         </template>
                         <template v-slot:item="data">
-                            <v-list-item-content>
+                            
                                 <v-list-item-title>{{ data.item.username }}</v-list-item-title>
                                 <v-list-item-subtitle>{{ data.item.email }}</v-list-item-subtitle>
-                            </v-list-item-content>
+                            
                         </template>
                     </v-autocomplete>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="cancel">{{$t('cancel')}}</v-btn>
+                    <v-btn variant="text" @click="cancel">{{$t('cancel')}}</v-btn>
                     <v-btn color="primary" @click="applyFilter">{{$t('apply')}}</v-btn>
                 </v-card-actions>
             </v-card>

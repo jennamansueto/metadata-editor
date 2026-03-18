@@ -1,5 +1,6 @@
 /// Template validation component
-Vue.component('template-validation-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['template-validation-component'] = {
     data () {
         return {
           validation_errors: "",
@@ -43,7 +44,7 @@ Vue.component('template-validation-component', {
                 vm.projectValidationReport();
             };
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         if (this._validationDelayTimer) {
             clearTimeout(this._validationDelayTimer);
         }
@@ -396,7 +397,7 @@ Vue.component('template-validation-component', {
                         <h6>{{$t("project_validation")}}</h6>
                         <div class="d-flex">                           
                             <v-btn icon title="Re-run validation" @click="RefreshValidation">
-                                <v-icon small>mdi-refresh</v-icon>
+                                <v-icon size="small">mdi-refresh</v-icon>
                             </v-btn>
                         </div>
                     </v-card-title>
@@ -406,16 +407,16 @@ Vue.component('template-validation-component', {
 
                     <!-- Schema validation (shown for all projects) -->
                     <div>
-                        <div>{{$t("Schema validation")}} <v-icon small :title="$t('Requires project to be saved')" >mdi-information-outline</v-icon></div>
+                        <div>{{$t("Schema validation")}} <v-icon size="small" :title="$t('Requires project to be saved')" >mdi-information-outline</v-icon></div>
                         <div class="validation-errors mt-2" v-if="validation_errors!=''" style="color:red;font-size:small;" >
                             
-                            <v-list dense>
+                            <v-list density="compact">
                                 <template v-for="error in validation_errors.errors" >
                                     <v-list-item @click="navigateToError(error.property)">
                                         <v-list-item-icon>
                                             <v-icon color="red">mdi-alert-circle</v-icon>
                                         </v-list-item-icon>
-                                        <v-list-item-content>
+                                        
                                             <v-list-item-title color="red">
                                                 <div style="font-weight:bold;color:red">{{error.message}}</div>                                            
                                             </v-list-item-title>
@@ -424,7 +425,7 @@ Vue.component('template-validation-component', {
                                                     {{error.property}}
                                                 </div>
                                             </v-list-item-subtitle>
-                                        </v-list-item-content>                                                                                            
+                                                                                                                                    
                                     </v-list-item>
                                 </template>
                             </v-list>
@@ -436,17 +437,17 @@ Vue.component('template-validation-component', {
 
                     <!-- Variables validation (only for microdata projects) -->
                     <div v-if="isMicrodataProject" class="mt-4">
-                        <div>{{$t("variables_validation")}} <v-icon small :title="$t('Requires project to be saved')" >mdi-information-outline</v-icon></div>
+                        <div>{{$t("variables_validation")}} <v-icon size="small" :title="$t('Requires project to be saved')" >mdi-information-outline</v-icon></div>
                         
                         <div class="validation-errors mt-2" v-if="variables_validation_errors!=''" style="color:red;font-size:small;" >
                             
-                            <v-list dense>
+                            <v-list density="compact">
                                 <template v-for="error in variables_validation_errors.errors" >
                                     <v-list-item @click="navigateToError(error.property, error.variable_fid)">
                                         <v-list-item-icon>
                                             <v-icon color="red">mdi-alert-circle</v-icon>
                                         </v-list-item-icon>
-                                        <v-list-item-content>
+                                        
                                             <v-list-item-title color="red">
                                                 <div style="font-weight:bold;color:red">{{error.message}}</div>                                            
                                             </v-list-item-title>
@@ -457,7 +458,7 @@ Vue.component('template-validation-component', {
                                                     <span v-if="!error.variable_name && !error.variable_fid">{{error.property}}</span>
                                                 </div>
                                             </v-list-item-subtitle>
-                                        </v-list-item-content>                                                                                            
+                                                                                                                                    
                                     </v-list-item>
                                 </template>
                             </v-list>
@@ -470,13 +471,13 @@ Vue.component('template-validation-component', {
                     <div class="mt-3">{{$t("Template validation")}}</div>
                                         
                     <div>
-                        <v-list dense>                            
+                        <v-list density="compact">                            
                             <template v-for="(item, i) in TemplateValidationErrors" >
                                 <v-list-item v-if="!item.result.valid" :key="i" @click="navigateToError(item.key)">
                                     <v-list-item-icon>
                                         <v-icon color="red">mdi-alert-circle</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content>
+                                    
                                         <v-list-item-title color="red">
                                             <div v-for="error in item.result.errors" style="font-weight:bold;color:red">{{error}}</div>                                            
                                         </v-list-item-title>
@@ -485,7 +486,7 @@ Vue.component('template-validation-component', {
                                                 {{item.item.title}} - {{item.key}}
                                             </div>
                                         </v-list-item-subtitle>
-                                    </v-list-item-content>                                                                                            
+                                                                                                                                
                                 </v-list-item>
                             </template>
                         </v-list>
@@ -504,7 +505,7 @@ Vue.component('template-validation-component', {
                             @click="navigateToFullValidationReport"
                             class="text-caption"
                         >
-                            <v-icon small left>mdi-clipboard-list</v-icon>
+                            <v-icon size="small" start>mdi-clipboard-list</v-icon>
                             {{$t("view_full_validation_report")}}
                         </v-btn>
                     </v-card-actions>

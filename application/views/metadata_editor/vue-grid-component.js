@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('grid-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['grid-component'] = {
     props:['value','columns','path', 'field'],
     data: function () {    
         return {
@@ -10,7 +11,7 @@ Vue.component('grid-component', {
     },
     watch: { 
         field_data: function(newVal, oldVal) {
-            this.$vueSet (this.$store.state.formData, this.key_path, newVal);
+            _.set(this.$store.state.formData, this.key_path, newVal);
         }
     
     },
@@ -41,9 +42,8 @@ Vue.component('grid-component', {
                             top 
                             max-width="300"
                         >
-                        <template v-slot:activator="{ on, attrs }">
-                            <i v-bind="attrs"
-                            v-on="on" class="far fa-question-circle"></i>        
+                        <template v-slot:activator="{ props: activatorProps }">
+                            <i v-bind="activatorProps" class="far fa-question-circle"></i>        
                         </template>
                         <span>{{column.help_text}}</span>
                         </v-tooltip>

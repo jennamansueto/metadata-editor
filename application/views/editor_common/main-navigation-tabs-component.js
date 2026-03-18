@@ -7,7 +7,8 @@
  *   - value: Number - v-model value for tab selection (optional)
  * 
  */
-Vue.component('main-navigation-tabs', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['main-navigation-tabs'] = {
     props: {
         activeTab: {
             type: String,

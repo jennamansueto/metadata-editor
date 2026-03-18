@@ -1,5 +1,6 @@
 ///// nested-section-subsection
-Vue.component('nested-section-subsection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nested-section-subsection'] = {
     props:['value','columns','path','title','parentElement'],
     data: function () {    
         return {
@@ -22,7 +23,7 @@ Vue.component('nested-section-subsection', {
             return this.columns;
         },
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         }
     },
     methods:{
@@ -91,10 +92,10 @@ Vue.component('nested-section-subsection', {
                     <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                                 <span><v-icon>mdi-folder-text-outline</v-icon> {{title}}</span>
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
                                 <div v-for="(column,idx_col) in localColumns" scope="row" >
                                     <div v-if="column.type=='section'">
                                         <nested-section-subsection
@@ -164,7 +165,7 @@ Vue.component('nested-section-subsection', {
                                     
                                         
                                 </div>  
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </template>

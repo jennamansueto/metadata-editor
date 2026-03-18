@@ -1,10 +1,11 @@
 // Global alert dialog component
-Vue.component('alert-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['alert-dialog'] = {
   template: `
     <v-dialog v-model="visible" max-width="500" persistent>
       <v-card>
         <v-card-title class="headline">
-          <v-icon left :style="{ color: iconColor }">{{ icon }}</v-icon>
+          <v-icon start :style="{ color: iconColor }">{{ icon }}</v-icon>
           <span :class="titleClass">{{ title }}</span>
         </v-card-title>
         <v-card-text class="pt-4 pb-4" style="overflow-y: auto; max-height: 300px;">
@@ -12,7 +13,7 @@ Vue.component('alert-dialog', {
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :color="buttonColor" text @click="close">OK</v-btn>
+          <v-btn :color="buttonColor" variant="text" @click="close">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -84,7 +85,7 @@ Vue.component('alert-dialog', {
     }
   },
   mounted() {
-    EventBus.$on('alert', this.show);
+    EventBus.on('alert', this.show);
   },
 });
 

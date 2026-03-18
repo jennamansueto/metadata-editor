@@ -4,20 +4,23 @@
     default: JSON.parse(atob(translationsJsonBase64))
   };
 
-  const i18n = new VueI18n({
+  const i18n = VueI18n.createI18n({
+      legacy: true,
     locale: 'default',
     messages: translation_messages
   });
 
-  const vuetify = new Vuetify({
+  const vuetify = Vuetify.createVuetify({
     theme: {
       themes: {
         light: {
-          primary: '#526bc7',
-          'primary-dark': '#0c1a4d',
-          secondary: '#b0bec5',
-          accent: '#8c9eff',
-          error: '#b71c1c'
+          colors: {
+            primary: '#526bc7',
+            'primary-dark': '#0c1a4d',
+            secondary: '#b0bec5',
+            accent: '#8c9eff',
+            error: '#b71c1c'
+          }
         }
       }
     }
@@ -849,7 +852,7 @@
         }
         this.$confirm(this.$t('delete_schema_file_confirm', { filename: file.filename }))
           .then(() => {
-            this.$set(this.deletingFiles, file.filename, true);
+            this.deletingFiles[file.filename] = true;
             axios.delete(this.baseApiUrl + '/files/' + encodeURIComponent(this.schemaUid), {
                 params: { filename: file.filename }
               })
@@ -872,7 +875,7 @@
                 this.$alert(message, { color: 'error' });
               })
               .finally(() => {
-                this.$set(this.deletingFiles, file.filename, false);
+                this.deletingFiles[file.filename] = false;
               });
           })
           .catch(() => {});
@@ -1100,15 +1103,15 @@
       },
       addAttribute() {
         if (!this.form.core_fields.attributes) {
-          this.$set(this.form.core_fields, 'attributes', {});
+          this.form.core_fields['attributes'] = {};
         }
         // Create a new attribute with a default key
         const newKey = 'attribute_' + (Object.keys(this.form.core_fields.attributes).length + 1);
-        this.$set(this.form.core_fields.attributes, newKey, '');
+        this.form.core_fields.attributes[newKey] = '';
       },
       removeAttribute(key) {
         if (this.form.core_fields.attributes && this.form.core_fields.attributes[key]) {
-          this.$delete(this.form.core_fields.attributes, key);
+          delete this.form.core_fields.attributes[key];
         }
       },
       updateAttributeKey(oldKey, newKey) {
@@ -1122,16 +1125,16 @@
         }
         // Update the key
         const value = this.form.core_fields.attributes[oldKey];
-        this.$delete(this.form.core_fields.attributes, oldKey);
-        this.$set(this.form.core_fields.attributes, newKey, value);
+        delete this.form.core_fields.attributes[oldKey];
+        this.form.core_fields.attributes[newKey] = value;
       },
       updateAttributeValue(key, value) {
         if (!this.form.core_fields.attributes) {
-          this.$set(this.form.core_fields, 'attributes', {});
+          this.form.core_fields['attributes'] = {};
         }
         // If value is an array (from combobox), take the first item or empty string
         const fieldValue = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : (value || '');
-        this.$set(this.form.core_fields.attributes, key, fieldValue);
+        this.form.core_fields.attributes[key] = fieldValue;
       },
       submit() {
         if (this.loading || this.saving) {
@@ -1234,16 +1237,12 @@
     { path: '/mappings/:uid', name: 'schema-mappings', component: SchemaMappings, props: route => ({ schemaUid: route.params.uid }) }
   ];
 
-  const router = new VueRouter({
-    mode: 'hash',
+  const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
     routes
   });
 
-  new Vue({
-    el: '#app',
-    i18n,
-    vuetify,
-    router,
+  const app = Vue.createApp({
     data() {
       return {
         baseApiRoot,
@@ -1274,4 +1273,22 @@
       }
     }
   });
+
+  app.use(vuetify);
+  app.use(i18n);
+  app.use(router);
+
+  // Register global properties
+  if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+  if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+  if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+  // Register components
+  if (window.AppComponents) {
+    for (const [name, component] of Object.entries(window.AppComponents)) {
+      app.component(name, component);
+    }
+  }
+
+  app.mount('#app');
 })();

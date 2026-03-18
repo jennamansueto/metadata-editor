@@ -1,5 +1,6 @@
 /// Template apply defaults component
-Vue.component('template-apply-defaults-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['template-apply-defaults-component'] = {
     props:['value'],
     data () {
         return {
@@ -210,10 +211,10 @@ Vue.component('template-apply-defaults-component', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="templateApplyDefaults" >
+                    <v-btn color="primary" variant="text" @click="templateApplyDefaults" >
                         {{$t('apply')}}
                     </v-btn>
-                    <v-btn color="primary" text @click="dialog=false;is_processed=false;" >
+                    <v-btn color="primary" variant="text" @click="dialog=false;is_processed=false;" >
                         {{$t('close')}}
                     </v-btn>
                     </v-card-actions>

@@ -1,7 +1,8 @@
 /**
  * Batch export dialog: export multiple data files to one or more formats
  */
-Vue.component('dialog-batch-export', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-batch-export'] = {
     props: {
         value: { type: Boolean, default: false },
         selectedFiles: { type: Array, default: () => [] }  // [{ file_id, file_name }]
@@ -265,7 +266,7 @@ Vue.component('dialog-batch-export', {
                             </div>
                             <div>
                                 <label class="text-body-2 font-weight-medium d-block mb-2">{{ $t('batch_export_select_formats') || 'Select export format(s)' }}</label>
-                                <v-simple-table dense class="batch-export-formats-table">
+                                <v-table dense class="batch-export-formats-table">
                                     <thead>
                                         <tr>
                                             <th class="text-left text-body-2" style="width: 90px;">{{ $t('batch_export_export') || 'Export' }}</th>
@@ -297,7 +298,7 @@ Vue.component('dialog-batch-export', {
                                             </td>
                                         </tr>
                                     </tbody>
-                                </v-simple-table>
+                                </v-table>
                             </div>
                             <div class="mt-3">
                                 <v-checkbox
@@ -347,15 +348,15 @@ Vue.component('dialog-batch-export', {
                                     {{ $t('batch_export_creating_zip') || 'Creating ZIP...' }}
                                 </div>
                                 <v-btn v-else-if="zip_download_url" color="primary" :href="zip_download_url" target="_blank" download class="mb-2">
-                                    <v-icon left>mdi-folder-zip</v-icon>{{ $t('batch_export_download_zip') || 'Download all (ZIP)' }}
+                                    <v-icon start>mdi-folder-zip</v-icon>{{ $t('batch_export_download_zip') || 'Download all (ZIP)' }}
                                 </v-btn>
                                 <div v-else-if="zip_error" class="text-caption error--text">{{ zip_error }}</div>
                             </div>
                             <div style="max-height: 240px; overflow-y: auto;">
                                 <div v-for="(r, idx) in results" :key="idx" class="d-flex align-center py-1">
                                     <span class="text-body-2 flex-grow-1">{{ r.file_name }} [{{ r.format.toUpperCase() }}]</span>
-                                    <v-btn v-if="r.status === 'done' && !individual_files_removed" small color="primary" :href="r.download_url" target="_blank" download>
-                                        <v-icon small left>mdi-download</v-icon>{{ $t('download') }}
+                                    <v-btn v-if="r.status === 'done' && !individual_files_removed" size="small" color="primary" :href="r.download_url" target="_blank" download>
+                                        <v-icon size="small" start>mdi-download</v-icon>{{ $t('download') }}
                                     </v-btn>
                                     <span v-else-if="r.status === 'done' && individual_files_removed" class="text-caption text--secondary">{{ $t('batch_export_removed') || 'Removed' }}</span>
                                     <span v-else class="text-caption error--text">{{ r.error || $t('failed') }}</span>
@@ -366,16 +367,16 @@ Vue.component('dialog-batch-export', {
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <template v-if="state === 'config'">
-                            <v-btn color="grey" text small @click="closeDialog">{{ $t('cancel') }}</v-btn>
-                            <v-btn color="primary" small :disabled="selected_formats.length === 0 || selectedFiles.length === 0" @click="startExport">
+                            <v-btn color="grey" variant="text" size="small" @click="closeDialog">{{ $t('cancel') }}</v-btn>
+                            <v-btn color="primary" size="small" :disabled="selected_formats.length === 0 || selectedFiles.length === 0" @click="startExport">
                                 {{ $t('export') }}
                             </v-btn>
                         </template>
                         <template v-if="state === 'running'">
-                            <v-btn color="grey" text small disabled>{{ $t('cancel') }}</v-btn>
+                            <v-btn color="grey" variant="text" size="small" disabled>{{ $t('cancel') }}</v-btn>
                         </template>
                         <template v-if="state === 'done'">
-                            <v-btn color="primary" text small @click="closeAndClear">{{ $t('close') }}</v-btn>
+                            <v-btn color="primary" variant="text" size="small" @click="closeAndClear">{{ $t('close') }}</v-btn>
                         </template>
                     </v-card-actions>
                 </v-card>

@@ -1,5 +1,6 @@
 /// Geospatial features list component
-Vue.component('geospatial-features', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-features'] = {
     props: ['index'],
     data: function () {    
         return {
@@ -366,7 +367,7 @@ Vue.component('geospatial-features', {
                 <v-card>
                     <v-card-title>{{$t("geospatial_features")}}</v-card-title>
                     <v-card-text>
-                        <v-alert text outlined color="warning" icon="mdi-alert">
+                        <v-alert variant="outlined" color="warning" icon="mdi-alert">
                             {{$t("geospatial_features_only_available_for_geospatial_projects")}}
                         </v-alert>
                     </v-card-text>
@@ -437,7 +438,7 @@ Vue.component('geospatial-features', {
                                                 {{feature.file_name}}
                                             </div>
                                             <div v-else class="text-muted text-small mt-2">
-                                                <v-icon color="grey" small class="mr-1">mdi-file-remove</v-icon>
+                                                <v-icon color="grey" size="small" class="mr-1">mdi-file-remove</v-icon>
                                                 {{$t("no_file")}}
                                             </div>
                                         </td>
@@ -465,15 +466,15 @@ Vue.component('geospatial-features', {
                                         <td>
                                             <div class="zxaction-buttons-hover">
                                                 <v-menu offset-y>
-                                                    <template v-slot:activator="{ on, attrs }">
-                                                        <v-btn small icon v-on="on" v-bind="attrs" 
+                                                    <template v-slot:activator="{ props: activatorProps }">
+                                                        <v-btn size="small" icon v-bind="activatorProps" 
                                                                :title="$t('more_options')" 
                                                                color="primary">
                                                             <v-icon>mdi-dots-vertical</v-icon>
                                                         </v-btn>
                                                     </template>
                                                     
-                                                    <v-list dense>
+                                                    <v-list density="compact">
                                                         <v-list-item @click="editFeature(index)">
                                                             <v-list-item-icon>
                                                                 <v-icon>mdi-file-edit</v-icon>
@@ -527,7 +528,7 @@ Vue.component('geospatial-features', {
                             </table>
                             
                             <div v-if="geospatialFeatures.length === 0" class="text-center mt-5">
-                                <v-alert text outlined color="info" icon="mdi-information">
+                                <v-alert variant="outlined" color="info" icon="mdi-information">
                                     {{$t("no_geospatial_features")}}
                                 </v-alert>
                             </div>
@@ -567,7 +568,7 @@ Vue.component('geospatial-features', {
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="dialog.show=false" v-if="dialog.is_loading==false">
+                        <v-btn color="primary" variant="text" @click="dialog.show=false" v-if="dialog.is_loading==false">
                             {{$t("close")}}
                         </v-btn>
                     </v-card-actions>
@@ -578,7 +579,7 @@ Vue.component('geospatial-features', {
             <v-dialog v-model="refresh_dialog.show" width="600" persistent>
                 <v-card>
                     <v-card-title class="text-h5 blue lighten-4">
-                        <v-icon left color="blue">mdi-refresh</v-icon>
+                        <v-icon start color="blue">mdi-refresh</v-icon>
                         {{$t("refresh_metadata")}}
                     </v-card-title>
 

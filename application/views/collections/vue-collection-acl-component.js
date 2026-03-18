@@ -1,4 +1,5 @@
-Vue.component('vue-collection-acl', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-collection-acl'] = {
     props: ['collection_id'],
     data() {
         return {

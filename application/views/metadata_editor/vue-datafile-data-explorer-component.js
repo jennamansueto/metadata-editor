@@ -1,5 +1,6 @@
 /// datafile data explorer
-Vue.component('datafile-data-explorer', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['datafile-data-explorer'] = {
     props:['file_id','value'],
     data: function () {    
         return {
@@ -133,16 +134,16 @@ Vue.component('datafile-data-explorer', {
                     }
                     vm.variable_data = [];
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', vm.$t('csv_data_deleted') || 'CSV data deleted successfully.');
+                        EventBus.emit('onSuccess', vm.$t('csv_data_deleted') || 'CSV data deleted successfully.');
                     }
                 } else {
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onFail', (res.data && res.data.message) || 'Failed to delete CSV data.');
+                        EventBus.emit('onFail', (res.data && res.data.message) || 'Failed to delete CSV data.');
                     }
                 }
             } catch (err) {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message;
-                if (typeof EventBus !== 'undefined') EventBus.$emit('onFail', msg);
+                if (typeof EventBus !== 'undefined') EventBus.emit('onFail', msg);
             } finally {
                 vm.delete_in_progress = false;
             }
@@ -162,12 +163,12 @@ Vue.component('datafile-data-explorer', {
 
                     <div class="float-right d-flex align-center" style="gap: 8px;">
                         <template v-if="variable_data.records">
-                            <v-btn color="primary" outlined small @click="exportFile">
+                            <v-btn color="primary" variant="outlined" size="small" @click="exportFile">
                                 <v-icon>mdi-export</v-icon> {{$t("export")}}
                             </v-btn>
                         </template>
-                        <v-btn color="error" outlined small @click="confirmDeleteData" :disabled="delete_in_progress">
-                            <v-icon small>mdi-delete</v-icon> {{$t("delete_data") || "Delete data"}}
+                        <v-btn color="error" variant="outlined" size="small" @click="confirmDeleteData" :disabled="delete_in_progress">
+                            <v-icon size="small">mdi-delete</v-icon> {{$t("delete_data") || "Delete data"}}
                         </v-btn>
                     </div>
                     <br/>
@@ -281,7 +282,7 @@ Vue.component('datafile-data-explorer', {
 
                             <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="primary" text @click="dialog.show=false" v-if="dialog.is_loading==false">
+                            <v-btn color="primary" variant="text" @click="dialog.show=false" v-if="dialog.is_loading==false">
                                 {{$t('close')}}
                             </v-btn>
                             </v-card-actions>
@@ -314,8 +315,8 @@ Vue.component('datafile-data-explorer', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="delete_confirm_dialog = false" :disabled="delete_in_progress">{{ $t("cancel") || "Cancel" }}</v-btn>
-                        <v-btn color="error" text @click="deleteData" :loading="delete_in_progress">{{ $t("delete") || "Delete" }}</v-btn>
+                        <v-btn variant="text" @click="delete_confirm_dialog = false" :disabled="delete_in_progress">{{ $t("cancel") || "Cancel" }}</v-btn>
+                        <v-btn color="error" variant="text" @click="deleteData" :loading="delete_in_progress">{{ $t("delete") || "Delete" }}</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>

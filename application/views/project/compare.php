@@ -152,7 +152,7 @@
       <v-dialog v-model="showOptionsDialog" max-width="800px" persistent>
         <v-card>
           <v-card-title style="font-size: 16px; ">
-            <v-icon left size="small">mdi-cog</v-icon>
+            <v-icon start size="small">mdi-cog</v-icon>
             {{$t('diff_options')}}
             <v-spacer></v-spacer>
             <v-btn icon @click="showOptionsDialog = false">
@@ -166,7 +166,7 @@
               <v-col cols="12" md="6" style="border-right: 1px solid #e0e0e0; padding-right: 20px;">
                 <div>
                   <div class="subtitle-2" style="font-size: 14px; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center;">
-                    <v-icon left color="primary" size="small">mdi-compare-horizontal</v-icon>
+                    <v-icon start color="primary" size="small">mdi-compare-horizontal</v-icon>
                     {{$t('differ_options')}}
                   </div>
                   <div style="padding: 0;">
@@ -225,7 +225,7 @@
               <v-col cols="12" md="6" style="padding-left: 20px;">
                 <div>
                   <div class="subtitle-2" style="font-size: 14px; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center;">
-                    <v-icon left color="success" size="small">mdi-eye</v-icon>
+                    <v-icon start color="success" size="small">mdi-eye</v-icon>
                     {{$t('viewer_options')}}
                   </div>
                   <div style="padding: 0;">
@@ -275,16 +275,16 @@
           </v-card-text>
           
           <v-card-actions>
-            <v-btn text small @click="resetToDefaults">
-              <v-icon left size="small">mdi-undo</v-icon>
+            <v-btn variant="text" size="small" @click="resetToDefaults">
+              <v-icon start size="small">mdi-undo</v-icon>
               {{$t('reset_to_defaults')}}
             </v-btn>
-            <v-btn text small @click="showOptionsDialog = false">
+            <v-btn variant="text" size="small" @click="showOptionsDialog = false">
               {{$t('cancel')}}
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" small @click="applyOptionsAndClose">
-              <v-icon left size="small">mdi-check</v-icon>
+            <v-btn color="primary" size="small" @click="applyOptionsAndClose">
+              <v-icon start size="small">mdi-check</v-icon>
               {{$t('apply_and_compare')}}
             </v-btn>
           </v-card-actions>
@@ -295,7 +295,7 @@
       <v-dialog v-model="showProjectSelectionDialog" max-width="600px" persistent>
         <v-card>
           <v-card-title style="font-size: 16px;">
-            <v-icon left size="small">mdi-magnify</v-icon>
+            <v-icon start size="small">mdi-magnify</v-icon>
             {{$t('select_projects_to_compare')}}
             <v-spacer></v-spacer>
             <v-btn icon @click="showProjectSelectionDialog = false">
@@ -337,7 +337,7 @@
             
             <!-- Validation Errors -->
             <div v-if="validationErrors.sameId || validationErrors.differentTypes" class="mt-3">
-              <v-alert type="error" dense style="background-color:red;color:white;">
+              <v-alert type="error" density="compact" style="background-color:red;color:white;">
                 <div v-if="validationErrors.sameId">{{ validationErrors.sameId }}</div>
                 <div v-if="validationErrors.differentTypes">{{ validationErrors.differentTypes }}</div>
               </v-alert>
@@ -351,7 +351,7 @@
           </v-card-text>
           
           <v-card-actions style="padding-bottom: 16px; padding-right: 16px;margin-right:10px;">
-            <v-btn text small @click="showProjectSelectionDialog = false">
+            <v-btn variant="text" size="small" @click="showProjectSelectionDialog = false">
               {{$t('cancel')}}
             </v-btn>
             <v-spacer></v-spacer>
@@ -361,7 +361,7 @@
               @click="compareSelectedProjects"
               :disabled="!project1Id || !project2Id || validationErrors.sameId || validationErrors.differentTypes || isValidating"
             >
-              <v-icon left size="small">mdi-compare</v-icon>
+              <v-icon start size="small">mdi-compare</v-icon>
               {{$t('compare_projects')}}
             </v-btn>
           </v-card-actions>
@@ -381,11 +381,11 @@
                 <!-- Page Header -->
                 <v-card>
                   <v-card-title>
-                    <v-icon left>mdi-compare</v-icon>
+                    <v-icon start>mdi-compare</v-icon>
                     {{$t('project_comparison')}}
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" outlined @click="openProjectSelectionDialog" class="mr-2">
-                      <v-icon left>mdi-magnify</v-icon>
+                    <v-btn color="primary" variant="outlined" @click="openProjectSelectionDialog" class="mr-2">
+                      <v-icon start>mdi-magnify</v-icon>
                       {{$t('select_projects')}}
                     </v-btn>
                     <v-btn icon @click="openOptionsDialog" :title="$t('diff_options')">
@@ -426,7 +426,7 @@
                     <div v-if="validationErrors.differentTypes">{{ validationErrors.differentTypes }}</div>
                     <div class="mt-3">
                       <v-btn color="primary" @click="openProjectSelectionDialog">
-                        <v-icon left>mdi-magnify</v-icon>
+                        <v-icon start>mdi-magnify</v-icon>
                         {{$t('select_different_projects')}}
                       </v-btn>
                     </div>
@@ -523,7 +523,7 @@
                       <!-- Variables Diff (microdata/survey only) -->
                       <v-card class="mt-4" v-if="project1 && ['survey','microdata'].includes(project1.type)">
                         <v-card-title style="font-size:15px;">
-                          <v-icon left>mdi-variable</v-icon>
+                          <v-icon start>mdi-variable</v-icon>
                           {{$t('variables_comparison')}}
                         </v-card-title>
 
@@ -535,7 +535,7 @@
 
                         <!-- Error -->
                         <v-card-text v-else-if="variables_diff_error">
-                          <v-alert type="error" dense>{{ variables_diff_error }}</v-alert>
+                          <v-alert type="error" density="compact">{{ variables_diff_error }}</v-alert>
                         </v-card-text>
 
                         <!-- Results -->
@@ -566,7 +566,7 @@
                               @click="variables_diff_filter='removed'">
                               {{$t('deletions')}}: {{ variables_diff.removed.length }}
                             </v-chip>
-                            <v-chip small outlined
+                            <v-chip size="small" outlined
                               :color="variables_diff_filter==='unchanged' ? 'grey darken-1' : ''"
                               :dark="variables_diff_filter==='unchanged'"
                               @click="variables_diff_filter='unchanged'">
@@ -575,7 +575,7 @@
                           </div>
 
                           <!-- No differences -->
-                          <v-alert v-if="filteredVariablesDiff.length === 0" type="success" dense outlined>
+                          <v-alert v-if="filteredVariablesDiff.length === 0" type="success" density="compact" variant="outlined">
                             {{$t('no_variable_differences')}}
                           </v-alert>
 
@@ -626,6 +626,7 @@
 
   <!-- Vue.js and dependencies -->
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuex.min.js"></script>
@@ -642,7 +643,8 @@
       default: <?php echo json_encode($translations, JSON_HEX_APOS); ?>
     };
     
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default',
       fallbackLocale: 'default',
       messages: translation_messages
@@ -650,28 +652,27 @@
 
 
     // Vuetify setup
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#1976D2',
-            secondary: '#424242',
-            accent: '#82B1FF',
-            error: '#FF5252',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FFC107'
+            colors: {
+              primary: '#1976D2',
+              secondary: '#424242',
+              accent: '#82B1FF',
+              error: '#FF5252',
+              info: '#2196F3',
+              success: '#4CAF50',
+              warning: '#FFC107'
+            }
           }
         }
       }
     });
 
     // Vue app
-    const vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         // Get project IDs from URL query string
         project1_id: new URLSearchParams(window.location.search).get('project1'),
         project2_id: new URLSearchParams(window.location.search).get('project2'),
@@ -1187,6 +1188,23 @@
         }
       }
     });
+
+    app.use(vuetify);
+    app.use(i18n);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
 </body>

@@ -1,4 +1,5 @@
-Vue.component('v-textarea-latex', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['v-textarea-latex'] = {
     props: ['value'],
     data() {
         return {
@@ -86,8 +87,8 @@ Vue.component('v-textarea-latex', {
                     v-model="preview_toggle"
                     mandatory
                 >
-                    <v-btn small text @click="togglePreview(false)">Text</v-btn>
-                    <v-btn small text @click="togglePreview(true)">Preview</v-btn>
+                    <v-btn size="small" variant="text" @click="togglePreview(false)">Text</v-btn>
+                    <v-btn size="small" variant="text" @click="togglePreview(true)">Preview</v-btn>
                 </v-btn-toggle>
 
                 <span class="text-muted">LaTeX equations are supported. </span>

@@ -1,5 +1,6 @@
 ///variable categories edit form
-Vue.component('variable-categories', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variable-categories'] = {
     props:['value'],
     data: function () {    
         return {   
@@ -45,19 +46,19 @@ Vue.component('variable-categories', {
             }
             
             // Clear categories arrays
-            Vue.set(this.variable, 'var_catgry', []);
-            Vue.set(this.variable, 'var_catgry_labels', []);
+            this.variable['var_catgry'] = [];
+            this.variable['var_catgry_labels'] = [];
             
             if (!this.variable.sum_stats_options) {
-                Vue.set(this.variable, 'sum_stats_options', {});
+                this.variable['sum_stats_options'] = {};
             }
-            Vue.set(this.variable.sum_stats_options, 'freq', false);
+            this.variable.sum_stats_options['freq'] = false;
             
             // Emit update event
             this.$emit('update:value', this.variable);
             
             // Show success message
-            EventBus.$emit('onSuccess', this.deleteSuccessMessage);
+            EventBus.emit('onSuccess', this.deleteSuccessMessage);
         },
         refreshCategories: function(){
             if (!confirm(this.$t("confirm_reload_categories"))){
@@ -75,7 +76,7 @@ Vue.component('variable-categories', {
                 )
             }
 
-            Vue.set(this.variable, 'var_catgry_labels', labels);
+            this.variable['var_catgry_labels'] = labels;
         },
         GetFieldTitle: function (code, default_title='') {
             let template_field=this.FindTemplateByItemKey(this.VariableTemplate.items,code);
@@ -194,7 +195,7 @@ Vue.component('variable-categories', {
                                 outlined
                                 @click="deleteAllCategories"
                                 type="button">
-                                <v-icon small class="mr-1">mdi-delete</v-icon>
+                                <v-icon size="small" class="mr-1">mdi-delete</v-icon>
                                 {{$t('delete')}} ({{categoriesCount}})
                             </v-btn>
                         </div>
@@ -208,7 +209,7 @@ Vue.component('variable-categories', {
                             >
                         </table-grid-component>
                     </div>
-                    <v-alert outlined v-else class="m-3 border text-center p-3 text-secondary">{{$t("only_for_discrete_variables")}}</v-alert>
+                    <v-alert variant="outlined" v-else class="m-3 border text-center p-3 text-secondary">{{$t("only_for_discrete_variables")}}</v-alert>
                 </div>
             </div>
             

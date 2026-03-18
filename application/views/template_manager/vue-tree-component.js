@@ -1,5 +1,6 @@
 /// view treeview component
-Vue.component('nada-treeview', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nada-treeview'] = {
     props:['value','initially_open','tree_active_items','cut_fields'],
     data: function () {    
         return {
@@ -271,8 +272,8 @@ Vue.component('nada-treeview', {
             <template>            
               <v-treeview                   
                   color="warning"
-                  :open.sync="initiallyOpen" 
-                  :active.sync="TreeActiveItems"
+                  v-model:open="initiallyOpen" 
+                  v-model:active="TreeActiveItems"
                   @update:open="onTreeOpen" 
                   :items="Items" 
                   activatable dense 
@@ -287,7 +288,7 @@ Vue.component('nada-treeview', {
 
                 <template #label="{ item }" >
                     <span @click="treeClick(item)" :title="item.title" class="tree-item-label" :class="getItemClasses(item)" >
-                        <span v-if="item.type=='resource'" >{{item.title | truncate(23, '...') }}</span>
+                        <span v-if="item.type=='resource'" >{{ $filters.truncate(item.title, 23, '...') }}</span>
                         <span v-else>{{item.title}} <template v-if="item.title==''">Untitled</template></span>
                         <span v-if="isItemCut(item)">*</span>                        
                     </span>

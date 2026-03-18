@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('grid-preview-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['grid-preview-component'] = {
     props:['value','columns','path', 'field'],
     data: function () {    
         return {

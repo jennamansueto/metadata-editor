@@ -1,5 +1,6 @@
 // Vue Audit Logs Component
-Vue.component('vue-audit-logs-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-audit-logs-component'] = {
     data: function () {
         return {
             audit_logs: [],
@@ -260,7 +261,7 @@ Vue.component('vue-audit-logs-component', {
             }
             
             // Set loading state
-            this.$set(this.loading_details, logId, true);
+            this.loading_details[logId] = true;
             
             // Make API call to get detailed information
             fetch(`${CI.site_url}/api/audit_logs/info/${logId}`, {
@@ -274,7 +275,7 @@ Vue.component('vue-audit-logs-component', {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    this.$set(this.detailed_logs, logId, data.data);
+                    this.detailed_logs[logId] = data.data;
                 } else {
                     console.error('Error loading log details:', data.message);
                 }
@@ -283,7 +284,7 @@ Vue.component('vue-audit-logs-component', {
                 console.error('Error loading log details:', error);
             })
             .finally(() => {
-                this.$set(this.loading_details, logId, false);
+                this.loading_details[logId] = false;
             });
         }
     },
@@ -293,7 +294,7 @@ Vue.component('vue-audit-logs-component', {
             <v-row class="fill-height">
                 <!-- Left Sidebar - Filters -->
                 <v-col cols="12" md="3" lg="2" class="d-flex flex-column">
-                    <v-card class="flex-grow-1 sidebar-filters" flat style="max-height: calc(100vh - 160px); overflow-y: auto;">
+                    <v-card class="flex-grow-1 sidebar-filters" variant="flat" style="max-height: calc(100vh - 160px); overflow-y: auto;">
                         <v-card-title class="pb-2">
                             <v-icon class="mr-2">mdi-filter</v-icon>
                             {{$t('filters')}}
@@ -435,12 +436,12 @@ Vue.component('vue-audit-logs-component', {
                                 :loading="loading"
                                 :server-items-length="pagination.total"
                                 :items-per-page="pagination.itemsPerPage"
-                                :page.sync="pagination.page"
+                                v-model:page="pagination.page"
                                 @update:page="onPageChange"
                                 @update:items-per-page="onItemsPerPageChange"
                                 class="elevation-1"
                                 show-expand
-                                :expanded.sync="expanded_rows"
+                                v-model:expanded="expanded_rows"
                                 :footer-props="{
                                     'items-per-page-options': [10, 15, 25, 50]
                                 }"
@@ -486,7 +487,7 @@ Vue.component('vue-audit-logs-component', {
                             small 
                             outlined
                         >
-                            <v-icon left small>{{getActionIcon(item.action_type)}}</v-icon>
+                            <v-icon start size="small">{{getActionIcon(item.action_type)}}</v-icon>
                             {{item.action_type}}
                         </v-chip>
                     </template>
@@ -506,7 +507,7 @@ Vue.component('vue-audit-logs-component', {
                                     <div v-else-if="detailed_logs[item.id]">
                                         <v-row>                                            
                                             <v-col cols="6" md="6" class="pr-4">
-                                                <v-simple-table dense class="details-table mt-3 mb-5">
+                                                <v-table dense class="details-table mt-3 mb-5">
                                                     <tbody>
                                                         <tr>
                                                             <td><strong>{{$t('object_id')}}:</strong></td>
@@ -529,7 +530,7 @@ Vue.component('vue-audit-logs-component', {
                                                             <td>{{detailed_logs[item.id].action_type}}</td>
                                                         </tr>
                                                     </tbody>
-                                                </v-simple-table>
+                                                </v-table>
                                             </v-col>
                                             <v-col cols="6" md="6" class="pl-4">
                                                 <pre class="metadata-display pa-3 mt-3" style="padding:5px;height: 200px; width: 100%; overflow: auto; background-color: #e9ecef; word-wrap: break-word; white-space: pre-wrap;">{{combinedMetadata(detailed_logs[item.id])}}</pre>

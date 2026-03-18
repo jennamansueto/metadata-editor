@@ -1,5 +1,6 @@
 //
-Vue.component('identification-section', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['identification-section'] = {
     props:['value','columns','path'],
     data: function () {    
         return {
@@ -11,7 +12,7 @@ Vue.component('identification-section', {
         field_data: function(newVal, oldVal) {
             console.log('=========Prop changed: ', newVal, ' | was: ', oldVal)
             console.log('=========key path:',this.key_path);
-            this.$vueSet (this.$store.state.formData, this.key_path, newVal);
+            _.set(this.$store.state.formData, this.key_path, newVal);
         }
     },
     mounted: function () {
@@ -92,7 +93,7 @@ Vue.component('identification-section', {
             console.log(field_xpath,event);
             _.set(this.field_data,field_xpath,event);
             console.log(this.field_data);
-            Vue.set(this.field_data, 0, this.field_data[0]);
+            this.field_data[0] = this.field_data[0];
 
         }    
     }

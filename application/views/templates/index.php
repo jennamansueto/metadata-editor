@@ -24,7 +24,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.js"></script>
@@ -126,9 +126,9 @@
                                     <v-list-item-icon>
                                         <v-icon>mdi-filter</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content>
+                                    
                                         <v-list-item-title>{{$t('All')}}</v-list-item-title>
-                                    </v-list-item-content>
+                                    
                                 </v-list-item>
                                 <v-list-item
                                     v-for="schema in sidebar_data_types"
@@ -140,9 +140,9 @@
                                         <img v-if="getSchemaIconSrc(schema)" :src="getSchemaIconSrc(schema)" :alt="schema.label">
                                         <span v-else class="schema-icon-placeholder">{{ getSchemaInitial(schema) }}</span>
                                     </div>
-                                    <v-list-item-content>
+                                    
                                         <v-list-item-title>{{ getSchemaLabel(schema) }}</v-list-item-title>
-                                    </v-list-item-content>
+                                    
                                 </v-list-item>
                             </v-list-item-group>
                         </v-list>
@@ -282,10 +282,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
 
-              <v-btn :disabled="!importJSON" small color="primary" text @click="importTemplate">
+              <v-btn :disabled="!importJSON" size="small" color="primary" variant="text" @click="importTemplate">
                 {{$t('import')}}
               </v-btn>
-              <v-btn small text @click="dialog_import_template = false">
+              <v-btn size="small" variant="text" @click="dialog_import_template = false">
                 {{$t('cancel')}}
               </v-btn>
 
@@ -310,59 +310,59 @@
             <v-list-item-icon>
               <v-icon>mdi-share</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="shareTemplate(menu_active_template_id)"><v-btn text> {{$t('share')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="shareTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('share')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-content-duplicate</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="duplicateTemplate(menu_active_template_id)"><v-btn text> {{$t('duplicate')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="duplicateTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('duplicate')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-code-json</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="exportTemplate(menu_active_template_id)"><v-btn text> {{$t('export')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="exportTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('export')}}</v-btn></v-list-item-title>
           </v-list-item>
           <template v-if="!menu_active_template_core">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon>mdi-delete-outline</v-icon>
               </v-list-item-icon>
-              <v-list-item-title @click="deleteTemplate(menu_active_template_id)"><v-btn text> {{$t('delete')}}</v-btn></v-list-item-title>
+              <v-list-item-title @click="deleteTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('delete')}}</v-btn></v-list-item-title>
             </v-list-item>            
           </template>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-eye-outline</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="previewTemplate(menu_active_template_id)"><v-btn text> {{$t('preview')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="previewTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('preview')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-database-eye-outline</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="previewTableTemplate(menu_active_template_id)"><v-btn text> {{$t('table')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="previewTableTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('table')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-file-pdf-box</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="pdfTemplate(menu_active_template_id)"><v-btn text> {{$t('pdf')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="pdfTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('pdf')}}</v-btn></v-list-item-title>
           </v-list-item>  
           
           <v-list-item>
             <v-list-item-icon>
                 <v-icon>mdi-content-copy</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="viewTemplateRevisions(menu_active_template_id)"><v-btn text> {{$t('revisions')}}</v-btn></v-list-item-title>        
+            <v-list-item-title @click="viewTemplateRevisions(menu_active_template_id)"><v-btn variant="text"> {{$t('revisions')}}</v-btn></v-list-item-title>        
           </v-list-item>
 
           <v-list-item>
             <v-list-item-icon>
                 <v-icon>mdi-key</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="updateTemplateUUID(menu_active_template_id)"><v-btn text> {{$t('UUID')}}</v-btn></v-list-item-title>        
+            <v-list-item-title @click="updateTemplateUUID(menu_active_template_id)"><v-btn variant="text"> {{$t('UUID')}}</v-btn></v-list-item-title>        
           </v-list-item>
 
         </v-list>
@@ -414,7 +414,8 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     })
@@ -429,35 +430,29 @@
       name: 'home'
     }]
 
-    const router = new VueRouter({
-      routes
-    })
-
-    const vuetify = new Vuetify({
-            theme: {
-            themes: {
-                light: {
-                    primary: '#526bc7',
-                    "primary-dark": '#0c1a4d',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
-                },
-            },
-            },
+    const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes
         })
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
+    const vuetify = Vuetify.createVuetify({
+      theme: {
+        themes: {
+          light: {
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c',
+            },
+          },
+        },
+      },
+    });
 
-    vue_app = new Vue({
-      i18n,
-      el: '#app',
-      vuetify: vuetify,
-      router: router,
-      data: {
+    const app = Vue.createApp({
+      data() { return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -942,11 +937,33 @@
           reader.readAsText(file);
         }
       }
-    })
+    });
 
-    //register components
-    //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    app.use(vuetify);
+    app.use(i18n);
+    app.use(router);
+
+    // Use GlobalLoginPlugin for session handling
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        app.use(GlobalLoginPlugin);
+    }
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+    if (typeof VueJsonPretty !== 'undefined') {
+      app.component('VueJsonPretty', VueJsonPretty.default || VueJsonPretty);
+    }
+
+    app.mount('#app');
 
   </script>
 </body>

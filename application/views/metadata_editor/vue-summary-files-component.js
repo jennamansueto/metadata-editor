@@ -1,5 +1,6 @@
 ///Project files summary
-Vue.component('summary-files', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['summary-files'] = {
     props:[],
     
     data: function() {
@@ -133,9 +134,9 @@ Vue.component('summary-files', {
                 <v-tab>{{$t('Documentation')}}</v-tab>
                 <v-tab>{{$t('files')}}</v-tab>
             </v-tabs>
-            <v-tabs-items v-model="activeTab">
-                <v-tab-item>
-                    <v-simple-table v-if="resources && resources.length>0">
+            <v-window v-model="activeTab">
+                <v-window-item>
+                    <v-table v-if="resources && resources.length>0">
                             <template v-slot:default>
                                 <thead>
                                     <tr>
@@ -153,15 +154,15 @@ Vue.component('summary-files', {
                                     </tr>
                                 </tbody>
                             </template>
-                        </v-simple-table>
+                        </v-table>
                     <div v-else>
                         <div class="text-muted text-secondary">
                             {{$t('None')}}
                         </div>
                     </div>                
-                </v-tab-item>
-                <v-tab-item>
-                    <v-simple-table class="mb-5" style="font-size:smaller;">
+                </v-window-item>
+                <v-window-item>
+                    <v-table class="mb-5" style="font-size:smaller;">
                         <template v-slot:default>
                             <thead>
                                 <tr>                            
@@ -195,16 +196,16 @@ Vue.component('summary-files', {
                                 <td><span style="font-size:small;" :title="momentDate(file.timestamp)" >{{momentDate(file.timestamp, true)}}</span></td>
                                 
                                 <td>
-                                    <v-btn small danger text @click="deleteFile(file)">
+                                    <v-btn size="small" danger variant="text" @click="deleteFile(file)">
                                         <v-icon>mdi-delete-outline</v-icon> 
                                     </v-btn>                            
                                 </td>
                             </tr>
                             </tbody>
                         </template>
-                    </v-simple-table>
-                </v-tab-item>
-            </v-tabs-items>
+                    </v-table>
+                </v-window-item>
+            </v-window>
         
         
             

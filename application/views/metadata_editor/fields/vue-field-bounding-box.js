@@ -1,5 +1,6 @@
 //bounding box field control
-Vue.component('editor-bounding-box-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['editor-bounding-box-field'] = {
     props: ['value','field'],
     data: function () {    
         return {
@@ -751,7 +752,7 @@ Vue.component('editor-bounding-box-field', {
             this.drawingMode = false;
         }
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         this.destroyMap();
     },
     template: `
@@ -778,7 +779,7 @@ Vue.component('editor-bounding-box-field', {
             <v-card>
                 <v-card-title class="d-flex justify-space-between align-center">
                     <div>
-                        <v-icon left>mdi-map</v-icon>
+                        <v-icon start>mdi-map</v-icon>
                         {{field.title || 'Geographic Bounding Box'}}
                     </div>
                     <v-btn icon @click="dialog = false">
@@ -798,7 +799,7 @@ Vue.component('editor-bounding-box-field', {
                                 @click="toggleDrawingMode"
                                 :disabled="isFieldReadOnly"
                             >
-                                <v-icon left small>{{drawingMode ? 'mdi-draw' : 'mdi-draw-pen'}}</v-icon>
+                                <v-icon start size="small">{{drawingMode ? 'mdi-draw' : 'mdi-draw-pen'}}</v-icon>
                                 {{drawingMode ? 'Drawing Mode Active' : 'Enable Drawing'}}
                             </v-btn>
                             <v-btn 
@@ -810,7 +811,7 @@ Vue.component('editor-bounding-box-field', {
                                 :disabled="isFieldReadOnly"
                                 class="ml-2"
                             >
-                                <v-icon left small>mdi-close</v-icon>
+                                <v-icon start size="small">mdi-close</v-icon>
                                 Exit Drawing
                             </v-btn>
                             <v-btn 
@@ -820,7 +821,7 @@ Vue.component('editor-bounding-box-field', {
                                 :disabled="isFieldReadOnly"
                                 class="ml-2"
                             >
-                                <v-icon left small>mdi-refresh</v-icon>
+                                <v-icon start size="small">mdi-refresh</v-icon>
                                 Reset View
                             </v-btn>
                             <v-btn 
@@ -832,7 +833,7 @@ Vue.component('editor-bounding-box-field', {
                                 :loading="calculating"
                                 class="ml-2"
                             >
-                                <v-icon left small>mdi-calculator</v-icon>
+                                <v-icon start size="small">mdi-calculator</v-icon>
                                 Calculate from Features
                             </v-btn>
                         </div>

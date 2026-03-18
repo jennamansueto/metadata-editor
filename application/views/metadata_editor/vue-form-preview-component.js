@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form-preview', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nada-form-preview'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'value'],
     data() {
         return {
@@ -113,7 +114,7 @@ Vue.component('v-form-preview', {
     },
     computed: {       
         formData () {
-            return this.$deepModel('formData')
+            return this.$store.state.formData
         },
         
         ProjectType(){
@@ -138,7 +139,7 @@ Vue.component('v-form-preview', {
                     
                     <template>
                         <div  class="section-container-title">{{item.title}}</div>                        
-                                <v-form-preview
+                                <nada-form-preview
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -146,7 +147,7 @@ Vue.component('v-form-preview', {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form-preview>
+                                </nada-form-preview>
                     </template>                    
                 </div>
                 <!-- end-form-section-container -->
@@ -161,7 +162,7 @@ Vue.component('v-form-preview', {
                                 <h5>{{item.title}}</h5>
                             </div>
                             <div class="card-body">
-                                <v-form-preview
+                                <nada-form-preview
                                         :items="item.items" 
                                         :title="item.title"
                                         :depth="depth + 1"
@@ -169,7 +170,7 @@ Vue.component('v-form-preview', {
                                         :field="item"
                                         :css_class="'lvl-' + depth"
                                     >
-                                </v-form-preview>
+                                </nada-form-preview>
                             </div>
                             
                         </div>

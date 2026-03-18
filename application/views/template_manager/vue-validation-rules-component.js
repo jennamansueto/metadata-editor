@@ -1,5 +1,6 @@
 //vue validation-rules component
-Vue.component('validation-rules-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['validation-rules-component'] = {
     props:['value'],
     data: function () {    
         return {
@@ -152,7 +153,7 @@ Vue.component('validation-rules-component', {
             return '';
         },
         remove: function (rule_name){
-            Vue.delete(this.local, rule_name);
+            delete this.local[rule_name];
         },
         addRule: function ()
         {
@@ -182,13 +183,13 @@ Vue.component('validation-rules-component', {
                             ></v-select>
                         </v-col>
                         <v-col cols="auto">
-                            <v-btn color="primary" @click="addRule" :disabled="rule_selected==''" small>Add</v-btn>
+                            <v-btn color="primary" @click="addRule" :disabled="rule_selected==''" size="small">Add</v-btn>
                         </v-col>
                     </v-row>
                 </v-col>
             </v-row>
 
-            <v-simple-table>
+            <v-table>
                 <thead>
                 <tr>
                     <th>Rule</th>
@@ -216,13 +217,13 @@ Vue.component('validation-rules-component', {
                         <div v-else>{{local[name]}}</div>
                     </td>
                     <td>        
-                        <v-btn icon small color="error" @click="remove(name)" class="float-right">
+                        <v-btn icon size="small" color="error" @click="remove(name)" class="float-right">
                             <v-icon>mdi-delete</v-icon>
                         </v-btn>
                     </td>
                 </tr>
                 </tbody>
-            </v-simple-table>
+            </v-table>
 
             </div>  `    
 });

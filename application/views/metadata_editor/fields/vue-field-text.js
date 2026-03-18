@@ -1,5 +1,6 @@
 //text field control
-Vue.component('editor-text-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['editor-text-field'] = {
     props: ['value'],
     template: `
     <div>

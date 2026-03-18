@@ -1,4 +1,5 @@
-Vue.component('vue-transfer-ownership', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-transfer-ownership'] = {
     props: ['value','projects'],
     data() {
         return {
@@ -90,7 +91,7 @@ Vue.component('vue-transfer-ownership', {
                     <v-autocomplete
                         v-model="selected_user"
                         :loading="is_loading"
-                        :search-input.sync="search"
+                        v-model:search="search"
                         :items="users"
                         solo
                         chips
@@ -116,13 +117,13 @@ Vue.component('vue-transfer-ownership', {
 
                         <template v-slot:item="data">
                             <template v-if="typeof data.item !== 'object'">
-                                <v-list-item-content v-text="data.item"></v-list-item-content>
+                                <span v-text="data.item"></span>
                             </template>
                             <template v-else>
-                                <v-list-item-content>
+                                
                                 <v-list-item-title v-html="data.item.username"></v-list-item-title>
                                 <v-list-item-subtitle v-html="data.item.email"></v-list-item-subtitle>
-                                </v-list-item-content>
+                                
                             </template>
                         </template>
                   </v-autocomplete>

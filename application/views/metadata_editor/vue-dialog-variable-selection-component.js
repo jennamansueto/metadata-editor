@@ -1,4 +1,5 @@
-Vue.component('dialog-variable-selection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-variable-selection'] = {
     props:['value',"selected_items"],
     data() {
         return {
@@ -83,7 +84,7 @@ Vue.component('dialog-variable-selection', {
                                     <input type="checkbox" v-model="selection" :value="item.uid" :disabled="isItemIncluded(item.uid)" :id="item.uid"/>                                
                                 </v-list-item-action>
 
-                                <v-list-item-content>
+                                
                                 <v-list-item-title>
                                     <label :for="item.uid" class="text-normal">
                                     {{item.name}} -
@@ -91,7 +92,7 @@ Vue.component('dialog-variable-selection', {
                                     </label>
                                 </v-list-item-title>
 
-                                </v-list-item-content>
+                                
 
                                 <v-list-item-action>
                                     {{item.fid}}
@@ -110,7 +111,7 @@ Vue.component('dialog-variable-selection', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="closeDialog" >
+                    <v-btn color="primary" variant="text" @click="closeDialog" >
                         Close
                     </v-btn>
                     </v-card-actions>

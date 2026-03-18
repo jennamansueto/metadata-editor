@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
   <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
   
@@ -202,14 +203,14 @@
                 </v-col>
                 <v-col cols="12" md="3">
                   <div class="text-right pt-1 mr-5">
-                    <v-btn v-if="isEditable" small color="success" @click="saveTemplate()" class="mr-2">
-                      <v-icon left style="color:white;">mdi-content-save-check</v-icon> {{$t('save')}} <span v-if="is_dirty==true">*</span>
+                    <v-btn v-if="isEditable" size="small" color="success" @click="saveTemplate()" class="mr-2">
+                      <v-icon start style="color:white;">mdi-content-save-check</v-icon> {{$t('save')}} <span v-if="is_dirty==true">*</span>
                     </v-btn>
-                    <v-btn v-else small outlined disabled class="mr-2">
-                      <v-icon left>mdi-lock</v-icon> {{$t('read_only')}}
+                    <v-btn v-else size="small" variant="outlined" disabled class="mr-2">
+                      <v-icon start>mdi-lock</v-icon> {{$t('read_only')}}
                     </v-btn>
-                    <v-btn small outlined @click="cancelTemplate()">
-                      <v-icon left>mdi-exit-to-app</v-icon> {{$t('close')}}
+                    <v-btn size="small" variant="outlined" @click="cancelTemplate()">
+                      <v-icon start>mdi-exit-to-app</v-icon> {{$t('close')}}
                     </v-btn>
                   </div>
                 </v-col>
@@ -362,12 +363,13 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
+      legacy: true,
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
     });
 
-    Vue.mixin({
+    window.__globalMixin = {
       methods: {
                 
                 copyToClipBoard: function(textToCopy){
@@ -474,7 +476,7 @@
             }
     })
 
-    const store = new Vuex.Store({
+    const store = Vuex.createStore({
       state: {
         active_node: {},
         active_core_node: {},
@@ -544,13 +546,9 @@
           return Array.from(new Set(output));
         }
       }
-    })
+    });
 
-    new Vue({
-      el: "#app",
-      i18n,
-      store,
-      vuetify: new Vuetify(),
+    const app = Vue.createApp({
       data() {
         return {
           user_template_info: user_template_info,
@@ -572,6 +570,7 @@
           tree: [],
 
           tab: '',
+          editContentTab: 0,
           field_data_types: [
             "string",
             "number",
@@ -711,7 +710,7 @@
               item.props.forEach((prop, propIdx) => {
                 const propKey = prop.prop_key || prop.key;
                 if (propKey === item_key) {
-                  Vue.delete(item.props, propIdx);
+                  item.props.splice(propIdx, 1);
                 }
                 // Recursively check nested props
                 if (prop.props) {
@@ -720,27 +719,27 @@
               });
             }
             if (item.key == item_key || (item.prop_key && item.prop_key == item_key)) {
-              Vue.delete(tree, idx);
+              tree.splice(idx, 1);
             }
           });
         },
         EnumUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.$set(this.ActiveNode, "enum", [{}]);
+            this.ActiveNode["enum"] = [{}];
           }
         },
         EnumListUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.$set(this.ActiveNode, "enum", []);
+            this.ActiveNode["enum"] = [];
           }
         },
         DefaultUpdate: function(e) {
           if (!this.ActiveNode.default) {
-            this.$set(this.ActiveNode, "default", [{}]);
+            this.ActiveNode["default"] = [{}];
           }
         },
         RulesUpdate: function(e) {
-          this.$set(this.ActiveNode, "rules", e);
+          this.ActiveNode["rules"] = e;
         },
         removeField: function() {
           const nodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
@@ -787,7 +786,7 @@
               }
               
               if (propIndex !== -1) {
-                Vue.delete(propsArray, propIndex);
+                propsArray.splice(propIndex, 1);
                 vm.ActiveNode = {};
                 vm.tree_active_items = [];
                 return true;
@@ -932,13 +931,13 @@
               // If pasting into an array/nested_array and the cut item is a prop, add to props
               if ((this.ActiveNode.type === 'array' || this.ActiveNode.type === 'nested_array') && this.cut_fields[i].isProp) {
                 if (!this.ActiveNode.props) {
-                  this.$set(this.ActiveNode, "props", []);
+                  this.ActiveNode["props"] = [];
                 }
                 this.ActiveNode.props.push(this.cut_fields[i].node);
               } else {
                 // Regular paste to items
                 if (!this.ActiveNode.items) {
-                  this.$set(this.ActiveNode, "items", []);
+                  this.ActiveNode["items"] = [];
                 }
                 this.ActiveNode.items.push(this.cut_fields[i].node);
               }
@@ -993,7 +992,7 @@
           }
 
           if (!this.ActiveNode.items) {
-            this.$set(this.ActiveNode, "items", []);
+            this.ActiveNode["items"] = [];
           }
 
           this.ActiveNode.items.push(this.ActiveCoreNode);
@@ -1014,7 +1013,7 @@
             "help_text": ""
           };
 
-          this.$set(parentNode, "items", [
+          parentNode["items"] = [
             ...parentNode.items,
             new_node
           ]);
@@ -1042,7 +1041,7 @@
           
           // Ensure UserTemplate.items exists
           if (!this.UserTemplate.items) {
-            this.$set(this.UserTemplate, "items", []);
+            this.UserTemplate["items"] = [];
           }
           
           // Check if container already exists
@@ -1129,7 +1128,7 @@
           // If parent is array/nested_array, add as prop; otherwise add as child item
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             const propKey = new_node_key;
             const propKeyShort = propKey.split('.').pop();
@@ -1145,7 +1144,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
 
             parentNode.items.push({
@@ -1204,7 +1203,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             newArrayNode.prop_key = new_node_key;
             newArrayNode.key = new_node_key.split('.').pop();
@@ -1212,7 +1211,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newArrayNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1259,7 +1258,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              this.$set(parentNode, "props", []);
+              parentNode["props"] = [];
             }
             newNestedNode.prop_key = new_node_key;
             newNestedNode.key = new_node_key.split('.').pop();
@@ -1267,7 +1266,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              this.$set(parentNode, "items", []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newNestedNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1292,7 +1291,7 @@
           if (Array.isArray(this.tree_active_items)) {
             const idx = this.tree_active_items.indexOf(oldKey);
             if (idx !== -1) {
-              this.$set(this.tree_active_items, idx, e);
+              this.tree_active_items[idx] = e;
             }
           }
           if (Array.isArray(this.initiallyOpen) && this.initiallyOpen.indexOf(e) === -1) {
@@ -1799,14 +1798,14 @@
                   'label': item
                 });
               });
-              Vue.set(this.ActiveNode, "enum", enum_list);
+              this.ActiveNode["enum"] = enum_list;
               return enum_list;
             }
             return this.ActiveNode.enum || [];
           },
           set: function(newValue) {
             if (!this.ActiveNode) return;
-            Vue.set(this.ActiveNode, "enum", newValue);
+            this.ActiveNode["enum"] = newValue;
           }
         },
         ActiveNodeEnumStoreColumn:{
@@ -1819,7 +1818,7 @@
           },
           set: function(newValue){
             if (!this.ActiveNode) return;
-            Vue.set(this.ActiveNode, "enum_store_column", newValue);
+            this.ActiveNode["enum_store_column"] = newValue;
         }
           
         },
@@ -1991,6 +1990,48 @@
         },
       }
     });
+
+    const vuetify = Vuetify.createVuetify({
+      theme: {
+        themes: {
+          light: {
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c'
+            }
+          }
+        }
+      }
+    });
+
+    app.use(vuetify);
+    app.use(i18n);
+    app.use(store);
+    if (window.__globalMixin) app.mixin(window.__globalMixin);
+
+    // Register global properties
+    if (window.__globalConfirm) app.config.globalProperties.$confirm = window.__globalConfirm;
+    if (window.__globalAlert) app.config.globalProperties.$alert = window.__globalAlert;
+    if (window.__globalExtractErrorMessage) app.config.globalProperties.$extractErrorMessage = window.__globalExtractErrorMessage;
+
+    // Register $filters for template components that use filter syntax
+    app.config.globalProperties.$filters = {
+      truncate(text, stop, clamp) {
+        return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
+      }
+    };
+
+    // Register components
+    if (window.AppComponents) {
+      for (const [name, component] of Object.entries(window.AppComponents)) {
+        app.component(name, component);
+      }
+    }
+
+    app.mount('#app');
   </script>
 
 

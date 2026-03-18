@@ -1,5 +1,6 @@
 // Indicator DSD CSV Import Component
-Vue.component('indicator-dsd-import', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['indicator-dsd-import'] = {
     data() {
         return {
             dataset_id: project_sid,
@@ -61,7 +62,7 @@ Vue.component('indicator-dsd-import', {
             this.$router.beforeHooks.push(this._routeGuard);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         window.removeEventListener('beforeunload', this._boundBeforeUnload);
         window.removeEventListener('hashchange', this._boundHashChange);
         if (this._routeGuard && this.$router && Array.isArray(this.$router.beforeHooks)) {
@@ -362,7 +363,7 @@ Vue.component('indicator-dsd-import', {
             console.log('processImport called');
             
             if (!this.file || !this.csvData) {
-                EventBus.$emit('onFail', 'No CSV file to import');
+                EventBus.emit('onFail', 'No CSV file to import');
                 return;
             }
 
@@ -370,7 +371,7 @@ Vue.component('indicator-dsd-import', {
             const selectedColumns = this.columnMappings.filter(m => m.selected);
             console.log('Selected columns:', selectedColumns.length);
             if (selectedColumns.length === 0) {
-                EventBus.$emit('onFail', 'Please select at least one column to import');
+                EventBus.emit('onFail', 'Please select at least one column to import');
                 return;
             }
 
@@ -378,7 +379,7 @@ Vue.component('indicator-dsd-import', {
             const validation = this.validateIndicatorId();
             console.log('Indicator ID validation:', validation);
             if (!validation || !validation.valid) {
-                EventBus.$emit('onFail', validation ? validation.error : 'Indicator ID validation failed');
+                EventBus.emit('onFail', validation ? validation.error : 'Indicator ID validation failed');
                 return;
             }
 
@@ -428,7 +429,7 @@ Vue.component('indicator-dsd-import', {
                         // Import completed but with errors
                         this.errors = response.data.errors;
                         this.importStatus = 'Import completed with errors';
-                        EventBus.$emit('onFail', 'CSV import completed with errors. Please check the errors below.');
+                        EventBus.emit('onFail', 'CSV import completed with errors. Please check the errors below.');
                         this.step = 2; // Go back to preview to show errors
                     } else if (response.data.status === 'success') {
                         // Refresh project data so left-tree data preview gets the new file (no page refresh needed)
@@ -447,23 +448,23 @@ Vue.component('indicator-dsd-import', {
                                     this.importStatus = 'Import completed. Code lists populated.';
                                     const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                                     const message = `CSV imported: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg} Code lists populated for ${pop.updated} columns.`;
-                                    EventBus.$emit('onSuccess', message);
+                                    EventBus.emit('onSuccess', message);
                                 } else {
                                     this.importStatus = 'Import completed successfully!';
                                     const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                                     const message = `CSV imported successfully: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg}`;
-                                    EventBus.$emit('onSuccess', message);
+                                    EventBus.emit('onSuccess', message);
                                 }
                             } catch (popErr) {
                                 this.importStatus = 'Import completed (code list populate had issues).';
                                 const message = `CSV imported: ${response.data.created || 0} created, ${response.data.updated || 0} updated. Code list populate failed: ${(popErr.response && popErr.response.data && popErr.response.data.message) || popErr.message}`;
-                                EventBus.$emit('onSuccess', message);
+                                EventBus.emit('onSuccess', message);
                             }
                         } else {
                             this.importStatus = 'Import completed successfully!';
                             const rowsMsg = response.data.rows_imported != null ? ` ${response.data.rows_imported} rows imported.` : '';
                             const message = `CSV imported successfully: ${response.data.created || 0} created, ${response.data.updated || 0} updated.${rowsMsg}`;
-                            EventBus.$emit('onSuccess', message);
+                            EventBus.emit('onSuccess', message);
                         }
                         this.importProgress = 100;
                         this.hasUnsavedChanges = false;
@@ -491,7 +492,7 @@ Vue.component('indicator-dsd-import', {
                     this.errors.push(error.message || 'Failed to import CSV');
                 }
                 this.step = 2; // Go back to preview to show errors
-                EventBus.$emit('onFail', 'CSV import failed: ' + (this.errors[0] || 'Unknown error'));
+                EventBus.emit('onFail', 'CSV import failed: ' + (this.errors[0] || 'Unknown error'));
             } finally {
                 this.isProcessing = false;
             }
@@ -542,7 +543,7 @@ Vue.component('indicator-dsd-import', {
             this.hasUnsavedChanges = true;
         },
         setRequiredFieldLabelColumn: function(fieldKey, csvColumn) {
-            this.$set(this.requiredFieldLabelColumns, fieldKey, csvColumn || '');
+            this.requiredFieldLabelColumns[fieldKey] = csvColumn || '';
             this.hasUnsavedChanges = true;
         },
         isRequiredFieldMapped: function(mapping) {
@@ -767,19 +768,19 @@ Vue.component('indicator-dsd-import', {
                         </v-alert>
 
                         <div class="mt-4">
-                            <v-btn text @click="cancel">{{$t("cancel") || "Cancel"}}</v-btn>
+                            <v-btn variant="text" @click="cancel">{{$t("cancel") || "Cancel"}}</v-btn>
                         </div>
                     </div>
 
                     <!-- Step 2: Preview and Configure (simplified single page) -->
                     <div v-if="step === 2 && csvData">
                         <!-- Required Fields: table with Field, Mapping, Field label, Status -->
-                        <v-card class="mb-3" outlined>
+                        <v-card class="mb-3" variant="outlined">
                             <v-card-title class="pa-3" style="font-size: 16px; font-weight: bold;">
                                 {{$t("required_fields") || "Required Fields"}}
                             </v-card-title>
                             <v-card-text class="pa-3 pt-0">
-                                <v-simple-table dense class="required-fields-table">
+                                <v-table dense class="required-fields-table">
                                     <thead>
                                         <tr>
                                             <th class="text-left" style="min-width: 120px; padding: 6px 8px;">{{$t("field") || "Field"}}</th>
@@ -802,7 +803,7 @@ Vue.component('indicator-dsd-import', {
                                                             style="max-width: 200px; font-size: 13px;"
                                                             @input="validateIndicatorId"
                                                         ></v-text-field>
-                                                        <v-btn x-small text @click="editableStudyIdno = StudyIDNO || ''">{{$t("reset") || "Reset"}}</v-btn>
+                                                        <v-btn size="x-small" variant="text" @click="editableStudyIdno = StudyIDNO || ''">{{$t("reset") || "Reset"}}</v-btn>
                                                     </div>
                                                 </template>
                                                 <template v-else>
@@ -850,7 +851,7 @@ Vue.component('indicator-dsd-import', {
                                             </td>
                                         </tr>
                                     </tbody>
-                                </v-simple-table>
+                                </v-table>
                             </v-card-text>
                         </v-card>
 
@@ -859,7 +860,7 @@ Vue.component('indicator-dsd-import', {
                         </v-alert>
 
                         <!-- Map fields: bordered section with view switcher and column/data views -->
-                        <v-card class="mb-3" outlined>
+                        <v-card class="mb-3" variant="outlined">
                             <v-card-title class="pa-3" style="font-size: 16px; font-weight: bold;">
                                 {{$t("map_fields") || "Map fields"}}
                             </v-card-title>
@@ -872,7 +873,7 @@ Vue.component('indicator-dsd-import', {
                                         :outlined="csvPreviewView !== 'data'"
                                         @click="csvPreviewView = 'data'"
                                     >
-                                        <v-icon left small>mdi-table</v-icon>
+                                        <v-icon start size="small">mdi-table</v-icon>
                                         {{$t("data_view") || "Data"}}
                                     </v-btn>
                                     <v-btn
@@ -881,7 +882,7 @@ Vue.component('indicator-dsd-import', {
                                         :outlined="csvPreviewView !== 'column'"
                                         @click="csvPreviewView = 'column'"
                                     >
-                                        <v-icon left small>mdi-view-list</v-icon>
+                                        <v-icon start size="small">mdi-view-list</v-icon>
                                         {{$t("columns") || "Columns"}}
                                     </v-btn>
                                 </div>
@@ -911,7 +912,7 @@ Vue.component('indicator-dsd-import', {
                                 <!-- Column view: table of fields for mapping -->
                                 <div v-if="csvPreviewView === 'column'" class="mb-4">
                                     <div class="csv-column-view-table" style="border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;">
-                                        <v-simple-table dense>
+                                        <v-table dense>
                                     <thead>
                                         <tr>
                                             <th class="text-left" style="width: 48px;"></th>
@@ -981,14 +982,14 @@ Vue.component('indicator-dsd-import', {
                                             </td>
                                         </tr>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </div>
                                 </div>
 
                                 <!-- Data view: Data Preview Table with Column Configuration in Headers -->
                                 <div v-if="csvPreviewView === 'data'" class="mb-4" style="border: 1px solid #e0e0e0; border-radius: 4px; overflow-x: scroll; overflow-y: auto; max-height: 600px; position: relative;">
                             <div class="csv-preview-table-container" style="overflow-x: scroll; overflow-y: auto;">
-                                <v-simple-table dense style="min-width: 100%;">
+                                <v-table dense style="min-width: 100%;">
                                     <thead>
                                         <tr>
                                             <th v-for="(mapping, idx) in columnMappings" :key="idx" class="text-left" :style="[ { minWidth: '200px', verticalAlign: 'top', fontSize: '10px', padding: '2px' }, isRequiredFieldMapped(mapping) ? { backgroundColor: '#e3f2fd' } : {} ]">
@@ -1052,7 +1053,7 @@ Vue.component('indicator-dsd-import', {
                                             </td>
                                         </tr>
                                     </tbody>
-                                </v-simple-table>
+                                </v-table>
                                     </div>
                                 </div>
                             </v-card-text>
@@ -1076,7 +1077,7 @@ Vue.component('indicator-dsd-import', {
 
                         <div class="mt-4 d-flex justify-space-between align-center">
                             <div>
-                                <v-btn text @click="reset">{{$t("upload_another") || "Upload Another File"}}</v-btn>
+                                <v-btn variant="text" @click="reset">{{$t("upload_another") || "Upload Another File"}}</v-btn>
                             </div>
                             <div>
                                 <v-btn 
@@ -1086,10 +1087,10 @@ Vue.component('indicator-dsd-import', {
                                     :disabled="!canImport"
                                     large
                                 >
-                                    <v-icon left>mdi-upload</v-icon>
+                                    <v-icon start>mdi-upload</v-icon>
                                     {{$t("import") || "Import"}}
                                 </v-btn>
-                                <v-btn text @click="cancel" class="ml-2">{{$t("cancel") || "Cancel"}}</v-btn>
+                                <v-btn variant="text" @click="cancel" class="ml-2">{{$t("cancel") || "Cancel"}}</v-btn>
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
-Vue.component('vue-collection-access-manager', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-collection-access-manager'] = {
     props: ['value'],
     data() {
         return {
@@ -361,7 +362,7 @@ Vue.component('vue-collection-access-manager', {
                             <v-autocomplete
                                 v-model="selected_users"
                                 :loading="is_loading"
-                                :search-input.sync="search"
+                                v-model:search="search"
                                 :items="users"
                                 solo
                                 chips
@@ -388,13 +389,13 @@ Vue.component('vue-collection-access-manager', {
 
                                 <template v-slot:item="data">
                                     <template v-if="typeof data.item !== 'object'">
-                                        <v-list-item-content v-text="data.item"></v-list-item-content>
+                                        <span v-text="data.item"></span>
                                     </template>
                                     <template v-else>
-                                        <v-list-item-content>
+                                        
                                         <v-list-item-title v-html="data.item.username"></v-list-item-title>
                                         <v-list-item-subtitle v-html="data.item.email"></v-list-item-subtitle>
-                                        </v-list-item-content>
+                                        
                                     </template>
                                 </template>
                           </v-autocomplete>
@@ -411,7 +412,7 @@ Vue.component('vue-collection-access-manager', {
                             ></v-select>                    
                         </div>
                         <div class="col-auto">
-                            <v-btn large @click="addCollectionAclAccess" :loading="is_updating" color="primary">{{$t('add')}}</v-btn>                    
+                            <v-btn size="large" @click="addCollectionAclAccess" :loading="is_updating" color="primary">{{$t('add')}}</v-btn>                    
                         </div>
                     </div>
                 </div>
@@ -420,7 +421,7 @@ Vue.component('vue-collection-access-manager', {
                     <div v-if="!hasCollectionAclUsers">
                         <p>No collection ACL users found</p>
                     </div>
-                    <v-simple-table v-else>
+                    <v-table v-else>
                         <thead>
                         <tr>
                             <th>{{$t('user')}}</th>
@@ -435,16 +436,16 @@ Vue.component('vue-collection-access-manager', {
                                 <div class="small text-muted">{{user.email}}</div>
                             </td>
                             <td>                           
-                                <v-btn text @click.stop.prevent="showChangeRoleMenu($event, user.user_id, false)">
+                                <v-btn variant="text" @click.stop.prevent="showChangeRoleMenu($event, user.user_id, false)">
                                     {{user.permissions}} <v-icon>mdi-chevron-down</v-icon> 
                                 </v-btn>                        
                             </td>
                             <td>
-                                <v-btn icon small color="red" @click="removeCollectionAclAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
+                                <v-btn icon size="small" color="red" @click="removeCollectionAclAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
                             </td>
                         </tr>
                         </tbody>
-                    </v-simple-table>
+                    </v-table>
                 </div>
             </div>
         </div>
@@ -466,7 +467,7 @@ Vue.component('vue-collection-access-manager', {
                         <v-autocomplete
                             v-model="selected_users"
                             :loading="is_loading"
-                            :search-input.sync="search"
+                            v-model:search="search"
                             :items="users"
                             solo
                             chips
@@ -493,13 +494,13 @@ Vue.component('vue-collection-access-manager', {
 
                             <template v-slot:item="data">
                                 <template v-if="typeof data.item !== 'object'">
-                                    <v-list-item-content v-text="data.item"></v-list-item-content>
+                                    <span v-text="data.item"></span>
                                 </template>
                                 <template v-else>
-                                    <v-list-item-content>
+                                    
                                     <v-list-item-title v-html="data.item.username"></v-list-item-title>
                                     <v-list-item-subtitle v-html="data.item.email"></v-list-item-subtitle>
-                                    </v-list-item-content>
+                                    
                                 </template>
                             </template>
                       </v-autocomplete>
@@ -516,7 +517,7 @@ Vue.component('vue-collection-access-manager', {
                         ></v-select>                    
                     </div>
                     <div class="col-auto">
-                        <v-btn large @click="addCollectionAccess" :loading="is_updating" color="primary">{{$t('add')}}</v-btn>                    
+                        <v-btn size="large" @click="addCollectionAccess" :loading="is_updating" color="primary">{{$t('add')}}</v-btn>                    
                     </div>
                 </div>
             </div>
@@ -525,7 +526,7 @@ Vue.component('vue-collection-access-manager', {
                 <div v-if="!hasCollectionUsers">
                     <p>No users found</p>
                 </div>
-                <v-simple-table v-else>
+                <v-table v-else>
                     <thead>
                     <tr>
                         <th>{{$t('user')}}</th>
@@ -540,16 +541,16 @@ Vue.component('vue-collection-access-manager', {
                             <div class="small text-muted">{{user.email}}</div>
                         </td>
                         <td>                           
-                            <v-btn text @click.stop.prevent="showChangeRoleMenu($event, user.user_id, true)">
+                            <v-btn variant="text" @click.stop.prevent="showChangeRoleMenu($event, user.user_id, true)">
                                 {{user.permissions}} <v-icon>mdi-chevron-down</v-icon> 
                             </v-btn>                        
                         </td>
                         <td>
-                            <v-btn icon small color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
+                            <v-btn icon size="small" color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
                         </td>
                     </tr>
                     </tbody>
-                </v-simple-table>
+                </v-table>
             </div>
         </div>
         </div>
@@ -566,7 +567,7 @@ Vue.component('vue-collection-access-manager', {
 
                 <v-list>          
                 <v-list-item v-for="permission_ in user_roles">
-                        <v-list-item-title @click="ChangeUserRole(permission_.value)"><v-btn text>{{permission_.text}}</v-btn></v-list-item-title>
+                        <v-list-item-title @click="ChangeUserRole(permission_.value)"><v-btn variant="text">{{permission_.text}}</v-btn></v-list-item-title>
                 </v-list-item>  
                 </v-list>
             </v-menu>

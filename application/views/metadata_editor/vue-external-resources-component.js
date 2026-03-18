@@ -1,5 +1,5 @@
 //external resources
-const VueExternalResources = Vue.component('external-resources', {
+const VueExternalResources = {
     props: ['index', 'id'],
     data() {
         return {
@@ -226,26 +226,26 @@ const VueExternalResources = Vue.component('external-resources', {
             <v-card>
                 <v-card-title>
                     {{$t("external_resources")}} 
-                    <v-chip small color="primary" class="ml-2">{{ExternalResources.length}}</v-chip>
+                    <v-chip size="small" color="primary" class="ml-2">{{ExternalResources.length}}</v-chip>
                 </v-card-title>
                 <v-card-subtitle>
                     <v-row>
                         <v-col md="4">
-                            <v-btn v-if="showBulkActions" color="error" small outlined @click="bulkDeleteResources" :disabled="isDeleting">
+                            <v-btn v-if="showBulkActions" color="error" size="small" variant="outlined" @click="bulkDeleteResources" :disabled="isDeleting">
                                 <i class="fas fa-trash-alt"></i> 
                                 {{isDeleting ? $t("deleting") : $t("delete_selected") + ' (' + selectedResources.length + ')'}}
                             </v-btn>
                         </v-col>
                         <v-col md="8" class="mb-2">
                             <div class="float-right">                                
-                                <v-btn color="primary" outlined small @click="addResource">
+                                <v-btn color="primary" variant="outlined" size="small" @click="addResource">
                                     <i class="fas fa-plus-square"></i> {{$t("create_resource")}}
                                 </v-btn>
-                                <v-btn color="primary" outlined small @click="importResource">
+                                <v-btn color="primary" variant="outlined" size="small" @click="importResource">
                                     <i class="fas fa-file-upload"></i> {{$t("import_resources")}}
                                 </v-btn> 
-                                <v-btn color="primary" outlined small :to="'/files'" class="mr-1">
-                                    <v-icon small left>mdi-folder-open</v-icon>{{$t("file_manager")}}
+                                <v-btn color="primary" variant="outlined" size="small" :to="'/files'" class="mr-1">
+                                    <v-icon size="small" start>mdi-folder-open</v-icon>{{$t("file_manager")}}
                                 </v-btn>
                             </div>
                         </v-col>
@@ -313,15 +313,15 @@ const VueExternalResources = Vue.component('external-resources', {
                                 
                                 <td>
                                     <v-menu offset-y>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon v-on="on" v-bind="attrs" 
+                                        <template v-slot:activator="{ props: activatorProps }">
+                                            <v-btn size="small" icon v-bind="activatorProps" 
                                                    :title="$t('more_options')" 
                                                    color="primary">
                                                 <v-icon>mdi-dots-vertical</v-icon>
                                             </v-btn>
                                         </template>
                                         
-                                        <v-list dense>
+                                        <v-list density="compact">
                                             <v-list-item @click="editResource(resource.id)">
                                                 <v-list-item-icon>
                                                     <v-icon>mdi-pencil</v-icon>

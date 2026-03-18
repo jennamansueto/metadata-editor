@@ -1,4 +1,5 @@
-Vue.component('vue-project-access-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-project-access-dialog'] = {
     props: ['value', 'project_access'],
     data() {
         return {            

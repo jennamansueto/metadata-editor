@@ -1,4 +1,5 @@
-Vue.component('vue-template-revision-history', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-template-revision-history'] = {
     props: ['value','template_id'],
     data() {
         return {            
@@ -58,7 +59,7 @@ Vue.component('vue-template-revision-history', {
                     {{$t('revision_history')}}
                     </v-card-title>
                     <v-card-text>
-                        <v-simple-table v-if="revisions && revisions.history && revisions.history.length>0">
+                        <v-table v-if="revisions && revisions.history && revisions.history.length>0">
                             <template v-slot:default>
                                 <thead>
                                     <tr>
@@ -79,9 +80,9 @@ Vue.component('vue-template-revision-history', {
                                     </tr>
                                 </tbody>
                             </template>
-                        </v-simple-table>
+                        </v-table>
                         <div v-else>
-                            <v-alert outlined color="red">
+                            <v-alert variant="outlined" color="red">
                                 {{$t('no_revisions_found')}}
                             </v-alert>
                         </div>
