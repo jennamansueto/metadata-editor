@@ -482,11 +482,11 @@ window.AppComponents['variable-edit'] = {
         <div class="variable-edit-component pb-5">
         <template>
             <v-tabs v-model="active_tab">
-                <v-tab key="statistics" href="#statistics">{{$t('statistics')}}</v-tab>
-                <v-tab key="weights" href="#weights">
+                <v-tab key="statistics" value="statistics">{{$t('statistics')}}</v-tab>
+                <v-tab key="weights" value="weights">
                     {{$t('weights')}} <span v-if="variable.var_wgt_id"><v-icon style="color:green;">mdi-circle-medium</v-icon></span></v-tab>
-                <v-tab key="documentation" href="#documentation">{{$t('documentation')}}</v-tab>
-                <v-tab key="json" href="#json">{{$t('json')}}</v-tab>
+                <v-tab key="documentation" value="documentation">{{$t('documentation')}}</v-tab>
+                <v-tab key="json" value="json">{{$t('json')}}</v-tab>
             </v-tabs>
             <v-window v-model="active_tab">
                 <v-window-item key="statistics" value="statistics">
