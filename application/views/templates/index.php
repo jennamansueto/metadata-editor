@@ -719,12 +719,12 @@
           const coreList = Array.isArray(this.templates.core) ? this.templates.core : [];
           const customList = Array.isArray(this.templates.custom) ? this.templates.custom : [];
 
-          const coreMatch = coreList.find(template => template.uid == uid;
+          const coreMatch = coreList.find(template => template.uid == uid);
           if (coreMatch){
             return coreMatch;
           }
 
-          const customMatch = customList.find(template => template.uid == uid;
+          const customMatch = customList.find(template => template.uid == uid);
           return customMatch || null;
         },
         isReadOnlyTemplate: function(item) {

@@ -98,7 +98,7 @@ window.AppComponents['dialog-batch-export'] = {
                 if (r.output_filename) {
                     filenames.push(r.output_filename);
                 } else {
-                    const file = this.selectedFiles.find(f => f.file_id === r.file_id;
+                    const file = this.selectedFiles.find(f => f.file_id === r.file_id);
                     const physical = (file && file.file_physical_name) ? file.file_physical_name : '';
                     const base = this.filenamePart(physical);
                     if (base) filenames.push(base + '.' + r.format);

@@ -168,7 +168,7 @@ window.AppComponents['variables-validation'] = {
             var vm = this;
             vm.proposedNewNames = {};
             vm.invalid_names.forEach(function(item) {
-                vm.proposedNewNames[item.name] = vm.getDefaultSuggestion(item));
+                vm.proposedNewNames[item.name] = vm.getDefaultSuggestion(item);
             });
         },
         validateNewNames: function(renames) {
@@ -282,7 +282,7 @@ window.AppComponents['variables-validation'] = {
             this.proposedNewNames[name] = value;
         },
         resetRowSuggestion: function(item) {
-            this.proposedNewNames[item.name] = this.getDefaultSuggestion(item));
+            this.proposedNewNames[item.name] = this.getDefaultSuggestion(item);
         },
         openApplyConfirm: function() {
             this.pendingRenamesCount = this.renamesToApply.length;

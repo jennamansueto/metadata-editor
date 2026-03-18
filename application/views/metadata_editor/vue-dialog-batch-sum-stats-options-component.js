@@ -93,7 +93,7 @@ window.AppComponents['dialog-batch-sum-stats-options'] = {
         applyDefaultsForIntervalType() {
             const defaults = this._defaultOptionsForIntervalType(this.interval_type);
             Object.keys(defaults).forEach(k => {
-                this.sum_stats_options[k] = defaults[k]);
+                this.sum_stats_options[k] = defaults[k];
             });
         },
         _varIntervalType(v) {

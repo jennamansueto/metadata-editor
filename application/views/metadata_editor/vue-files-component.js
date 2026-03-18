@@ -241,7 +241,7 @@ window.AppComponents['file-manager'] = {
         filesToShow() {
             const filesOnly = this.files.filter(f => !f.is_dir);
             if (this.selectedFolderPath === null) return filesOnly;
-            return filesOnly.filter(f => f.dir_path === this.selectedFolderPath;
+            return filesOnly.filter(f => f.dir_path === this.selectedFolderPath);
         },
         isAllSelected() {
             if (!this.filesToShow.length) return false;

@@ -528,7 +528,7 @@ window.AppComponents['variables'] = {
                             }
 
                             //variable_[field_name]=JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
-                            variable_[field_name] = JSON.parse(JSON.stringify(this.variableMultiple[field_name])));
+                            variable_[field_name] = JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
                         }
                     }
                 }

@@ -64,13 +64,13 @@ window.AppComponents['variable-edit'] = {
 
         // Initialize sum_stats_options properly with Vue.set for reactivity
         if (!this.variable.sum_stats_options){
-            this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
+            this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options));
         } else {
             // Ensure all required properties exist
             const defaultOptions = JSON.parse(JSON.stringify(this.sum_stats_options));
             for (const key in defaultOptions) {
                 if (!(key in this.variable.sum_stats_options)) {
-                    this.variable.sum_stats_options[key] = defaultOptions[key]);
+                    this.variable.sum_stats_options[key] = defaultOptions[key];
                 }
             }
         }
@@ -92,7 +92,7 @@ window.AppComponents['variable-edit'] = {
         Variable:{
             get(){
                 if (!this.variable.sum_stats_options) {
-                    this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
+                    this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options));
                 }
                 return this.variable;
             },
@@ -447,12 +447,12 @@ window.AppComponents['variable-edit'] = {
         ensureSumStatsOptions: function() {
             // Ensure sum_stats_options exists and has all required properties
             if (!this.variable.sum_stats_options) {
-                this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
+                this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options));
             } else {
                 const defaultOptions = JSON.parse(JSON.stringify(this.sum_stats_options));
                 for (const key in defaultOptions) {
                     if (!(key in this.variable.sum_stats_options)) {
-                        this.variable.sum_stats_options[key] = defaultOptions[key]);
+                        this.variable.sum_stats_options[key] = defaultOptions[key];
                     }
                 }
             }

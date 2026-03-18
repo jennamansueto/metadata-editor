@@ -533,7 +533,7 @@ window.AppComponents['indicator-dsd-import'] = {
             });
             // Set new mapping if a column was selected
             if (csvColumn) {
-                const m = this.columnMappings.find(x => x.csvColumn === csvColumn;
+                const m = this.columnMappings.find(x => x.csvColumn === csvColumn);
                 if (m) {
                     m.columnType = fieldKey;
                     m.selected = true;
@@ -543,7 +543,7 @@ window.AppComponents['indicator-dsd-import'] = {
             this.hasUnsavedChanges = true;
         },
         setRequiredFieldLabelColumn: function(fieldKey, csvColumn) {
-            this.requiredFieldLabelColumns[fieldKey] = csvColumn || '');
+            this.requiredFieldLabelColumns[fieldKey] = csvColumn || '';
             this.hasUnsavedChanges = true;
         },
         isRequiredFieldMapped: function(mapping) {
@@ -664,7 +664,7 @@ window.AppComponents['indicator-dsd-import'] = {
             const selectedMappings = this.columnMappings.filter(m => m.selected);
             
             requiredFields.forEach(field => {
-                const mapping = selectedMappings.find(m => m.columnType === field.key;
+                const mapping = selectedMappings.find(m => m.columnType === field.key);
                 status[field.key] = {
                     label: field.label,
                     selected: !!mapping,

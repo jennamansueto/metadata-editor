@@ -8,7 +8,7 @@ window.AppComponents['vue-collection-remove-dialog'] = {
     },
     methods: {            
         removeCollectionFromList: function(collection_id){
-            let index = this.collections.findIndex(x => x.id === collection_id;
+            let index = this.collections.findIndex(x => x.id === collection_id);
             if (index > -1) {
                 delete this.collections[index];
             }

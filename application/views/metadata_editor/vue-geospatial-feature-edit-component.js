@@ -129,9 +129,9 @@ window.AppComponents['geospatial-feature-edit'] = {
                 const features = this.$store.state.geospatial_features;
                 
                 if (featureId) {
-                    this.feature = features.find(f => f.id == featureId;
+                    this.feature = features.find(f => f.id == featureId);
                 } else {
-                    this.feature = features.find(f => f.name === featureName || f.code === featureName;
+                    this.feature = features.find(f => f.name === featureName || f.code === featureName);
                 }
                 
                 if (this.feature) {

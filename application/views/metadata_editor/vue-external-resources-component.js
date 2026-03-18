@@ -121,7 +121,7 @@ const VueExternalResources = {
             const vm = this;
             
             // Find the resource to duplicate
-            const resourceToDuplicate = this.ExternalResources.find(resource => resource.id == id;
+            const resourceToDuplicate = this.ExternalResources.find(resource => resource.id == id);
             if (!resourceToDuplicate) {
                 alert(vm.$t("failed_operation") + ": Resource not found");
                 return;

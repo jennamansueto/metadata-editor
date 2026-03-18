@@ -638,7 +638,7 @@
         }
       },
       removeAssociatedFile(item) {
-        this.associatedFiles = this.associatedFiles.filter(file => file.id !== item.id;
+        this.associatedFiles = this.associatedFiles.filter(file => file.id !== item.id);
       },
       clearAssociatedFiles() {
         this.associatedFiles = [];
@@ -1107,7 +1107,7 @@
         }
         // Create a new attribute with a default key
         const newKey = 'attribute_' + (Object.keys(this.form.core_fields.attributes).length + 1);
-        this.form.core_fields.attributes[newKey] = '');
+        this.form.core_fields.attributes[newKey] = '';
       },
       removeAttribute(key) {
         if (this.form.core_fields.attributes && this.form.core_fields.attributes[key]) {

@@ -35,7 +35,7 @@ window.AppComponents['vue-tag-filter'] = {
             .finally(() => (vm.is_loading = false));
         }, 300),
         removeSelectionItem: function(item) {
-            let index = this.selected_tags.findIndex(t => t.id === item.id;
+            let index = this.selected_tags.findIndex(t => t.id === item.id);
             if (index > -1) {
                 this.selected_tags.splice(index, 1);
             }

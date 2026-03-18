@@ -724,7 +724,7 @@
         },
         EnumUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.ActiveNode["enum"] = [{}]);
+            this.ActiveNode["enum"] = [{}];
           }
         },
         EnumListUpdate: function(e) {
@@ -734,7 +734,7 @@
         },
         DefaultUpdate: function(e) {
           if (!this.ActiveNode.default) {
-            this.ActiveNode["default"] = [{}]);
+            this.ActiveNode["default"] = [{}];
           }
         },
         RulesUpdate: function(e) {
@@ -758,7 +758,7 @@
               let propIndex = -1;
               
               // First, try direct object reference (most reliable)
-              propIndex = propsArray.findIndex(p => p === vm.ActiveNode;
+              propIndex = propsArray.findIndex(p => p === vm.ActiveNode);
               
               // If not found, try by prop_key
               if (propIndex === -1 && propKeyToDelete) {

@@ -312,8 +312,7 @@ window.AppComponents['datafile-import'] = {
             return false;
         },
         removeFile(file_idx){
-            delete this.files[file_idx];      
-            this.files.splice(file_idx, 0);
+            this.files.splice(file_idx, 1);
         },        
         handleFileUpload(event)
         {

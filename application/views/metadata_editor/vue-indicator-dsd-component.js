@@ -111,7 +111,7 @@ window.AppComponents['indicator-dsd'] = {
         },
         editColumnByColumn: function(column) {
             // Find the index of the column in the original columns array
-            const index = this.columns.findIndex(col => col.id === column.id;
+            const index = this.columns.findIndex(col => col.id === column.id);
             if (index !== -1) {
                 this.editColumn(index);
             }
@@ -399,7 +399,7 @@ window.AppComponents['indicator-dsd'] = {
             if (!col.metadata) {
                 col['metadata'] = {};
             }
-            col.metadata['value_label_column'] = newValue == null ? '' : String(newValue));
+            col.metadata['value_label_column'] = newValue == null ? '' : String(newValue);
             if (col.id && this.columnHasChanges(col)) {
                 this.saveColumnDebounce();
             }

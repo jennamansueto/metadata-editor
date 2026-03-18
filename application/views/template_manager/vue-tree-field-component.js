@@ -487,7 +487,7 @@ window.AppComponents['nada-treeview-field'] = {
             this.UserTemplate["items"] = [];
           }
           
-          const exists = this.UserTemplate.items.some(i => i && i.key === item.key;
+          const exists = this.UserTemplate.items.some(i => i && i.key === item.key);
           if (exists) {
             return false;
           }

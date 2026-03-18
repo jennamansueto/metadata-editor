@@ -973,14 +973,14 @@
       },
       methods: {
         toggleRevisions: function(project_id) {
-          let project = this.Projects.find(x => x.id == project_id;
+          let project = this.Projects.find(x => x.id == project_id);
           if (project) {
-            project['versions_show'] = !project.versions_show);
+            project['versions_show'] = !project.versions_show;
           }
         },
         createProjectRevision: function(project_id) {
 
-          let project = this.Projects.find(x => x.id == project_id;
+          let project = this.Projects.find(x => x.id == project_id);
 
           this.dialog_project_revision_options = {
             'project_id': project_id,
@@ -1187,7 +1187,7 @@
           }
 
           //find facet by id
-          let facet = this.facets[facet_name].find(x => x.id == facet_id;
+          let facet = this.facets[facet_name].find(x => x.id == facet_id);
 
           if (facet_name == 'collection') {
             facet=this.searchNestedCollectionsFacet(facet_id);
@@ -1650,7 +1650,7 @@
         manageProjectCollections: async function(project_id) 
         {
           //get collections for the project
-          let project = this.Projects.find(x => x.id == project_id;
+          let project = this.Projects.find(x => x.id == project_id);
           if (!project){
             return false;
           }

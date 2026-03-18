@@ -199,7 +199,7 @@ window.AppComponents['nested-section'] = {
         },
         setData: function (field_xpath,event){
             _.set(this.field_data,field_xpath,event);
-            this.field_data[0] = this.field_data[0]);
+            this.field_data[0] = this.field_data[0];
         },
         toggleChildren(index) {
             if (!this.active_sections.includes(index)) {

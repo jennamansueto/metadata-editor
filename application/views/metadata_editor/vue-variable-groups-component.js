@@ -198,7 +198,7 @@ window.AppComponents['variable-groups'] = {
             .then(function (response) {
                 console.log("updating",response);
                 EventBus.emit('onSuccess', 'Variable group saved!');
-                //vm.data_files[vm.edit_item] = JSON.parse(JSON.stringify(data)));
+                //vm.data_files[vm.edit_item] = JSON.parse(JSON.stringify(data));
                 //vm.$store.dispatch('loadDataFiles',{dataset_id:vm.dataset_id});
             })
             .catch(function (error) {

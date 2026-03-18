@@ -73,7 +73,7 @@ window.AppComponents['indicator-dsd-edit'] = {
             this.column['metadata'] = {};
         }
         if (!this.column.metadata.hasOwnProperty('value_label_column')) {
-            this.column.metadata['value_label_column'] = this.column.metadata.value_label_column || '');
+            this.column.metadata['value_label_column'] = this.column.metadata.value_label_column || '';
         }
     },
     watch: {
