@@ -1,5 +1,6 @@
 // configure-catalog component
-Vue.component('configure-catalog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['configure-catalog'] = {
     props:['value'],
     data: function () {    
         return {          

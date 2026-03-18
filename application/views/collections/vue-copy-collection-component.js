@@ -1,4 +1,5 @@
-Vue.component('vue-copy-collection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-copy-collection'] = {
     props: ['value'],
     data() {
         return {

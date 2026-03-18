@@ -1,4 +1,5 @@
-Vue.component('vue-project-share', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-project-share'] = {
     props: ['value','users','project_id'],
     data() {
         return {            
@@ -216,13 +217,13 @@ Vue.component('vue-project-share', {
 
                         <template v-slot:item="data">
                             <template v-if="typeof data.item !== 'object'">
-                                <v-list-item-content v-text="data.item"></v-list-item-content>
+                                <v-list-item-content v-text="data.item">
                             </template>
                             <template v-else>
-                                <v-list-item-content>
+                                
                                 <v-list-item-title v-html="data.item.username"></v-list-item-title>
                                 <v-list-item-subtitle v-html="data.item.email"></v-list-item-subtitle>
-                                </v-list-item-content>
+                                
                             </template>
                         </template>
                   </v-autocomplete>
@@ -257,7 +258,7 @@ Vue.component('vue-project-share', {
 
                     <div class="table-responsive mt-3" style="max-height:200px;overflow:auto;" v-if="shared_users!=''">
                     
-                        <v-simple-table style="font-size:small;">
+                        <v-table style="font-size:small;">
                             <thead>
                             <tr>
                                 <th>{{$t('username')}}</th>
@@ -283,11 +284,11 @@ Vue.component('vue-project-share', {
                                     </select>
                                 </td>
                                 <td>
-                                    <v-btn icon small color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
+                                    <v-btn icon size="small" color="red" @click="removeAccess(index)"><v-icon>mdi-delete-outline</v-icon></v-btn>
                                 </td>
                             </tr>
                             </tbody>
-                        </v-simple-table>
+                        </v-table>
                     </div>
                     <div v-else>
                         <div class="text-center m-3" >None</div>

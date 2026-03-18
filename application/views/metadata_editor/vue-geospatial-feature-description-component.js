@@ -1,5 +1,6 @@
 /// Geospatial feature catalogue description component
-Vue.component('geospatial-feature-description', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-feature-description'] = {
     data: function () {    
         return {
             loading: false,
@@ -117,10 +118,10 @@ Vue.component('geospatial-feature-description', {
             
             // Ensure description.feature_catalogue exists
             if (!this.projectMetadata.description) {
-                Vue.set(this.projectMetadata, 'description', {});
+                this.projectMetadata['description'] = {});
             }
             if (!this.projectMetadata.description.feature_catalogue) {
-                Vue.set(this.projectMetadata.description, 'feature_catalogue', {});
+                this.projectMetadata.description['feature_catalogue'] = {});
             }
             
             // Handle nested paths (like versionDate.date, versionDate.type)
@@ -141,7 +142,7 @@ Vue.component('geospatial-feature-description', {
             <v-card>
                 <v-card-title class="d-flex justify-space-between align-center">
                     <div>
-                        <v-icon left>mdi-information-outline</v-icon>
+                        <v-icon start>mdi-information-outline</v-icon>
                         {{$t('feature_catalogue')}}
                     </div>
                 </v-card-title>

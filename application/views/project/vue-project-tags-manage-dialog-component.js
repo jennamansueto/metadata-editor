@@ -1,5 +1,6 @@
 /// Dialog to manage tags for a project (add/remove). Used on projects list page when clicking tags on a card.
-Vue.component('vue-project-tags-manage-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-project-tags-manage-dialog'] = {
     props: ['value', 'project_id', 'tags'],
     data: function () {
         return {
@@ -89,7 +90,7 @@ Vue.component('vue-project-tags-manage-dialog', {
                 <v-card-text class="pt-3">
                     <div v-if="localTags.length === 0 && !dialog_loading" class="text-muted mb-3">{{ $t('None') }}</div>
                     <div class="mb-3">
-                        <v-chip v-for="t in localTags" :key="'tag-' + t.id" small class="mr-1 mb-1" close @click:close="removeTag(t)">
+                        <v-chip v-for="t in localTags" :key="'tag-' + t.id" size="small" class="mr-1 mb-1" closable @click:close="removeTag(t)">
                             {{ t.tag }}
                         </v-chip>
                     </div>
@@ -106,7 +107,7 @@ Vue.component('vue-project-tags-manage-dialog', {
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="dialog = false">{{ $t('close') }}</v-btn>
+                    <v-btn variant="text" @click="dialog = false">{{ $t('close') }}</v-btn>
                     <v-btn color="primary" :disabled="!add_tag_input || !add_tag_input.trim() || dialog_loading" :loading="dialog_loading" @click="addTags">
                         {{ $t('Add') }}
                     </v-btn>

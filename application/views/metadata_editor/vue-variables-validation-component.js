@@ -3,7 +3,8 @@
  * Route: #/variables-validation/:file_id
  */
 
-Vue.component('variables-validation', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variables-validation'] = {
     props: ['file_id'],
     data: function() {
         var fileId = this.file_id || (this.$route && this.$route.params && this.$route.params.file_id);
@@ -167,7 +168,7 @@ Vue.component('variables-validation', {
             var vm = this;
             vm.proposedNewNames = {};
             vm.invalid_names.forEach(function(item) {
-                vm.$set(vm.proposedNewNames, item.name, vm.getDefaultSuggestion(item));
+                vm.proposedNewNames[item.name] = vm.getDefaultSuggestion(item));
             });
         },
         validateNewNames: function(renames) {
@@ -274,14 +275,14 @@ Vue.component('variables-validation', {
             var items = vm.getSuggestAffectedItems(actionType, scopeAll);
             items.forEach(function(item) {
                 var newName = vm.suggestNewName(item, actionType, vm.batchPrefix);
-                vm.$set(vm.proposedNewNames, item.name, newName);
+                vm.proposedNewNames[item.name] = newName);
             });
         },
         updateProposedName: function(name, value) {
-            this.$set(this.proposedNewNames, name, value);
+            this.proposedNewNames[name] = value);
         },
         resetRowSuggestion: function(item) {
-            this.$set(this.proposedNewNames, item.name, this.getDefaultSuggestion(item));
+            this.proposedNewNames[item.name] = this.getDefaultSuggestion(item));
         },
         openApplyConfirm: function() {
             this.pendingRenamesCount = this.renamesToApply.length;
@@ -320,7 +321,7 @@ Vue.component('variables-validation', {
                         vm.$store.dispatch('loadVariables', { dataset_id: vm.projectId, fid: vm.fid });
                     }
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', (vm.$t('variables_renamed') || 'Variables renamed.'));
+                        EventBus.emit('onSuccess', (vm.$t('variables_renamed') || 'Variables renamed.'));
                     }
                 })
                 .catch(function(err) {
@@ -435,14 +436,14 @@ Vue.component('variables-validation', {
                         vm.fetchValidation();
                     });
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
+                        EventBus.emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
                     }
                 })
                 .catch(function(err) {
                     vm.actionLoading = false;
                     vm.actionError = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (vm.$t('failed') || 'Failed');
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onFail', vm.actionError);
+                        EventBus.emit('onFail', vm.actionError);
                     }
                 });
         },
@@ -491,8 +492,8 @@ Vue.component('variables-validation', {
                                 </v-badge>
                             </v-tab>
                         </v-tabs>
-                        <v-tabs-items v-model="activeTab">
-                            <v-tab-item>
+                        <v-window v-model="activeTab">
+                            <v-window-item>
                                 <div v-if="!hasSyncMismatch && columns_diff" class="alert alert-success">
                                     {{ $t('variables_match_csv') || 'Variables match CSV.' }}
                                 </div>
@@ -519,9 +520,9 @@ Vue.component('variables-validation', {
                                         {{ $t('remove') }} ({{ columnsInDbNotInCsvCount }})
                                     </v-btn>
                                 </div>
-                            </v-tab-item>
-                            <v-tab-item>
-                                <v-alert v-if="hasInvalidNames" type="warning" outlined dense class="mb-3">
+                            </v-window-item>
+                            <v-window-item>
+                                <v-alert v-if="hasInvalidNames" type="warning" variant="outlined" density="compact" class="mb-3">
                                     <div class="font-weight-medium mb-2">{{ $t('invalid_variable_names_rules_title') || 'Variable name rules:' }}</div>
                                     <ul class="mb-0 pl-3" style="list-style-type: disc;">
                                         <li>{{ $t('var_rule_start_letter') || 'Must start with a letter (a–z, A–Z)' }}</li>
@@ -535,23 +536,23 @@ Vue.component('variables-validation', {
                                 <div v-else>
                                     <v-expansion-panels v-if="hasBatchFixSections" v-model="batchFixExpanded" flat class="mb-3" style="border: 1px solid rgba(0,0,0,.12); border-radius: 4px;">
                                         <v-expansion-panel>
-                                            <v-expansion-panel-header class="py-2">
+                                            <v-expansion-panel-title class="py-2">
                                                 <div>
                                                     <div class="font-weight-medium">{{ $t('batch_fix') || 'Bulk fix' }}</div>
                                                     <div class="text-caption grey--text text--darken-1 mt-0 pt-0">{{ $t('batch_fix_note') || 'Apply bulk fix to all variables with the same issue.' }}</div>
                                                 </div>
-                                            </v-expansion-panel-header>
-                                            <v-expansion-panel-content class="pt-0">
+                                            </v-expansion-panel-title>
+                                            <v-expansion-panel-text class="pt-0">
                                                 <v-card v-if="leadingUnderscoreItems.length > 0" outlined class="mb-3">
                                                     <v-card-subtitle class="font-weight-medium pb-1 d-flex align-center">
-                                                        <v-chip small class="mr-2" color="grey lighten-2">{{ leadingUnderscoreItems.length }}</v-chip>
+                                                        <v-chip size="small" class="mr-2" color="grey lighten-2">{{ leadingUnderscoreItems.length }}</v-chip>
                                                         {{ $t('variables_with_leading_underscores') || 'Variables with leading underscores' }}
                                                     </v-card-subtitle>
                                                     <v-card-text class="pt-0">
                                                         <v-row no-gutters class="flex-column">
                                                             <v-col class="pa-3 rounded grey lighten-4 mb-2">
                                                                 <div class="text-caption grey--text text--darken-1 mb-1">{{ $t('remove_leading_underscore') || 'Remove leading underscore' }}</div>
-                                                                <v-btn small outlined @click="batchRemoveLeadingUnderscore">{{ $t('remove_leading_underscore') || 'Remove underscore' }}</v-btn>
+                                                                <v-btn size="small" variant="outlined" @click="batchRemoveLeadingUnderscore">{{ $t('remove_leading_underscore') || 'Remove underscore' }}</v-btn>
                                                             </v-col>
                                                             <v-col class="pa-3 rounded grey lighten-4">
                                                                 <div class="text-caption grey--text text--darken-1 mb-2">{{ $t('add_prefix_leading_underscore') || 'Add prefix' }}</div>
@@ -561,7 +562,7 @@ Vue.component('variables-validation', {
                                                                         <input type="text" v-model="batchPrefix" class="form-control form-control-sm d-inline-block" style="width: 80px; vertical-align: middle;">
                                                                     </v-col>
                                                                     <v-col cols="12" sm="auto">
-                                                                        <v-btn small outlined @click="batchAddPrefixLeadingUnderscore">{{ $t('add_prefix_leading_underscore') || 'Add prefix' }}</v-btn>
+                                                                        <v-btn size="small" variant="outlined" @click="batchAddPrefixLeadingUnderscore">{{ $t('add_prefix_leading_underscore') || 'Add prefix' }}</v-btn>
                                                                     </v-col>
                                                                 </v-row>
                                                             </v-col>
@@ -570,27 +571,27 @@ Vue.component('variables-validation', {
                                                 </v-card>
                                                 <v-card v-if="invalidCharsOrTooLongItems.length > 0" outlined class="mb-3">
                                                     <v-card-subtitle class="font-weight-medium pb-1 d-flex align-center">
-                                                        <v-chip small class="mr-2" color="grey lighten-2">{{ invalidCharsOrTooLongItems.length }}</v-chip>
+                                                        <v-chip size="small" class="mr-2" color="grey lighten-2">{{ invalidCharsOrTooLongItems.length }}</v-chip>
                                                         {{ $t('variables_with_invalid_characters') || 'Variables with invalid characters' }}
                                                     </v-card-subtitle>
                                                     <v-card-text class="pt-0">
-                                                        <v-btn small outlined @click="batchReplaceInvalidChars">{{ $t('replace_invalid_chars') || 'Replace special characters with underscore' }}</v-btn>
+                                                        <v-btn size="small" variant="outlined" @click="batchReplaceInvalidChars">{{ $t('replace_invalid_chars') || 'Replace special characters with underscore' }}</v-btn>
                                                     </v-card-text>
                                                 </v-card>
                                                 <v-card v-if="startsWithNumberItems.length > 0" outlined>
                                                     <v-card-subtitle class="font-weight-medium pb-1 d-flex align-center">
-                                                        <v-chip small class="mr-2" color="grey lighten-2">{{ startsWithNumberItems.length }}</v-chip>
+                                                        <v-chip size="small" class="mr-2" color="grey lighten-2">{{ startsWithNumberItems.length }}</v-chip>
                                                         {{ $t('variables_starting_with_number') || 'Variables starting with a number' }}
                                                     </v-card-subtitle>
                                                     <v-card-text class="pt-0">
                                                         <div class="d-flex flex-wrap align-center">
                                                             <span class="text-body-2 mr-2 mb-1">{{ $t('prefix') || 'Prefix' }}:</span>
                                                             <input type="text" v-model="batchPrefix" class="form-control form-control-sm mr-2 mb-1" style="width: 80px;">
-                                                            <v-btn small outlined class="mb-1" @click="batchAddPrefixStartsWithNumber">{{ $t('add_prefix_starts_with_number') || 'Add prefix' }}</v-btn>
+                                                            <v-btn size="small" variant="outlined" class="mb-1" @click="batchAddPrefixStartsWithNumber">{{ $t('add_prefix_starts_with_number') || 'Add prefix' }}</v-btn>
                                                         </div>
                                                     </v-card-text>
                                                 </v-card>
-                                            </v-expansion-panel-content>
+                                            </v-expansion-panel-text>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
                                     <p class="text-body-2 mb-2 mt-5">{{ $t('edit_new_name_help') || 'Edit the New name column. Check the variables you want to rename, then click Apply rename. Use Bulk fix to apply actions by issue type.' }}</p>
@@ -620,7 +621,7 @@ Vue.component('variables-validation', {
                                                     <input type="text" :value="proposedNewNames[item.name]" @input="updateProposedName(item.name, $event.target.value)" :placeholder="getDefaultSuggestion(item)" style="width: 200px;" class="form-control form-control-sm">
                                                 </td>
                                                 <td>
-                                                    <v-btn x-small text @click="resetRowSuggestion(item)" :title="$t('reset') || 'Reset'">{{ $t('reset') || 'Reset' }}</v-btn>
+                                                    <v-btn size="x-small" variant="text" @click="resetRowSuggestion(item)" :title="$t('reset') || 'Reset'">{{ $t('reset') || 'Reset' }}</v-btn>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -629,8 +630,8 @@ Vue.component('variables-validation', {
                                         {{ $t('apply_rename') || 'Apply rename' }} ({{ renamesToApply.length }})
                                     </v-btn>
                                 </div>
-                            </v-tab-item>
-                        </v-tabs-items>
+                            </v-window-item>
+                        </v-window>
                     </template>
                 </v-card-text>
             </v-card>
@@ -645,8 +646,8 @@ Vue.component('variables-validation', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="cancelRemove">{{ $t('cancel') || 'Cancel' }}</v-btn>
-                        <v-btn color="error" dark depressed :loading="actionLoading" @click="confirmRemoveSubmit">{{ $t('Remove') || 'Remove' }}</v-btn>
+                        <v-btn variant="text" @click="cancelRemove">{{ $t('cancel') || 'Cancel' }}</v-btn>
+                        <v-btn color="error" dark variant="flat" :loading="actionLoading" @click="confirmRemoveSubmit">{{ $t('Remove') || 'Remove' }}</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -660,8 +661,8 @@ Vue.component('variables-validation', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="closeSuggestConfirm">{{ $t('cancel') || 'Cancel' }}</v-btn>
-                        <v-btn color="primary" depressed @click="confirmApplySuggestion">{{ $t('apply') || 'Apply' }}</v-btn>
+                        <v-btn variant="text" @click="closeSuggestConfirm">{{ $t('cancel') || 'Cancel' }}</v-btn>
+                        <v-btn color="primary" variant="flat" @click="confirmApplySuggestion">{{ $t('apply') || 'Apply' }}</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -676,8 +677,8 @@ Vue.component('variables-validation', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="closeApplyConfirm">{{ $t('cancel') || 'Cancel' }}</v-btn>
-                        <v-btn color="primary" depressed :loading="renameLoading" @click="applyRenames">{{ $t('apply') || 'Apply' }}</v-btn>
+                        <v-btn variant="text" @click="closeApplyConfirm">{{ $t('cancel') || 'Cancel' }}</v-btn>
+                        <v-btn color="primary" variant="flat" :loading="renameLoading" @click="applyRenames">{{ $t('apply') || 'Apply' }}</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>

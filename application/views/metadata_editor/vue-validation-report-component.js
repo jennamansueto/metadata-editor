@@ -1,4 +1,5 @@
-Vue.component('validation-report', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['validation-report'] = {
     data: function () {
         return {
             loading_schema: false,
@@ -439,7 +440,7 @@ Vue.component('validation-report', {
                             
                             // Ensure additional section exists
                             if (!metadata.additional) {
-                                vm.$set(metadata, 'additional', {});
+                                metadata['additional'] = {});
                             }
                             
                             // Set value in additional section using dot notation
@@ -692,7 +693,7 @@ Vue.component('validation-report', {
         togglePreview: function(path) {
             // Handle both path strings and numeric indices (including 0)
             const key = path !== null && path !== undefined ? String(path) : 'default';
-            this.$set(this.expanded_previews, key, !this.expanded_previews[key]);
+            this.expanded_previews[key] = !this.expanded_previews[key]);
         },
         /**
          * Check if preview is expanded for an issue
@@ -1053,7 +1054,7 @@ Vue.component('validation-report', {
                         :disabled="loading"
                         small
                     >
-                        <v-icon left small>mdi-refresh</v-icon>
+                        <v-icon start size="small">mdi-refresh</v-icon>
                         {{$t("refresh")}}
                     </v-btn>
                 </v-card-title>
@@ -1090,7 +1091,7 @@ Vue.component('validation-report', {
                                     small
                                     class="ml-3"
                                 >
-                                    <v-icon small left>
+                                    <v-icon size="small" start>
                                         {{schema_validation.valid ? 'mdi-check-circle' : 'mdi-alert-circle'}}
                                     </v-icon>
                                     {{schema_validation.valid ? $t("valid") : $t("failed")}}
@@ -1106,7 +1107,7 @@ Vue.component('validation-report', {
                                     <!-- Validation Issues -->
                                     <div v-if="hasSchemaIssues">
                                         
-                                        <v-simple-table dense>
+                                        <v-table dense>
                                             <thead>
                                                 <tr>
                                                     <th style="width: 30%;">{{$t("property")}}</th>
@@ -1175,7 +1176,7 @@ Vue.component('validation-report', {
                                                                     @click.stop="navigateToHelp(issue.type)"
                                                                     :title='$t("view_help_for_this_error_type")'
                                                                 >
-                                                                    <v-icon x-small left>mdi-help-circle-outline</v-icon>
+                                                                    <v-icon x-small start>mdi-help-circle-outline</v-icon>
                                                                     {{$t("help")}}
                                                                 </v-btn>
                                                             </div>
@@ -1183,7 +1184,7 @@ Vue.component('validation-report', {
                                                     </tr>
                                                 </template>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </div>
 
                                     <!-- No Issues -->
@@ -1215,7 +1216,7 @@ Vue.component('validation-report', {
                                     small
                                     class="ml-3"
                                 >
-                                    <v-icon small left>
+                                    <v-icon size="small" start>
                                         {{template_validation.valid ? 'mdi-check-circle' : 'mdi-alert-circle'}}
                                     </v-icon>
                                     {{template_validation.valid ? $t("valid") : $t("failed")}}
@@ -1231,7 +1232,7 @@ Vue.component('validation-report', {
                                     <!-- Complete Validation Report (All Fields) -->
                                     <div v-if="templateValidationReport.length > 0">                                        
 
-                                        <v-simple-table dense>
+                                        <v-table dense>
                                             <thead>
                                                 <tr>
                                                     <th style="width: 25%;">{{$t("field")}}</th>
@@ -1321,7 +1322,7 @@ Vue.component('validation-report', {
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </div>
                                 </div>
 
@@ -1394,7 +1395,7 @@ Vue.component('validation-report', {
                                             {{$t("showing_first_50_errors_warning")}}
                                         </v-alert>
                                         
-                                        <v-simple-table dense>
+                                        <v-table dense>
                                             <thead>
                                                 <tr>
                                                     <th style="width: 25%;">{{$t("variable")}}</th>
@@ -1458,7 +1459,7 @@ Vue.component('validation-report', {
                                                     </tr>
                                                 </template>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </div>
 
                                 </div>
@@ -1511,7 +1512,7 @@ Vue.component('validation-report', {
                                                     :disabled="selected_extra_fields.length === 0"
                                                     class="mr-2"
                                                 >
-                                                    <v-icon left small>mdi-folder-move</v-icon>
+                                                    <v-icon start size="small">mdi-folder-move</v-icon>
                                                     {{$t("move_selected_to_additional")}}
                                                 </v-btn>
                                                 <v-btn
@@ -1522,13 +1523,13 @@ Vue.component('validation-report', {
                                                     @click="confirmRemoveFields"
                                                     :disabled="selected_extra_fields.length === 0"
                                                 >
-                                                    <v-icon left small>mdi-delete</v-icon>
+                                                    <v-icon start size="small">mdi-delete</v-icon>
                                                     {{$t("remove_selected")}}
                                                 </v-btn>
                                             </div>
                                         </div>
                                         
-                                        <v-simple-table dense>
+                                        <v-table dense>
                                             <thead>
                                                 <tr>
                                                     <th style="width: 5%;">
@@ -1594,7 +1595,7 @@ Vue.component('validation-report', {
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </div>
 
                                     <!-- No Extra Fields -->

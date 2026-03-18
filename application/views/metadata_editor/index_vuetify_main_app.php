@@ -447,10 +447,9 @@
                 formTextFieldStyle:
                 { 
                     clearable: true,
-                    "single-line":true,
-                    dense:true,
-                    filled:false,
-                    outlined:true,                    
+                    variant:"outlined",
+                    density:"compact",
+                    "hide-details":"auto",                    
                     style:"xborder-top:1px solid gray;"
                 }
             },
@@ -911,12 +910,12 @@
                     state.metadata_types=data;
                 },
                 variables(state,data){
-                    Vue.set(state.variables, data.fid, data.variables);
+                    state.variables[data.fid] = data.variables);
                 },
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
-                        Vue.set(state.variables,data.fid,[]);
-                        Vue.set(state.variables[data.fid],data.fid,{});
+                        state.variables[data.fid] = []);
+                        state.variables[data.fid][data.fid] = {});
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;
@@ -1083,8 +1082,8 @@
             message: 'Invalid value. To fix, delete the field value and then type/select a new value'
         });
 
-    Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
-    Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
+    // MIGRATE: app.component('ValidationProvider', VeeValidate.ValidationProvider);
+    // MIGRATE: app.component('ValidationObserver', VeeValidate.ValidationObserver);
 
     const { Splitpanes, Pane } = splitpanes;
 

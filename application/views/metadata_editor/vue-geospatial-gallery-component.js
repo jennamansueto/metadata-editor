@@ -1,5 +1,6 @@
 /// Geospatial gallery component
-Vue.component('geospatial-gallery', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-gallery'] = {
     props:['value'],
     data: function () {    
         return {            

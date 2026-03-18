@@ -849,7 +849,7 @@
         }
         this.$confirm(this.$t('delete_schema_file_confirm', { filename: file.filename }))
           .then(() => {
-            this.$set(this.deletingFiles, file.filename, true);
+            this.deletingFiles[file.filename] = true);
             axios.delete(this.baseApiUrl + '/files/' + encodeURIComponent(this.schemaUid), {
                 params: { filename: file.filename }
               })
@@ -872,7 +872,7 @@
                 this.$alert(message, { color: 'error' });
               })
               .finally(() => {
-                this.$set(this.deletingFiles, file.filename, false);
+                this.deletingFiles[file.filename] = false);
               });
           })
           .catch(() => {});
@@ -1100,15 +1100,15 @@
       },
       addAttribute() {
         if (!this.form.core_fields.attributes) {
-          this.$set(this.form.core_fields, 'attributes', {});
+          this.form.core_fields['attributes'] = {});
         }
         // Create a new attribute with a default key
         const newKey = 'attribute_' + (Object.keys(this.form.core_fields.attributes).length + 1);
-        this.$set(this.form.core_fields.attributes, newKey, '');
+        this.form.core_fields.attributes[newKey] = '');
       },
       removeAttribute(key) {
         if (this.form.core_fields.attributes && this.form.core_fields.attributes[key]) {
-          this.$delete(this.form.core_fields.attributes, key);
+          delete this.form.core_fields.attributes[key];
         }
       },
       updateAttributeKey(oldKey, newKey) {
@@ -1122,16 +1122,16 @@
         }
         // Update the key
         const value = this.form.core_fields.attributes[oldKey];
-        this.$delete(this.form.core_fields.attributes, oldKey);
-        this.$set(this.form.core_fields.attributes, newKey, value);
+        delete this.form.core_fields.attributes[oldKey];
+        this.form.core_fields.attributes[newKey] = value);
       },
       updateAttributeValue(key, value) {
         if (!this.form.core_fields.attributes) {
-          this.$set(this.form.core_fields, 'attributes', {});
+          this.form.core_fields['attributes'] = {});
         }
         // If value is an array (from combobox), take the first item or empty string
         const fieldValue = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : (value || '');
-        this.$set(this.form.core_fields.attributes, key, fieldValue);
+        this.form.core_fields.attributes[key] = fieldValue);
       },
       submit() {
         if (this.loading || this.saving) {

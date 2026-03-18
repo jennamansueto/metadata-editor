@@ -1,4 +1,5 @@
-Vue.component('vue-edit-collection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-edit-collection'] = {
     props: ['value','collection'],
     data() {
         return {

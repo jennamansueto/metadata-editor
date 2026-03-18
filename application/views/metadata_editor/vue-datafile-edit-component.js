@@ -1,5 +1,5 @@
 /// datafile add/edit form
-const VueDatafileEdit= Vue.component('datafile-edit', {
+const VueDatafileEdit = {
     data: function () {    
         return {
             form_local: {},
@@ -112,8 +112,8 @@ const VueDatafileEdit= Vue.component('datafile-edit', {
                         <div style="font-weight:normal">{{$t("Data file")}}: {{form_local.file_name}}</div>
 
                         <div>
-                            <v-btn color="primary" small  @click="saveForm">{{$t("Save")}} <span v-if="is_dirty">*</span></v-btn>
-                            <v-btn  @click="cancelForm" small>{{$t("cancel")}}</v-btn>
+                            <v-btn color="primary" size="small"  @click="saveForm">{{$t("Save")}} <span v-if="is_dirty">*</span></v-btn>
+                            <v-btn  @click="cancelForm" size="small">{{$t("cancel")}}</v-btn>
                         </div>
                     </v-card-title>
                 </v-card>

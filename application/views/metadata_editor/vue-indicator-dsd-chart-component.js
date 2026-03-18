@@ -1,5 +1,6 @@
 // Indicator DSD Chart Visualization Component
-Vue.component('indicator-dsd-chart', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['indicator-dsd-chart'] = {
     props: [],
     data() {
         return {
@@ -117,7 +118,7 @@ Vue.component('indicator-dsd-chart', {
         document.head.appendChild(style);
         this._customStyle = style;
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clean up resize listener and injected style
         if (this._resizeHandler) {
             window.removeEventListener('resize', this._resizeHandler);
@@ -198,7 +199,7 @@ Vue.component('indicator-dsd-chart', {
             } catch (error) {
                 console.error('Error loading chart data:', error);
                 vm.error = error.response?.data?.message || error.message || 'Failed to load chart data';
-                EventBus.$emit('onFail', vm.error);
+                EventBus.emit('onFail', vm.error);
             } finally {
                 this.loading = false;
             }
@@ -391,7 +392,7 @@ Vue.component('indicator-dsd-chart', {
         },
         applyFilters: function() {
             if (!this.filters.geography || this.filters.geography.length === 0) {
-                EventBus.$emit('onFail', this.$t('select_at_least_one_geography') || 'Select at least one geography to view the chart.');
+                EventBus.emit('onFail', this.$t('select_at_least_one_geography') || 'Select at least one geography to view the chart.');
                 return;
             }
             this.loadChartData();
@@ -472,7 +473,7 @@ Vue.component('indicator-dsd-chart', {
     template: `
         <div class="indicator-dsd-chart-component" style="display: flex; flex-direction: column; height: calc(100vh - 120px);">
             <!-- Page Title -->
-            <v-card class="mb-2 m-2 p-2" flat>
+            <v-card class="mb-2 m-2 p-2" variant="flat">
                 <v-card-title class="d-flex justify-space-between align-center">
                     <div>
                         <h4 class="mb-0">{{$t("timeseries_visualization") || "Timeseries Visualization"}}</h4>
@@ -485,7 +486,7 @@ Vue.component('indicator-dsd-chart', {
                             small
                             @click="exportChart"
                         >
-                            <v-icon left small>mdi-download</v-icon>
+                            <v-icon start size="small">mdi-download</v-icon>
                             {{$t("export_chart") || "Export Chart"}}
                         </v-btn>
                     </div>
@@ -566,7 +567,7 @@ Vue.component('indicator-dsd-chart', {
                                 @click="applyFilters"
                                 :loading="loading"
                             >
-                                <v-icon left small>mdi-filter</v-icon>
+                                <v-icon start size="small">mdi-filter</v-icon>
                                 {{$t("apply_filters") || "Apply Filters"}}
                             </v-btn>
                             <v-btn 
@@ -576,7 +577,7 @@ Vue.component('indicator-dsd-chart', {
                                 block
                                 @click="resetFilters"
                             >
-                                <v-icon left small>mdi-refresh</v-icon>
+                                <v-icon start size="small">mdi-refresh</v-icon>
                                 {{$t("reset") || "Reset"}}
                             </v-btn>
                         </div>
@@ -593,23 +594,23 @@ Vue.component('indicator-dsd-chart', {
                         style="border-bottom: 1px solid #e0e0e0; background: #f5f5f5;"
                     >
                         <v-tab>
-                            <v-icon left small>mdi-chart-line</v-icon>
+                            <v-icon start size="small">mdi-chart-line</v-icon>
                             {{$t("chart") || "Chart"}}
                         </v-tab>
                         <v-tab>
-                            <v-icon left small>mdi-table</v-icon>
+                            <v-icon start size="small">mdi-table</v-icon>
                             {{$t("data_table") || "Data Table"}}
                         </v-tab>
                     </v-tabs>
                     
                     <!-- Tab Content -->
-                    <v-tabs-items
+                    <v-window
                         v-model="activeTab"
                         class="chart-tabs-items"
                         style="overflow: hidden;"
                     >
                         <!-- Chart Tab -->
-                        <v-tab-item :value="0" class="chart-tab">
+                        <v-window-item :value="0" class="chart-tab">
                             <div v-if="loading" class="tab-pane tab-pane--center pa-8">
                                 <div>
                                     <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -629,10 +630,10 @@ Vue.component('indicator-dsd-chart', {
                                     <canvas ref="chartCanvas"></canvas>
                                 </div>
                             </div>
-                        </v-tab-item>
+                        </v-window-item>
                         
                         <!-- Data Table Tab -->
-                        <v-tab-item :value="1" class="chart-tab">
+                        <v-window-item :value="1" class="chart-tab">
                             <div class="tab-pane tab-pane--scroll">
                                 <div v-if="loading" class="text-center pa-8">
                                     <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -664,8 +665,8 @@ Vue.component('indicator-dsd-chart', {
                                     </v-data-table>
                                 </div>
                             </div>
-                        </v-tab-item>
-                    </v-tabs-items>
+                        </v-window-item>
+                    </v-window>
                 </div>
             </div>
         </div>

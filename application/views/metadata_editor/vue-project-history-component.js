@@ -1,4 +1,5 @@
-Vue.component('project-history', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['project-history'] = {
     props: [],
     data() {
         return {
@@ -59,7 +60,7 @@ Vue.component('project-history', {
             </div>
 
 
-            <v-simple-table v-if="history && history.history && history.history.length>0">
+            <v-table v-if="history && history.history && history.history.length>0">
                 <template v-slot:default>
                     <thead>
                         <tr>
@@ -80,9 +81,9 @@ Vue.component('project-history', {
                         </tr>
                     </tbody>
                 </template>
-            </v-simple-table>
+            </v-table>
             <div v-else>
-                <v-alert outlined color="red">
+                <v-alert variant="outlined" color="red">
                     {{$t("no_revisions_found")}}.
                 </v-alert>
             </div>

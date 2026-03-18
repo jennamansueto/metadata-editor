@@ -1,5 +1,5 @@
 //metadata type edit component
-const VueMetadataTypeEdit = Vue.component('metadata-types-edit', {
+const VueMetadataTypeEdit = {
     props: ['index', 'id'],
     data() {
         return {
@@ -233,12 +233,12 @@ const VueMetadataTypeEdit = Vue.component('metadata-types-edit', {
                         <div style="font-weight:normal">{{$t("Edit")}} - <span v-if="MetadataTypeSchema">{{MetadataType.title}}</span></div>
 
                         <div v-if="MetadataTypeHasEditAccess">
-                            <v-btn  small outlined color="red" class="mr-5" @click="deleteMetadata" >{{$t("delete")}}</v-btn>
-                            <v-btn color="primary" small @click="saveMetadata" >{{$t("save")}} <span v-if="is_dirty">*</span></v-btn>
-                            <v-btn  small>{{$t("cancel")}}</v-btn>
+                            <v-btn size="small" variant="outlined" color="red" class="mr-5" @click="deleteMetadata" >{{$t("delete")}}</v-btn>
+                            <v-btn color="primary" size="small" @click="saveMetadata" >{{$t("save")}} <span v-if="is_dirty">*</span></v-btn>
+                            <v-btn size="small">{{$t("cancel")}}</v-btn>
                         </div>
                         <div v-else>
-                            <v-btn  small outlined color="red">{{$t("read_only")}}</v-btn>
+                            <v-btn size="small" variant="outlined" color="red">{{$t("read_only")}}</v-btn>
                         </div>
                     </v-card-title>
                 </v-card>
@@ -282,10 +282,10 @@ const VueMetadataTypeEdit = Vue.component('metadata-types-edit', {
                             </div>
                             <div v-else>
                                 <div v-if="field.enum">
-                                    <v-select :disabled="!MetadataTypeHasEditAccess" dense clearable outlined v-model="metadata_model[field_key]" :items="field.enum" label="" ></v-select>
+                                    <v-select :disabled="!MetadataTypeHasEditAccess" density="compact" clearable variant="outlined" v-model="metadata_model[field_key]" :items="field.enum" label="" ></v-select>
                                 </div>
                                 <div v-else>
-                                    <v-text-field :disabled="!MetadataTypeHasEditAccess" clearable dense outlined v-model="metadata_model[field_key]" label=""  ></v-text-field>
+                                    <v-text-field :disabled="!MetadataTypeHasEditAccess" clearable density="compact" variant="outlined" v-model="metadata_model[field_key]" label=""  ></v-text-field>
                                 </div>
                                 <p class="text-muted">{{field.description}}</p>
                             </div>

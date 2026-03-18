@@ -1,5 +1,6 @@
 //vue variable weights edit component
-Vue.component('variable-weights-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variable-weights-component'] = {
     props:['value','variables'],
     data: function () {    
         return {

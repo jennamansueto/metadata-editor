@@ -359,7 +359,7 @@
         <v-tab v-if="ActiveNode && isControlField(ActiveNode.type)"><span v-if="ActiveNode && ActiveNode.rules && Object.keys(ActiveNode.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
         <v-tab>{{$t("json")}}</v-tab>
 
-        <v-tab-item class="p-3 tab-display" v-if="ActiveNode.key && isControlField(ActiveNode.type) == true">
+        <v-window-item class="p-3 tab-display" v-if="ActiveNode.key && isControlField(ActiveNode.type) == true">
             <!--display-->
             <div v-if="ActiveNode.type!='simple_array'" class="mb-3">
                 <label class="mb-1 d-block">{{$t('data_type')}}:</label>
@@ -404,9 +404,9 @@
             </div>
 
             <!--end display -->
-        </v-tab-item>
+        </v-window-item>
 
-        <v-tab-item class="p-3 tab-cv" v-if="!ActiveArrayNodeIsNested">
+        <v-window-item class="p-3 tab-cv" v-if="!ActiveArrayNodeIsNested">
             <!-- controlled vocab -->
             <template >
             <div class="mb-3" >
@@ -463,8 +463,8 @@
             </div>
             </template>
             <!-- end controlled vocab -->
-        </v-tab-item>
-        <v-tab-item class="p-3 tab-default" v-if="!ActiveArrayNodeIsNested || (ActiveNode && isControlField(ActiveNode.type) == true)">
+        </v-window-item>
+        <v-window-item class="p-3 tab-default" v-if="!ActiveArrayNodeIsNested || (ActiveNode && isControlField(ActiveNode.type) == true)">
             <!-- default -->
             <template >
                 <div class="mb-3" >
@@ -516,24 +516,24 @@
                 </div>
             </template>
             <!-- end default -->
-        </v-tab-item>
-        <v-tab-item class="p-3 tab-rules" v-if="ActiveNode && isControlField(ActiveNode.type)">
+        </v-window-item>
+        <v-window-item class="p-3 tab-rules" v-if="ActiveNode && isControlField(ActiveNode.type)">
             <div class="mb-3" >
                 <label for="controlled_vocab">{{$t("validation_rules")}}:</label>
                 <div class="bg-white border">
                     <validation-rules-component @update:value="RulesUpdate"  v-model="ActiveNode.rules"  class="m-2 pb-2" />
                 </div>
             </div>
-        </v-tab-item>
+        </v-window-item>
 
-        <v-tab-item class="p-3 tab-json">
+        <v-window-item class="p-3 tab-json">
             <div class="mb-3" >
                 <label for="controlled_vocab">{{$t("json")}}:</label>
                 <div class="bg-white border" :style="ActiveNode && ActiveNode.type === 'nested_array' ? 'max-height: 300px; overflow-y: auto;' : ''">
                     <pre>{{ActiveNode}}</pre>
                 </div>
             </div>
-        </v-tab-item>
+        </v-window-item>
     </v-tabs>
 
 </template>

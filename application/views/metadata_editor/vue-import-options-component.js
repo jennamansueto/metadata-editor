@@ -1,5 +1,6 @@
 /// import options
-Vue.component('import-options', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['import-options'] = {
     props:['value'],
     data: function () {    
         return {

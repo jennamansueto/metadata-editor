@@ -1,4 +1,5 @@
-Vue.component('vue-dialog-enum-selection-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-dialog-enum-selection-component'] = {
     props:['value','enums','columns','selected_enum'],
     data() {
         return {            
@@ -111,10 +112,10 @@ Vue.component('vue-dialog-enum-selection-component', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="addSelection" >
+                    <v-btn color="primary" variant="text" @click="addSelection" >
                         Apply
                     </v-btn>
-                    <v-btn color="primary" text @click="dialog=false" >
+                    <v-btn color="primary" variant="text" @click="dialog=false" >
                         Close
                     </v-btn>
                     </v-card-actions>

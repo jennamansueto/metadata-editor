@@ -1,5 +1,6 @@
 //vue schema object field component
-Vue.component('schema-object-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['schema-object-field'] = {
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {
@@ -78,10 +79,10 @@ Vue.component('schema-object-field', {
             this.field_data[newValue]=this.field_data[key];
            
             //remove the key
-            Vue.delete(this.field_data, key);
+            delete this.field_data[key];
         },
         removeByKey: function (key){
-            Vue.delete(this.field_data, key);
+            delete this.field_data[key];
         },
         isValidKeValue(){
             if (!this.new_object.key){
@@ -158,7 +159,7 @@ Vue.component('schema-object-field', {
                         <input class="form-control form-control-sm"  type="text" v-model="new_object.value" />                    
                     </td>
                     <td>
-                        <v-btn small icon color="green" :disabled="!isValidKeValue()"><v-icon class="v-add-icon"   v-on:click="addObject">mdi-plus-circle-outline</v-icon></v-btn>
+                        <v-btn size="small" icon color="green" :disabled="!isValidKeValue()"><v-icon class="v-add-icon"   v-on:click="addObject">mdi-plus-circle-outline</v-icon></v-btn>
                     </td>
                 </tr>
                 <!--end-v-for -->

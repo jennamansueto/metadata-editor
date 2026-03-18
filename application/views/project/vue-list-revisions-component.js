@@ -1,4 +1,5 @@
-Vue.component('vue-list-revisions', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-list-revisions'] = {
     props: ['value', 'revisions'],
     data() {
         return {
@@ -26,11 +27,11 @@ Vue.component('vue-list-revisions', {
                         v-for="revision in revisions"
                         :key="revision.id"
                         >
-                        <v-expansion-panel-header>
-                            <div><v-icon small>mdi-lock-outline</v-icon> v{{revision.version_number}}</div>
+                        <v-expansion-panel-title>
+                            <div><v-icon size="small">mdi-lock-outline</v-icon> v{{revision.version_number}}</div>
                             {{momentDateLong(revision.version_created)}}
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
                             <div class="p-3">
                                 <div class="mt-2 mb-3 bg-light p-2">
                                     <div><strong>Version notes</strong></div>
@@ -44,19 +45,19 @@ Vue.component('vue-list-revisions', {
                                 </div>
                                                                     
                                 <div class="border-top pt-2">
-                                    <v-btn color="primary" outlined x-small @click="EditProject(revision.id)"> <v-icon small left>mdi-eye</v-icon> {{$t('view')}}</v-btn>
-                                    <v-btn color="primary" outlined x-small @click="DeleteProject(revision.id)"> <v-icon small left>mdi-delete</v-icon> {{$t('delete')}}</v-btn>
+                                    <v-btn color="primary" variant="outlined" size="x-small" @click="EditProject(revision.id)"> <v-icon size="small" start>mdi-eye</v-icon> {{$t('view')}}</v-btn>
+                                    <v-btn color="primary" variant="outlined" size="x-small" @click="DeleteProject(revision.id)"> <v-icon size="small" start>mdi-delete</v-icon> {{$t('delete')}}</v-btn>
                                     <v-btn v-if="revision.pid && revision.pid > 0" 
                                            color="primary" 
                                            outlined x-small 
                                            @click="CompareWithParent(revision.id, revision.pid)"
                                            :title="$t('Compare with parent project')">
-                                        <v-icon small left>mdi-compare</v-icon>
+                                        <v-icon size="small" start>mdi-compare</v-icon>
                                         {{$t('Compare')}}
                                     </v-btn>
                                 </div>                        
                             </div>                        
-                        </v-expansion-panel-content>
+                        </v-expansion-panel-text>
                         </v-expansion-panel>
                     </v-expansion-panels>
                 </template>

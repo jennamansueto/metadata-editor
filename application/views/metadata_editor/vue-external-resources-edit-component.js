@@ -1,5 +1,5 @@
 //external resources
-const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
+const VueExternalResourcesEdit = {
     props: ['index'],
     data() {
         return {
@@ -375,7 +375,7 @@ const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
             if (obj.key.indexOf(".") !== -1 && this.Resource[obj.key]){
                 delete this.Resource[obj.key];
             }
-            Vue.set(this.Resource,obj.key,obj.value);
+            this.Resource[obj.key] = obj.value);
         },
         formatFileSize: function(bytes) {
             if (!bytes || bytes === 0) return '0 Bytes';
@@ -445,7 +445,7 @@ const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
                                 :loading="is_saving || is_uploading">
                                 {{$t("Save")}} <span v-if="is_dirty || (attachment_type=='file' && file && file instanceof File && !uploadedFileName)">*</span>
                             </v-btn>
-                            <v-btn @click="cancelSave" small :disabled="is_saving">{{$t("cancel")}}</v-btn>
+                            <v-btn @click="cancelSave" size="small" :disabled="is_saving">{{$t("cancel")}}</v-btn>
                         </div>
                     </v-card-title>
 

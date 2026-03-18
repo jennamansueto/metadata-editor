@@ -75,7 +75,7 @@
                           :disabled="loading"
                           @click="confirmRemoveUnused"
                         >
-                          <v-icon left small>mdi-tag-remove-outline</v-icon>
+                          <v-icon start size="small">mdi-tag-remove-outline</v-icon>
                           {{ $t('remove_unused_tags') }}
                         </v-btn>
                       </div>
@@ -99,7 +99,7 @@
                         :items="tags"
                         :server-items-length="totalTags"
                         :items-per-page.sync="itemsPerPage"
-                        :page.sync="page"
+                        v-model:page="page"
                         :loading="loading"
                         class="tags-table"
                         dense
@@ -117,15 +117,15 @@
                         <template v-slot:item.actions="{ item }">
                           <div class="d-flex justify-end">
                             <v-menu bottom min-width="160" offset-y>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon small v-bind="attrs" v-on="on">
-                                  <v-icon small>mdi-dots-vertical</v-icon>
+                              <template v-slot:activator="{ props: activatorProps }">
+                                <v-btn icon size="small" v-bind="activatorProps">
+                                  <v-icon size="small">mdi-dots-vertical</v-icon>
                                 </v-btn>
                               </template>
-                              <v-list dense>
+                              <v-list density="compact">
                                 <v-list-item @click="confirmDelete(item)">
                                   <v-list-item-icon>
-                                    <v-icon small color="error">mdi-delete</v-icon>
+                                    <v-icon size="small" color="error">mdi-delete</v-icon>
                                   </v-list-item-icon>
                                   <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                                 </v-list-item>
@@ -242,12 +242,12 @@
                 this.tags = [];
                 this.totalTags = 0;
                 const msg = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (err.message || 'Failed to load tags');
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.loading = false; });
           },
           confirmDelete(item) {
-            EventBus.$emit('confirm', {
+            EventBus.emit('confirm', {
               message: (this.$t('confirm_delete_tag')),
               resolve: (ok) => {
                 if (ok) this.deleteTag(item.id);
@@ -261,19 +261,19 @@
               .then(res => {
                 if (res.data && res.data.status === 'success') {
                   this.loadTags();
-                  EventBus.$emit('alert', { message: this.$t('tag_deleted') || 'Tag deleted.' });
+                  EventBus.emit('alert', { message: this.$t('tag_deleted') || 'Tag deleted.' });
                 } else {
-                  EventBus.$emit('alert', { message: (res.data && res.data.message) || 'Delete failed.' });
+                  EventBus.emit('alert', { message: (res.data && res.data.message) || 'Delete failed.' });
                 }
               })
               .catch(err => {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message || 'Delete failed.';
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.loading = false; });
           },
           confirmRemoveUnused() {
-            EventBus.$emit('confirm', {
+            EventBus.emit('confirm', {
               message: this.$t('confirm_remove_unused_tags') || 'Remove all tags that are not used by any project?',
               resolve: (ok) => {
                 if (ok) this.removeUnused();
@@ -288,14 +288,14 @@
                 if (res.data && res.data.status === 'success') {
                   this.loadTags();
                   const n = (res.data.deleted != null) ? res.data.deleted : 0;
-                  EventBus.$emit('alert', { message: (this.$t('unused_tags_removed') || '{n} unused tag(s) removed.').replace('{n}', n) });
+                  EventBus.emit('alert', { message: (this.$t('unused_tags_removed') || '{n} unused tag(s) removed.').replace('{n}', n) });
                 } else {
-                  EventBus.$emit('alert', { message: (res.data && res.data.message) || 'Request failed.' });
+                  EventBus.emit('alert', { message: (res.data && res.data.message) || 'Request failed.' });
                 }
               })
               .catch(err => {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message || 'Request failed.';
-                EventBus.$emit('alert', { message: msg });
+                EventBus.emit('alert', { message: msg });
               })
               .finally(() => { this.removingUnused = false; });
           }

@@ -1,5 +1,6 @@
 //
-Vue.component('identification-section', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['identification-section'] = {
     props:['value','columns','path'],
     data: function () {    
         return {
@@ -92,7 +93,7 @@ Vue.component('identification-section', {
             console.log(field_xpath,event);
             _.set(this.field_data,field_xpath,event);
             console.log(this.field_data);
-            Vue.set(this.field_data, 0, this.field_data[0]);
+            this.field_data[0] = this.field_data[0]);
 
         }    
     }

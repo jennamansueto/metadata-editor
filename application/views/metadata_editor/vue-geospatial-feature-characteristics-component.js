@@ -1,5 +1,6 @@
 /// Geospatial feature characteristics component
-Vue.component('geospatial-feature-characteristics', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-feature-characteristics'] = {
     props: ['feature_id'],
     data: function () {    
         return {
@@ -58,7 +59,7 @@ Vue.component('geospatial-feature-characteristics', {
         // Add beforeunload event to warn user if they try to leave page with unsaved changes
         window.addEventListener('beforeunload', this.handleBeforeUnload);
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Remove event listener when component is destroyed
         window.removeEventListener('beforeunload', this.handleBeforeUnload);
     },
@@ -727,8 +728,8 @@ Vue.component('geospatial-feature-characteristics', {
                                     <v-icon class="mr-2">mdi-table</v-icon>
                                     {{$t('feature_characteristics')}}
                                 </div>
-                                <v-btn @click="loadCharacteristics" :loading="loading" small outlined>
-                                    <v-icon left>mdi-refresh</v-icon>
+                                <v-btn @click="loadCharacteristics" :loading="loading" size="small" variant="outlined">
+                                    <v-icon start>mdi-refresh</v-icon>
                                     {{$t('refresh')}}
                                 </v-btn>
                             </v-card-title>
@@ -817,7 +818,7 @@ Vue.component('geospatial-feature-characteristics', {
                                     <span>
                                         <v-icon title="Show/hide Help" class="ml-3 mr-2" @click="showHelp = !showHelp">mdi-help-circle</v-icon>                                        
                                     </span>
-                                    <v-chip v-if="hasUnsavedChanges" small color="warning" class="ml-3">
+                                    <v-chip v-if="hasUnsavedChanges" size="small" color="warning" class="ml-3">
                                         {{$t('unsaved_changes')}}
                                     </v-chip>
                                 </div>
@@ -830,7 +831,7 @@ Vue.component('geospatial-feature-characteristics', {
                                         @click="cancelChanges"
                                         class="mr-2"
                                     >
-                                        <v-icon left small>mdi-close</v-icon>
+                                        <v-icon start size="small">mdi-close</v-icon>
                                         {{$t('cancel')}}
                                     </v-btn>
                                     <v-btn
@@ -839,7 +840,7 @@ Vue.component('geospatial-feature-characteristics', {
                                         color="primary"
                                         @click="saveChanges"
                                     >
-                                        <v-icon left small>mdi-content-save</v-icon>
+                                        <v-icon start size="small">mdi-content-save</v-icon>
                                         {{$t('save')}}
                                     </v-btn>
                                 </div>
@@ -926,7 +927,7 @@ Vue.component('geospatial-feature-characteristics', {
                                     </v-row>
 
                                     <!-- Listed Values -->
-                                    <v-card outlined class="mt-4" v-if="isAllowListed(editedCharacteristic.data_type)">
+                                    <v-card variant="outlined" class="mt-4" v-if="isAllowListed(editedCharacteristic.data_type)">
                                         <v-card-title class="text-subtitle-1">
                                             <v-icon class="mr-2">mdi-format-list-bulleted</v-icon>
                                             {{$t(getFieldTitle('description.feature_catalogue.featureType.carrierOfCharacteristics.listedValue'))}}
@@ -945,11 +946,11 @@ Vue.component('geospatial-feature-characteristics', {
                                     </v-card>
                                     
                                     <!-- Frequencies -->
-                                    <v-card outlined class="mt-4" v-if="hasFrequencies(editedCharacteristic)">
+                                    <v-card variant="outlined" class="mt-4" v-if="hasFrequencies(editedCharacteristic)">
                                         <v-card-title class="text-subtitle-1">
                                             <v-icon class="mr-2">mdi-chart-bar</v-icon>
                                             {{$t('frequencies')}}
-                                            <v-chip small class="ml-2">{{$t('valid')}}: {{getValidCount(editedCharacteristic)}}</v-chip>
+                                            <v-chip size="small" class="ml-2">{{$t('valid')}}: {{getValidCount(editedCharacteristic)}}</v-chip>
                                         </v-card-title>
                                         <v-card-text>
                                             <table class="table table-sm variable-frequencies" style="width: 100%; font-size: 12px;">
@@ -985,7 +986,7 @@ Vue.component('geospatial-feature-characteristics', {
                                     </v-card>                                    
                                     
                                     <!-- Summary Statistics -->
-                                    <v-card outlined class="mt-4" v-if="hasSummaryStatistics(editedCharacteristic)">
+                                    <v-card variant="outlined" class="mt-4" v-if="hasSummaryStatistics(editedCharacteristic)">
                                         <v-card-title class="text-subtitle-1">
                                             <v-icon class="mr-2">mdi-chart-line</v-icon>
                                             {{$t('summary_statistics')}}
@@ -1007,7 +1008,7 @@ Vue.component('geospatial-feature-characteristics', {
                                     </v-card>
                                     
                                     <!-- Metadata -->
-                                    <v-card outlined class="mt-4" v-show="false">
+                                    <v-card variant="outlined" class="mt-4" v-show="false">
                                         <v-card-title class="text-subtitle-1">
                                             <v-icon class="mr-2">mdi-code-json</v-icon>
                                             {{$t('metadata')}}

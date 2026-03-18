@@ -1,5 +1,6 @@
 //text field control
-Vue.component('editor-date-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['editor-date-field'] = {
     props: ['value','field'],
     data: function () {    
       return {
@@ -54,13 +55,13 @@ Vue.component('editor-date-field', {
           :close-on-content-click="false"
           max-width="290"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props: activatorProps }">
             <v-text-field
               :value="Value"
               clearable
               readonly
               v-bind="attrs"
-              v-on="on"
+              v-bind="activatorProps"
               dense
               solo
               @click:clear="date = null"

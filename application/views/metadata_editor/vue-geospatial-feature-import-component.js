@@ -1,5 +1,6 @@
 /// Geospatial feature import component
-Vue.component('geospatial-feature-import', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-feature-import'] = {
     props: ['index'],
     data: function () {    
         return {
@@ -28,7 +29,7 @@ Vue.component('geospatial-feature-import', {
     mounted: function() {
         this.project_id = this.$store.state.project_id;
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clear all intervals
         if (this.pollInterval) {
             clearInterval(this.pollInterval);
@@ -1215,8 +1216,8 @@ Vue.component('geospatial-feature-import', {
                 <v-card>
                     <v-card-title class="d-flex justify-space-between">
                         <div>{{$t("import_geospatial_files")}}</div>
-                        <v-btn @click="$router.push('/geospatial-features')" outlined small>
-                            <v-icon left>mdi-arrow-left</v-icon>
+                        <v-btn @click="$router.push('/geospatial-features')" variant="outlined" size="small">
+                            <v-icon start>mdi-arrow-left</v-icon>
                             {{$t("back_to_features")}}
                         </v-btn>
                     </v-card-title>
@@ -1240,12 +1241,12 @@ Vue.component('geospatial-feature-import', {
                             <v-card class="files-container mt-3 mb-3 elevation-2" v-if="files.length>0">
                                 <v-card-title class="d-flex justify-space-between">
                                     <div>{{files.length}} {{$t("selected")}}</div>
-                                    <v-btn @click="clearFiles" text small color="error">
-                                        <v-icon left>mdi-delete</v-icon>
+                                    <v-btn @click="clearFiles" variant="text" size="small" color="error">
+                                        <v-icon start>mdi-delete</v-icon>
                                         {{$t("clear_all")}}
                                     </v-btn>
                                 </v-card-title>
-                                <v-simple-table class="table-striped">
+                                <v-table class="table-striped">
                                     <template v-slot:default>
                                         <thead>
                                             <tr>
@@ -1267,42 +1268,42 @@ Vue.component('geospatial-feature-import', {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <v-chip :color="getFileTypeColor(file.type)" small outlined>
+                                                    <v-chip :color="getFileTypeColor(file.type)" size="small" outlined>
                                                         {{file.type.toUpperCase()}}
                                                     </v-chip>
                                                 </td>
                                                 <td>{{formatFileSize(file.size)}}</td>
                                                 <td>
-                                                    <v-chip v-if="file.status === 'pending'" color="grey" dark small>
-                                                        <v-icon left small>mdi-clock-outline</v-icon>
+                                                    <v-chip v-if="file.status === 'pending'" color="grey" dark size="small">
+                                                        <v-icon start size="small">mdi-clock-outline</v-icon>
                                                         {{$t("pending")}}
                                                     </v-chip>
-                                                    <v-chip v-else-if="file.status === 'processing'" color="info" dark small>
-                                                        <v-icon left small>mdi-sync</v-icon>
+                                                    <v-chip v-else-if="file.status === 'processing'" color="info" dark size="small">
+                                                        <v-icon start size="small">mdi-sync</v-icon>
                                                         {{$t("processing")}}
                                                     </v-chip>
-                                                    <v-chip v-else-if="file.status === 'completed'" color="success" dark small>
-                                                        <v-icon left small>mdi-check-circle</v-icon>
+                                                    <v-chip v-else-if="file.status === 'completed'" color="success" dark size="small">
+                                                        <v-icon start size="small">mdi-check-circle</v-icon>
                                                         {{$t("completed")}}
                                                     </v-chip>
-                                                    <v-chip v-else-if="file.status === 'failed'" color="error" dark small>
-                                                        <v-icon left small>mdi-alert-circle</v-icon>
+                                                    <v-chip v-else-if="file.status === 'failed'" color="error" dark size="small">
+                                                        <v-icon start size="small">mdi-alert-circle</v-icon>
                                                         {{$t("failed")}}
                                                     </v-chip>
                                                 </td>
                                                 <td>
-                                                    <v-btn icon small @click="removeFile(file_index)" color="error">
+                                                    <v-btn icon size="small" @click="removeFile(file_index)" color="error">
                                                         <v-icon>mdi-delete</v-icon>
                                                     </v-btn>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </template>
-                                </v-simple-table>
+                                </v-table>
                             </v-card>
                             
                             <div class="d-flex justify-space-between">
-                                <v-btn @click="$router.push('/geospatial-features')" outlined>
+                                <v-btn @click="$router.push('/geospatial-features')" variant="outlined">
                                     {{$t("cancel")}}
                                 </v-btn>
                                 <v-btn 
@@ -1310,7 +1311,7 @@ Vue.component('geospatial-feature-import', {
                                     :disabled="!canProcess" 
                                     @click="processImport"
                                     :loading="is_processing">
-                                    <v-icon left>mdi-upload</v-icon>
+                                    <v-icon start>mdi-upload</v-icon>
                                     {{$t("import_files")}}
                                 </v-btn>
                             </div>
@@ -1364,7 +1365,7 @@ Vue.component('geospatial-feature-import', {
                                             color="error" 
                                             outlined 
                                             @click="cancelImport">
-                                            <v-icon left>mdi-cancel</v-icon>
+                                            <v-icon start>mdi-cancel</v-icon>
                                             {{$t("cancel_import")}}
                                         </v-btn>
                                     </div>
@@ -1373,7 +1374,7 @@ Vue.component('geospatial-feature-import', {
 
                             <div v-if="upload_report.length > 0" class="mt-3">
                                 <h6>{{$t("processing_report")}}</h6>
-                                <v-simple-table dense>
+                                <v-table dense>
                                     <template v-slot:default>
                                         <thead>
                                             <tr>
@@ -1386,7 +1387,7 @@ Vue.component('geospatial-feature-import', {
                                             <tr v-for="report in upload_report" :key="report.file_name + (report.layer_name || '')">
                                                 <td>
                                                     <div class="d-flex align-center">
-                                                        <v-icon :color="report.status === 'success' ? 'success' : 'error'" small class="mr-2">
+                                                        <v-icon :color="report.status === 'success' ? 'success' : 'error'" size="small" class="mr-2">
                                                             {{report.status === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle'}}
                                                         </v-icon>
                                                         <div>
@@ -1397,7 +1398,7 @@ Vue.component('geospatial-feature-import', {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <v-chip :color="report.status === 'success' ? 'success' : 'error'" dark small>
+                                                    <v-chip :color="report.status === 'success' ? 'success' : 'error'" dark size="small">
                                                         {{report.status}}
                                                     </v-chip>
                                                 </td>
@@ -1418,7 +1419,7 @@ Vue.component('geospatial-feature-import', {
                                             </tr>
                                         </tbody>
                                     </template>
-                                </v-simple-table>
+                                </v-table>
                             </div>
                         </div>
                     </v-card-text>
@@ -1427,7 +1428,7 @@ Vue.component('geospatial-feature-import', {
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="dialogClose">
+                        <v-btn color="primary" variant="text" @click="dialogClose">
                             {{$t("close")}}
                         </v-btn>
                     </v-card-actions>
@@ -1446,10 +1447,10 @@ Vue.component('geospatial-feature-import', {
                     <v-card-text>
                         <div v-if="pendingLayerData && pendingLayerData.layers">
                             <div class="mb-3">
-                                <v-btn small @click="selectAllLayers" class="mr-2">
+                                <v-btn size="small" @click="selectAllLayers" class="mr-2">
                                     {{$t("select_all")}}
                                 </v-btn>
-                                <v-btn small @click="deselectAllLayers">
+                                <v-btn size="small" @click="deselectAllLayers">
                                     {{$t("deselect_all")}}
                                 </v-btn>
                             </div>
@@ -1466,7 +1467,7 @@ Vue.component('geospatial-feature-import', {
                                                 <v-checkbox :input-value="active"></v-checkbox>
                                             </v-list-item-action>
 
-                                            <v-list-item-content>
+                                            
                                                 <v-list-item-title>{{layer.name || layer.layer_name}}</v-list-item-title>
                                                 <v-list-item-subtitle>
                                                     <div class="text-caption">
@@ -1479,7 +1480,7 @@ Vue.component('geospatial-feature-import', {
                                                         </span>
                                                     </div>
                                                 </v-list-item-subtitle>
-                                            </v-list-item-content>
+                                            
                                         </template>
                                     </v-list-item>
                                 </v-list-item-group>
@@ -1491,7 +1492,7 @@ Vue.component('geospatial-feature-import', {
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="cancelLayerSelection">
+                        <v-btn variant="text" @click="cancelLayerSelection">
                             {{is_processing ? $t("cancel_processing") : $t("cancel")}}
                         </v-btn>
                         <v-btn color="primary" @click="confirmLayerSelection" :disabled="selectedLayers.length === 0 || is_processing" :loading="is_processing">

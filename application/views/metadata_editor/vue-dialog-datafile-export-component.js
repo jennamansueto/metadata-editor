@@ -1,4 +1,5 @@
-Vue.component('dialog-datafile-export', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-datafile-export'] = {
     props: {
         value: { type: Boolean, default: false },
         file_id: { type: [String, Number], default: null },
@@ -331,7 +332,7 @@ Vue.component('dialog-datafile-export', {
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="grey" text small @click="closeDialog">
+                        <v-btn color="grey" variant="text" size="small" @click="closeDialog">
                             {{$t('cancel')}}
                         </v-btn>
                         <v-btn 
@@ -374,7 +375,7 @@ Vue.component('dialog-datafile-export', {
                                         {{ $t('batch_export_creating_zip') || 'Creating ZIP...' }}
                                     </div>
                                     <v-btn v-else-if="zip_download_url" color="primary" :href="zip_download_url" target="_blank" download class="mb-2">
-                                        <v-icon left>mdi-folder-zip</v-icon>{{ $t('single_export_download_zip') || 'Download (ZIP)' }}
+                                        <v-icon start>mdi-folder-zip</v-icon>{{ $t('single_export_download_zip') || 'Download (ZIP)' }}
                                     </v-btn>
                                     <div v-else-if="zip_error" class="text-caption error--text">{{ zip_error }}</div>
                                 </div>
@@ -391,7 +392,7 @@ Vue.component('dialog-datafile-export', {
                                         download
                                         class="mb-2"
                                     >
-                                        <v-icon left>mdi-download</v-icon>
+                                        <v-icon start>mdi-download</v-icon>
                                         [{{(link.format || '').toUpperCase()}}] {{$t('download')}}
                                     </v-btn>
                                 </div>
@@ -405,10 +406,10 @@ Vue.component('dialog-datafile-export', {
 
                     <v-card-actions class="py-3 px-4">
                         <v-spacer></v-spacer>
-                        <v-btn color="grey" text small @click="export_dialog.show = false" v-if="export_dialog.is_loading">
+                        <v-btn color="grey" variant="text" size="small" @click="export_dialog.show = false" v-if="export_dialog.is_loading">
                             {{$t('cancel')}}
                         </v-btn>
-                        <v-btn color="primary" text small @click="export_dialog.show = false" v-if="!export_dialog.is_loading">
+                        <v-btn color="primary" variant="text" size="small" @click="export_dialog.show = false" v-if="!export_dialog.is_loading">
                             {{$t('close')}}
                         </v-btn>
                     </v-card-actions>
@@ -475,10 +476,10 @@ Vue.component('dialog-datafile-export', {
 
                     <v-card-actions class="py-3 px-4">
                         <v-spacer></v-spacer>
-                        <v-btn color="grey" text small @click="cancelValidationWarning" class="mr-2">
+                        <v-btn color="grey" variant="text" size="small" @click="cancelValidationWarning" class="mr-2">
                             {{$t('cancel')}}
                         </v-btn>
-                        <v-btn color="primary" small @click="confirmValidationWarning">
+                        <v-btn color="primary" size="small" @click="confirmValidationWarning">
                             {{$t('continue_export')}}
                         </v-btn>
                     </v-card-actions>

@@ -1,4 +1,5 @@
-Vue.component('vue-template-acl', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-template-acl'] = {
     props: ['value','users','template_id'],
     data() {
         return {
@@ -52,15 +53,15 @@ Vue.component('vue-template-acl', {
                         <v-tab key="acl">{{$t('acl')}}</v-tab>
                     </v-tabs>
 
-                    <v-tabs-items v-model="tab">
-                        <v-tab-item key="share">
+                    <v-window v-model="tab">
+                        <v-window-item key="share">
                             <vue-template-share-common :key="template_id" :template_id="template_id"></vue-template-share-common>
-                        </v-tab-item>
+                        </v-window-item>
 
-                        <v-tab-item key="acl">
+                        <v-window-item key="acl">
                             <vue-template-acl-common :key="template_id" :template_id="template_id"></vue-template-acl-common>
-                        </v-tab-item>
-                    </v-tabs-items>
+                        </v-window-item>
+                    </v-window>
 
                     </v-card-text>
 

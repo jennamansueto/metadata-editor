@@ -77,7 +77,7 @@
             <v-tab v-if="isField(prop.type)"><span v-if="prop.rules && Object.keys(prop.rules).length>0"><v-icon style="color:green;">mdi-circle-medium</v-icon></span>{{$t("validation_rules")}}</v-tab>
             <v-tab>{{$t("json")}}</v-tab>
 
-            <v-tab-item class="p-3"  v-if="isField(prop.type)  || prop.type=='simple_array'">
+            <v-window-item class="p-3"  v-if="isField(prop.type)  || prop.type=='simple_array'">
 
                 <!--display-->
                 <div v-if="prop.type!='simple_array'" class="mb-3">
@@ -103,9 +103,9 @@
                 </div>
                 <!--end display -->
 
-            </v-tab-item>
+            </v-window-item>
 
-            <v-tab-item class="p-3">
+            <v-window-item class="p-3">
                 <!-- controlled vocab -->
                 <template>
                 <div class="mb-3" >
@@ -157,8 +157,8 @@
                 </div>
                 </template>
                 <!-- end controlled vocab -->
-            </v-tab-item>
-            <v-tab-item class="p-3">
+            </v-window-item>
+            <v-window-item class="p-3">
                 <!-- default -->
                 <template v-if="prop.type!=='section_container' && prop.type!=='section'">
                     <div class="mb-3" >
@@ -195,24 +195,24 @@
                     </div>
                 </template>
                 <!-- end default -->
-            </v-tab-item>
-            <v-tab-item class="p-3" v-if="isField(prop.type)">
+            </v-window-item>
+            <v-window-item class="p-3" v-if="isField(prop.type)">
                 <div class="mb-3" >
                     <label for="controlled_vocab">{{$t("validation_rules")}}:</label>
                     <div class="bg-white border">
                         <validation-rules-component v-model="prop.rules" @update:value="RulesUpdate"  class="m-2 pb-2" />
                     </div>
                 </div>
-            </v-tab-item>
+            </v-window-item>
 
-            <v-tab-item class="p-3">
+            <v-window-item class="p-3">
                 <div class="mb-3" >
                     <label for="controlled_vocab">{{$t("json")}}:</label>
                     <div class="bg-white border" :style="prop && prop.type === 'nested_array' ? 'max-height: 300px; overflow-y: auto;' : ''">
                         <pre>{{prop}}</pre>
                     </div>
                 </div>
-            </v-tab-item>
+            </v-window-item>
         </v-tabs>
     </template>
 </div>

@@ -1,4 +1,5 @@
-Vue.component('vue-create-revision-dialog', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-create-revision-dialog'] = {
     props: ['value', 'project_id', 'project'],
     data() {
         return {
@@ -154,7 +155,7 @@ Vue.component('vue-create-revision-dialog', {
                                 <div class="pa-4">
                                     <h6 class="text-h6 mb-3">{{$t('version_information')}}</h6>
                                     <div class="mb-3">
-                                        <strong><v-icon small>mdi-information</v-icon> {{$t('version_type')}}</strong><br>
+                                        <strong><v-icon size="small">mdi-information</v-icon> {{$t('version_type')}}</strong><br>
                                         <span class="text-caption text-muted">
                                             <div v-html="$t('version_type_help')"></div>
                                         </span>

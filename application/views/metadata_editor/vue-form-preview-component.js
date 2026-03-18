@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form-preview', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['v-form-preview'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'value'],
     data() {
         return {

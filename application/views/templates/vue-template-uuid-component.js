@@ -1,4 +1,5 @@
-Vue.component('vue-template-uuid', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-template-uuid'] = {
     props: ['value','template_id'],
     data() {
         return {            

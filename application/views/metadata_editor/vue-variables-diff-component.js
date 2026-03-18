@@ -3,7 +3,8 @@
  * Route: #/variables-diff/:file_id
  */
 
-Vue.component('variables-diff', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variables-diff'] = {
     props: ['file_id'],
     data: function() {
         var fileId = this.file_id || (this.$route && this.$route.params && this.$route.params.file_id);
@@ -124,14 +125,14 @@ Vue.component('variables-diff', {
                             vm.fetchColumnsDiff();
                         });
                         if (typeof EventBus !== 'undefined') {
-                            EventBus.$emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
+                            EventBus.emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
                         }
                     })
                     .catch(function(err) {
                         vm.actionLoading = false;
                         vm.actionError = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (vm.$t('failed') || 'Failed');
                         if (typeof EventBus !== 'undefined') {
-                            EventBus.$emit('onFail', vm.actionError);
+                            EventBus.emit('onFail', vm.actionError);
                         }
                     });
         },
@@ -194,8 +195,8 @@ Vue.component('variables-diff', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="cancelRemove">{{ $t('cancel') || 'Cancel' }}</v-btn>
-                        <v-btn color="error" dark depressed :loading="actionLoading" @click="confirmRemoveSubmit">{{ $t('Remove') || 'Remove' }}</v-btn>
+                        <v-btn variant="text" @click="cancelRemove">{{ $t('cancel') || 'Cancel' }}</v-btn>
+                        <v-btn color="error" dark variant="flat" :loading="actionLoading" @click="confirmRemoveSubmit">{{ $t('Remove') || 'Remove' }}</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>

@@ -24,7 +24,7 @@
  * - @chunk-retry: Emitted when a chunk upload is being retried
  *   - payload: { chunkNumber, attempt, maxAttempts, delay, error }
  */
-const VueResumableFileUpload = Vue.component('resumable-file-upload', {
+const VueResumableFileUpload = {
     props: {
         projectId: {
             type: [String, Number],
@@ -592,12 +592,12 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
                         {{ error }}
                     </div>
                     <div v-if="uploadStatus === 'retryable_error'" class="ml-2">
-                        <v-btn color="primary" x-small @click="retryUpload" :disabled="disabled">
-                            <v-icon left x-small>mdi-refresh</v-icon>
+                        <v-btn color="primary" size="x-small" @click="retryUpload" :disabled="disabled">
+                            <v-icon start x-small>mdi-refresh</v-icon>
                             Retry
                         </v-btn>
-                        <v-btn color="error" x-small @click="clearFile" class="ml-1">
-                            <v-icon left x-small>mdi-cancel</v-icon>
+                        <v-btn color="error" size="x-small" @click="clearFile" class="ml-1">
+                            <v-icon start x-small>mdi-cancel</v-icon>
                             Cancel
                         </v-btn>
                     </div>
@@ -644,7 +644,7 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
                     @click="startUpload"
                     :disabled="disabled"
                 >
-                    <v-icon left small>mdi-upload</v-icon>
+                    <v-icon start size="small">mdi-upload</v-icon>
                     Upload
                 </v-btn>
                 
@@ -654,7 +654,7 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
                     small
                     @click="cancelUpload"
                 >
-                    <v-icon left small>mdi-cancel</v-icon>
+                    <v-icon start size="small">mdi-cancel</v-icon>
                     Cancel
                 </v-btn>
                 
@@ -665,7 +665,7 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
                     @click="retryUpload"
                     :disabled="disabled"
                 >
-                    <v-icon left small>mdi-refresh</v-icon>
+                    <v-icon start size="small">mdi-refresh</v-icon>
                     Retry Upload
                 </v-btn>
                 
@@ -675,7 +675,7 @@ const VueResumableFileUpload = Vue.component('resumable-file-upload', {
                     small
                     disabled
                 >
-                    <v-icon left small>mdi-check</v-icon>
+                    <v-icon start size="small">mdi-check</v-icon>
                     Completed
                 </v-btn>
             </div>

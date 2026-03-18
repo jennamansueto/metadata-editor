@@ -1,5 +1,6 @@
 //file manager
-Vue.component('file-manager', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['file-manager'] = {
     props: ['index', 'id'],
     data() {
         return {
@@ -266,7 +267,7 @@ Vue.component('file-manager', {
                     <v-col cols="12" md="3" class="pr-md-3">
                         <v-card class="mb-4">
                             <v-card-text class="pt-5 pb-2">
-                                <v-list dense class="py-0">
+                                <v-list density="compact" class="py-0">
                                     <v-list-item
                                         v-for="item in flattenedFolders"
                                         :key="item.path === null ? '_all_' : item.path"
@@ -276,14 +277,14 @@ Vue.component('file-manager', {
                                         :style="{ paddingLeft: (8 + item.indent * 20) + 'px' }"
                                     >
                                         <v-list-item-icon class="mr-2" style="min-width: 24px;">
-                                            <v-icon v-if="item.path === null" small>mdi-folder-open</v-icon>
-                                            <v-icon v-else small>mdi-folder</v-icon>
+                                            <v-icon v-if="item.path === null" size="small">mdi-folder-open</v-icon>
+                                            <v-icon v-else size="small">mdi-folder</v-icon>
                                         </v-list-item-icon>
-                                        <v-list-item-content>
+                                        
                                             <v-list-item-title class="subtitle-2">
                                                 {{ item.name.toUpperCase() }}
                                             </v-list-item-title>
-                                        </v-list-item-content>
+                                        
                                     </v-list-item>
                                 </v-list>
                             </v-card-text>
@@ -304,13 +305,13 @@ Vue.component('file-manager', {
                                     @click="batchDelete"
                                     class="mt-1 mt-sm-0"
                                 >
-                                    <v-icon left small>mdi-trash-can-outline</v-icon>
+                                    <v-icon start size="small">mdi-trash-can-outline</v-icon>
                                     {{$t('Delete')}} {{ selectedFiles.length }} {{$t('selected')}}
                                 </v-btn>
                             </v-card-title>
                             <v-card-text>
 
-                            <v-simple-table class="elevation-1 border file-manager-table" dense>
+                            <v-table class="elevation-1 border file-manager-table" dense>
                                 <template v-slot:default>
                                     <thead>
                                         <tr>
@@ -348,7 +349,7 @@ Vue.component('file-manager', {
                                             </td>
                                             <!--
                                             <td>
-                                                <v-chip :color="colorByFolderType(file.dir_path)" small outlined class="text-caption text-uppercase">
+                                                <v-chip :color="colorByFolderType(file.dir_path)" size="small" outlined class="text-caption text-uppercase">
                                                     <span v-if="file.dir_path=='data/tmp' || file.dir_path=='.'">{{$t('temporary')}}</span>
                                                     <span v-else>{{ file.dir_path }}</span>
                                                 </v-chip>
@@ -360,13 +361,13 @@ Vue.component('file-manager', {
                                             <td>{{ file.size_human }}</td>
                                             <td>{{ momentDate(file.timestamp) }}</td>
                                             <td>
-                                                <v-btn icon x-small :href="downloadFileUrl(file)" :title="$t('download')" target="_blank" rel="noopener">
-                                                    <v-icon small>mdi-download</v-icon>
+                                                <v-btn icon size="x-small" :href="downloadFileUrl(file)" :title="$t('download')" target="_blank" rel="noopener">
+                                                    <v-icon size="small">mdi-download</v-icon>
                                                 </v-btn>
-                                                <v-btn icon x-small color="error" @click="deleteFile(file)" :title="$t('Delete')">
-                                                    <v-icon small>mdi-trash-can-outline</v-icon>
+                                                <v-btn icon size="x-small" color="error" @click="deleteFile(file)" :title="$t('Delete')">
+                                                    <v-icon size="small">mdi-trash-can-outline</v-icon>
                                                 </v-btn>
-                                                <v-btn v-if="ProjectType=='geospatial' && isZip(file.name)" x-small text color="primary" @click="extractZip(file)">
+                                                <v-btn v-if="ProjectType=='geospatial' && isZip(file.name)" size="x-small" variant="text" color="primary" @click="extractZip(file)">
                                                     {{$t('extract_zip')}}
                                                 </v-btn>
                                             </td>
@@ -378,7 +379,7 @@ Vue.component('file-manager', {
                                         </tr>
                                     </tbody>
                                 </template>
-                            </v-simple-table>
+                            </v-table>
 
                             </v-card-text>
                         </v-card>

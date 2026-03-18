@@ -1,5 +1,6 @@
 //v-form
-Vue.component('v-form', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['v-form'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'field','active_section'],
     data() {
         return {
@@ -84,10 +85,10 @@ Vue.component('v-form', {
                     <template>
                         <v-expansion-panels :value="0">
                             <v-expansion-panel>
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                                 {{item.title}}
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
                                 <v-form
                                         :items="item.items" 
                                         :title="item.title"
@@ -97,7 +98,7 @@ Vue.component('v-form', {
                                         :css_class="'lvl-' + depth"
                                     >
                                 </v-form>
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </template>

@@ -1,4 +1,5 @@
-Vue.component('vue-dialog-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-dialog-component'] = {
     props:['value'],
     data() {
         return {            
@@ -61,7 +62,7 @@ Vue.component('vue-dialog-component', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="dialog.show=false" v-if="dialog.is_loading==false">
+                    <v-btn color="primary" variant="text" @click="dialog.show=false" v-if="dialog.is_loading==false">
                         {{$t('close')}}
                     </v-btn>
                     </v-card-actions>

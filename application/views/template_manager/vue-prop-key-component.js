@@ -1,5 +1,6 @@
 ///vue component for prop key field
-Vue.component('vue-prop-key-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-prop-key-field'] = {
     props:['value', 'parent'],
     data: function () {    
         return {

@@ -1,5 +1,6 @@
 //admin metadata selection dialog
-Vue.component('vue-dialog-admin-metadata-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-dialog-admin-metadata-component'] = {
     props:['value'],
     data() {
         return {            
@@ -91,7 +92,7 @@ Vue.component('vue-dialog-admin-metadata-component', {
                             </div>
                         </div>
 
-                        <v-simple-table>
+                        <v-table>
                             <template v-slot:default>
                                 <tbody>
                                     <tr v-for="template in AdminMetadataTemplates">
@@ -105,12 +106,12 @@ Vue.component('vue-dialog-admin-metadata-component', {
                                     </tr>
                                 </tbody>
                             </template>
-                        </v-simple-table>
+                        </v-table>
                     </v-card-text>
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="dialogClose">
+                    <v-btn color="primary" variant="text" @click="dialogClose">
                         Close
                     </v-btn>
                     </v-card-actions>

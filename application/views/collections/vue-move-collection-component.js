@@ -1,4 +1,5 @@
-Vue.component('vue-move-collection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-move-collection'] = {
     props: ['value'],
     data() {
         return {

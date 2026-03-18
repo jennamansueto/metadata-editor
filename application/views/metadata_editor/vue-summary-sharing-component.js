@@ -1,5 +1,6 @@
 ///Project sharing summary component - users + collections
-Vue.component('vue-summary-sharing-stats', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-summary-sharing-stats'] = {
     props:[],
     data: function () {    
         return {
@@ -56,7 +57,7 @@ Vue.component('vue-summary-sharing-stats', {
                     {{$t("None")}}
                 </div>
                 
-                <v-simple-table style="font-size:small;" v-if="project_users.length>0">
+                <v-table style="font-size:small;" v-if="project_users.length>0">
                     <thead>
                     <tr>
                         <th>Username</th>
@@ -74,7 +75,7 @@ Vue.component('vue-summary-sharing-stats', {
                         </td>                    
                     </tr>
                     </tbody>
-                </v-simple-table>
+                </v-table>
 
 
             </v-card-text>

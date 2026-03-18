@@ -1360,7 +1360,7 @@
     }
     })
 
-    Vue.component('VueJsonPretty', VueJsonPretty.default);
+    // MIGRATE: app.component('VueJsonPretty', VueJsonPretty.default);
   </script>
 
   <script>

@@ -1,4 +1,5 @@
-Vue.component('admin-metadata-history', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['admin-metadata-history'] = {
     props: [],
     data() {
         return {
@@ -90,7 +91,7 @@ Vue.component('admin-metadata-history', {
 
 
             <div v-if="!is_loading">
-                <v-simple-table v-if="history && history.length>0">
+                <v-table v-if="history && history.length>0">
                     <template v-slot:default>
                         <thead>
                             <tr>
@@ -111,9 +112,9 @@ Vue.component('admin-metadata-history', {
                             </tr>
                         </tbody>
                     </template>
-                </v-simple-table>
-                <v-alert v-else outlined type="info" class="mt-3">
-                    <v-icon left>mdi-information</v-icon>
+                </v-table>
+                <v-alert v-else variant="outlined" type="info" class="mt-3">
+                    <v-icon start>mdi-information</v-icon>
                     {{$t("no_revisions_found")}}. History will appear here after you make changes to this admin metadata.
                 </v-alert>
             </div>

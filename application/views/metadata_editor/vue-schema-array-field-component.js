@@ -1,5 +1,6 @@
 //vue schema array field component
-Vue.component('schema-array-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['schema-array-field'] = {
     props:['value', 'field','is_readonly'],
     data: function () {    
         return {

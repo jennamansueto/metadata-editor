@@ -1,5 +1,6 @@
 /// Project templates + admin metadata templates
-Vue.component('summary-templates-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['summary-templates-component'] = {
     data () {
         return {
           validation_errors: "",
@@ -136,18 +137,18 @@ Vue.component('summary-templates-component', {
                         <!--admin metadata-->
                         <div style="position:relative;">
                             <div class="mt-2 font-weight-bold">{{$t('administrative_metadata_templates')}}:</div>
-                            <v-btn style="position:absolute;top:0;right:0" text small color="primary" @click="dialog_admin_metadata=true" :disabled="!isProjectEditable">
+                            <v-btn style="position:absolute;top:0;right:0" variant="text" size="small" color="primary" @click="dialog_admin_metadata=true" :disabled="!isProjectEditable">
                                 <v-icon>mdi-cog</v-icon>
                             </v-btn>
                         </div>
                         <div>
                             <template v-for="template in AdminMetadataTemplates">
-                                <v-chip small color="#dce3f7"  v-if="template.is_active" class="m-1 mr-2" @click="dialog_admin_metadata=true">
+                                <v-chip size="small" color="#dce3f7"  v-if="template.is_active" class="m-1 mr-2" @click="dialog_admin_metadata=true">
                                     {{template.name}}
                                 </v-chip>
                             </template>
                             <div v-if="AdminMetadataTemplates.length==0">
-                                <v-chip small color="gray"  class="m-1 mr-2">None</v-chip>
+                                <v-chip size="small" color="gray"  class="m-1 mr-2">None</v-chip>
                             </div>
                         </div>
                         
@@ -186,14 +187,14 @@ Vue.component('summary-templates-component', {
                                                 <template v-for="(item, index) in ProjectTemplates">
                                                 <v-list-item :key="item.uid">
                                                     <template v-slot:default="{ active }">
-                                                    <v-list-item-content>
+                                                    
                                                         <v-list-item-title><strong>{{item.name}}</strong></v-list-item-title>
                                                         <v-list-item-subtitle>
                                                             {{item.uid}}
                                                             <span v-if="item.version">| Version: {{item.version}}</span>  
                                                             <span v-if="item.lang">| Language: {{item.lang}}</span>
                                                         </v-list-item-subtitle>                                                                
-                                                    </v-list-item-content>
+                                                    
 
                                                     <v-list-item-action>
                                                         <v-list-item-action-text v-text="item.action"></v-list-item-action-text>

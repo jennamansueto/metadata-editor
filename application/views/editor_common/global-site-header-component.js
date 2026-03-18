@@ -1,4 +1,5 @@
-Vue.component('vue-global-site-header', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-global-site-header'] = {
     data() {
         return {
             languages: [],
@@ -85,15 +86,15 @@ Vue.component('vue-global-site-header', {
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 
-                <v-btn text @click="pageLink('about')">{{$t('About')}}</v-btn>
+                <v-btn variant="text" @click="pageLink('about')">{{$t('About')}}</v-btn>
 
                 <v-menu offset-y style="z-index: 2000;" >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props: activatorProps }">
                         <v-btn
                         text
                         dark
                         v-bind="attrs"
-                        v-on="on"
+                        v-bind="activatorProps"
                         >
                         <v-icon>mdi mdi-translate</v-icon> {{current_language.title}}
                         </v-btn>
@@ -101,7 +102,7 @@ Vue.component('vue-global-site-header', {
                     <v-list>
                         <v-list-item v-for="lang in languages" :key="lang.code">
                             <v-list-item-title>
-                                <v-btn text @click="switchLanguage(lang.name)" >                                    
+                                <v-btn variant="text" @click="switchLanguage(lang.name)" >                                    
                                     {{lang.display}}
                                 </v-btn>
                             </v-list-item-title>
@@ -110,28 +111,28 @@ Vue.component('vue-global-site-header', {
                 </v-menu>
                 
                 <v-menu offset-y style="z-index: 2000;" >
-                <template v-slot:activator="{ on, attrs }">
+                <template v-slot:activator="{ props: activatorProps }">
                     <v-btn
                      text
                     dark
                     v-bind="attrs"
-                    v-on="on"
+                    v-bind="activatorProps"
                     >
                     <v-icon>mdi-account-circle</v-icon> {{CI.user_info.username}}
                     </v-btn>
                 </template>
                 <v-list>
                     <v-list-item>
-                        <v-list-item-title><v-btn @click="pageLink('auth/profile')" text>{{$t('profile')}}</v-btn></v-list-item-title>
+                        <v-list-item-title><v-btn @click="pageLink('auth/profile')" variant="text">{{$t('profile')}}</v-btn></v-list-item-title>
                     </v-list-item>
                     <v-list-item>
-                        <v-list-item-title><v-btn text @click="pageLink('auth/change_password')" >{{$t('password')}}</v-btn></v-list-item-title>
+                        <v-list-item-title><v-btn variant="text" @click="pageLink('auth/change_password')" >{{$t('password')}}</v-btn></v-list-item-title>
                     </v-list-item>
                     <v-list-item v-if="CI.user_info.is_admin">
-                        <v-list-item-title><v-btn text @click="pageLink('admin')" >{{$t('site_administration')}}</v-btn></v-list-item-title>
+                        <v-list-item-title><v-btn variant="text" @click="pageLink('admin')" >{{$t('site_administration')}}</v-btn></v-list-item-title>
                     </v-list-item>
                     <v-list-item>
-                        <v-list-item-title><v-btn text @click="pageLink('auth/logout')" >{{$t('logout')}}</v-btn></v-list-item-title>
+                        <v-list-item-title><v-btn variant="text" @click="pageLink('auth/logout')" >{{$t('logout')}}</v-btn></v-list-item-title>
                     </v-list-item>
                 </v-list>
                 </v-menu>

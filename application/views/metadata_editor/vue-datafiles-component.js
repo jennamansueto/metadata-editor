@@ -1,4 +1,5 @@
-Vue.component('datafiles', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['datafiles'] = {
     data() {
         return {
             showChildren: true,
@@ -50,7 +51,7 @@ Vue.component('datafiles', {
         // Listen for page visibility changes (tab activation)
         document.addEventListener('visibilitychange', this.handleVisibilityChange);
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clean up event listener
         document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     },
@@ -546,7 +547,7 @@ Vue.component('datafiles', {
                     
                     </v-col>
                     <v-col md="4" align="right" class="mb-2">
-                        <v-btn color="primary" :to="'datafiles/import'" outlined small>{{$t("import_files")}}</v-btn>
+                        <v-btn color="primary" :to="'datafiles/import'" variant="outlined" size="small">{{$t("import_files")}}</v-btn>
                     </v-col>
                 </v-row>
 
@@ -588,7 +589,7 @@ Vue.component('datafiles', {
                                 </div>
                                 <div class="text-secondary text-small mt-1" v-if="data_file.file_info.original">                                                                
                                     <span v-if="hasCsvFile(data_file.file_id)" >
-                                    <v-chip small outlined>{{data_file.file_info.csv.filename}} {{data_file.file_info.csv.file_size}}</v-chip>
+                                    <v-chip size="small" outlined>{{data_file.file_info.csv.filename}} {{data_file.file_info.csv.file_size}}</v-chip>
                                     </span>
                                 </div>
                             </div>
@@ -599,15 +600,15 @@ Vue.component('datafiles', {
                         <td>
                             <div class="zxaction-buttons-hover">
                                 <v-menu offset-y>
-                                    <template v-slot:activator="{ on, attrs }">                                        
-                                            <v-btn small icon v-on="on" v-bind="attrs" 
+                                    <template v-slot:activator="{ props: activatorProps }">                                        
+                                            <v-btn size="small" icon v-bind="activatorProps" 
                                                    :title="$t('More options')" 
                                                    color="primary">
                                                 <v-icon>mdi-dots-vertical</v-icon>
                                             </v-btn>
                                     </template>
                                                                     
-                                    <v-list dense>
+                                    <v-list density="compact">
                                         <!-- View/Edit Options -->
                                         <v-list-item @click="editFile(index)">
                                             <v-list-item-icon>
@@ -770,7 +771,7 @@ Vue.component('datafiles', {
 
                         <div v-if="dialog.download_links">
                             <div v-for="link in dialog.download_links">
-                                <v-btn color="primary" outlined block text><a :href="link.url">{{link.title}}</a></v-btn>                                
+                                <v-btn color="primary" variant="outlined" block variant="text"><a :href="link.url">{{link.title}}</a></v-btn>                                
                             </div>
                         </div>
 
@@ -784,7 +785,7 @@ Vue.component('datafiles', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="dialog.show=false" v-if="dialog.is_loading==false">
+                    <v-btn color="primary" variant="text" @click="dialog.show=false" v-if="dialog.is_loading==false">
                         {{$t("close")}}
                     </v-btn>
                     </v-card-actions>
@@ -841,10 +842,10 @@ Vue.component('datafiles', {
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn small text @click="dialog_import_metadata.show = false" :disabled="dialog_import_metadata.uploading">
+                        <v-btn size="small" variant="text" @click="dialog_import_metadata.show = false" :disabled="dialog_import_metadata.uploading">
                             {{$t("close")}}
                         </v-btn>
-                        <v-btn small class="mr-2" color="primary" @click="submitImportMetadata"
+                        <v-btn size="small" class="mr-2" color="primary" @click="submitImportMetadata"
                                :disabled="!importMetadataFileSelected || dialog_import_metadata.uploading"
                                :loading="dialog_import_metadata.uploading">
                             {{$t("import_metadata")}}

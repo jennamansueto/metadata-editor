@@ -1,5 +1,6 @@
 /// Geospatial feature edit component
-Vue.component('geospatial-feature-edit', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-feature-edit'] = {
     props: ['feature_name', 'feature_id', 'value'],
     data: function () {    
         return {
@@ -16,7 +17,7 @@ Vue.component('geospatial-feature-edit', {
     mounted: function() {
         this.loadFeature();
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         this.destroyMap();
     },
     watch: {
@@ -603,11 +604,11 @@ Vue.component('geospatial-feature-edit', {
                                 </div>
                                 <div>
                                     <v-btn color="primary" @click="saveFeature" :loading="loading" :disabled="!form_data.id || !hasUnsavedChanges">
-                                        <v-icon left>mdi-content-save</v-icon>
+                                        <v-icon start>mdi-content-save</v-icon>
                                         {{$t("Save")}}
                                     </v-btn>
                                     <v-btn @click="exitEdit" class="ml-2">
-                                        <v-icon left>mdi-arrow-left</v-icon>
+                                        <v-icon start>mdi-arrow-left</v-icon>
                                         {{$t("back_to_features")}}
                                     </v-btn>
                                 </div>
@@ -629,7 +630,7 @@ Vue.component('geospatial-feature-edit', {
                                     <v-row class="mb-4">
                                         <v-col cols="12">
                                             <div class="editable-section">
-                                                <v-card outlined  class="mb-4 elevation-1">
+                                                <v-card variant="outlined"  class="mb-4 elevation-1">
                                                     <v-card-title class="text-h6 ">
                                                         <v-icon class="mr-2" color="white">mdi-pencil</v-icon>
                                                         {{$t('feature_catalogue')}}
@@ -719,7 +720,7 @@ Vue.component('geospatial-feature-edit', {
                                     <v-row class="mb-4">
                                         <v-col cols="12">
                                             <div class="readonly-section">
-                                                <v-card outlined  class="mb-4">
+                                                <v-card variant="outlined"  class="mb-4">
                                                     <v-card-title class="text-h6">
                                                         <v-icon class="mr-2">mdi-lock</v-icon>
                                                         {{$t('file_information')}}
@@ -790,7 +791,7 @@ Vue.component('geospatial-feature-edit', {
                                     <!-- Map Visualization -->
                                     <v-row v-if="hasMapData">
                                         <v-col cols="12">
-                                            <v-card outlined>
+                                            <v-card variant="outlined">
                                                 <v-card-title>
                                                     <v-icon class="mr-2">mdi-map</v-icon>
                                                     {{$t('geographic_extent')}}
@@ -801,10 +802,10 @@ Vue.component('geospatial-feature-edit', {
                                                     <!-- Bounding Box Table -->
                                                     <div v-if="boundingBox" class="mt-4">
                                                         <div class="text-subtitle-2 mb-2">
-                                                            <v-icon small class="mr-1">mdi-vector-square</v-icon>
+                                                            <v-icon size="small" class="mr-1">mdi-vector-square</v-icon>
                                                             {{$t('bounding_box_coordinates')}}
                                                         </div>
-                                                        <v-simple-table dense>
+                                                        <v-table dense>
                                                             <template v-slot:default>
                                                                 <tbody>
                                                                     <tr>
@@ -825,7 +826,7 @@ Vue.component('geospatial-feature-edit', {
                                                                     </tr>
                                                                 </tbody>
                                                             </template>
-                                                        </v-simple-table>
+                                                        </v-table>
                                                     </div>
                                                 </v-card-text>
                                             </v-card>
@@ -835,7 +836,7 @@ Vue.component('geospatial-feature-edit', {
                                     <!-- CRS Information Panel -->
                                     <v-row v-if="crsInfo">
                                         <v-col cols="12">
-                                            <v-card outlined>
+                                            <v-card variant="outlined">
                                                 <v-card-title class="text-subtitle-1">
                                                     <v-icon class="mr-2">mdi-information</v-icon>
                                                     {{$t('coordinate_reference_system_crs')}}
@@ -967,7 +968,7 @@ Vue.component('geospatial-feature-edit', {
                                     
                                     <v-row v-if="form_data.metadata">
                                         <v-col cols="12">
-                                            <v-card outlined style="height: 400px; overflow-y: auto;">
+                                            <v-card variant="outlined" style="height: 400px; overflow-y: auto;">
                                                 <v-card-title class="text-subtitle-1">
                                                     <v-icon class="mr-2">mdi-code-json</v-icon>
                                                     {{$t('Metadata')}}

@@ -1,5 +1,6 @@
 // Indicator Data Structure Definition (DSD) component
-Vue.component('indicator-dsd', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['indicator-dsd'] = {
     props: [],
     data() {
         return {
@@ -84,7 +85,7 @@ Vue.component('indicator-dsd', {
                 }
             } catch (error) {
                 console.log("Error loading columns", error);
-                EventBus.$emit('onFail', 'Failed to load columns');
+                EventBus.emit('onFail', 'Failed to load columns');
             } finally {
                 this.loading = false;
             }
@@ -140,12 +141,12 @@ Vue.component('indicator-dsd', {
                         this.columns.push(new_column);
                         let newIdx = this.columns.length - 1;
                         this.editColumn(newIdx);
-                        EventBus.$emit('onSuccess', 'Column created!');
+                        EventBus.emit('onSuccess', 'Column created!');
                     }
                 })
                 .catch((error) => {
                     console.log("error creating column", error);
-                    EventBus.$emit('onFail', 'Failed to create column');
+                    EventBus.emit('onFail', 'Failed to create column');
                 });
         },
         importColumns: function() {
@@ -167,7 +168,7 @@ Vue.component('indicator-dsd', {
                     const msg = data.updated !== undefined
                         ? (vm.$t('code_lists_populated') || 'Code lists populated') + ': ' + data.updated + ' ' + (vm.$t('columns_updated') || 'columns updated')
                         : (vm.$t('code_lists_populated') || 'Code lists populated');
-                    EventBus.$emit('onSuccess', msg);
+                    EventBus.emit('onSuccess', msg);
                     if (data.skipped && data.skipped.length > 0) {
                         console.log('Populate code lists skipped:', data.skipped);
                     }
@@ -176,11 +177,11 @@ Vue.component('indicator-dsd', {
                     }
                     await vm.loadColumns();
                 } else {
-                    EventBus.$emit('onFail', data.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists'));
+                    EventBus.emit('onFail', data.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists'));
                 }
             } catch (error) {
                 const msg = (error.response && error.response.data && error.response.data.message) || error.message || (vm.$t('populate_code_lists_failed') || 'Failed to populate code lists');
-                EventBus.$emit('onFail', msg);
+                EventBus.emit('onFail', msg);
             } finally {
                 vm.isPopulatingCodeLists = false;
             }
@@ -222,7 +223,7 @@ Vue.component('indicator-dsd', {
                 headers: { 'Content-Type': 'application/json' }
             })
                 .then(function (response) {
-                    EventBus.$emit('onSuccess', 'Column saved!');
+                    EventBus.emit('onSuccess', 'Column saved!');
                     // Update column_copy only after successful save
                     if (vm.edit_item !== null) {
                         vm.column_copy = _.cloneDeep(vm.columns[vm.edit_item]);
@@ -230,7 +231,7 @@ Vue.component('indicator-dsd', {
                 })
                 .catch(function (error) {
                     console.log(error);
-                    EventBus.$emit('onFail', 'Failed to save column');
+                    EventBus.emit('onFail', 'Failed to save column');
                 });
         },
         deleteColumn: function() {
@@ -268,7 +269,7 @@ Vue.component('indicator-dsd', {
                         vm.page_action = "list";
                     }
                     
-                    EventBus.$emit('onSuccess', ids.length === 1 ? 'Column deleted!' : `${ids.length} columns deleted!`);
+                    EventBus.emit('onSuccess', ids.length === 1 ? 'Column deleted!' : `${ids.length} columns deleted!`);
                 })
                 .catch(function (error) {
                     console.log("error deleting column", error);
@@ -386,7 +387,7 @@ Vue.component('indicator-dsd', {
             if (this.edit_item === null) {
                 return;
             }
-            Vue.set(this.columns, this.edit_item, column);
+            this.columns[this.edit_item] = column);
             if (column && column.id) {
                 this.saveColumnDebounce();
             }
@@ -396,9 +397,9 @@ Vue.component('indicator-dsd', {
             var col = this.columns[this.edit_item];
             if (!col) return;
             if (!col.metadata) {
-                Vue.set(col, 'metadata', {});
+                col['metadata'] = {});
             }
-            Vue.set(col.metadata, 'value_label_column', newValue == null ? '' : String(newValue));
+            col.metadata['value_label_column'] = newValue == null ? '' : String(newValue));
             if (col.id && this.columnHasChanges(col)) {
                 this.saveColumnDebounce();
             }
@@ -429,7 +430,7 @@ Vue.component('indicator-dsd', {
             } catch (error) {
                 // This is an actual error (network, server error, etc.)
                 console.error("Validation error:", error);
-                EventBus.$emit('onFail', 'Failed to validate data structure: ' + (error.response?.data?.message || error.message));
+                EventBus.emit('onFail', 'Failed to validate data structure: ' + (error.response?.data?.message || error.message));
             } finally {
                 this.isValidating = false;
             }
@@ -541,7 +542,7 @@ Vue.component('indicator-dsd', {
     template: `
         <div class="indicator-dsd-component" style="display: flex; flex-direction: column; height: calc(100vh - 120px);">
             <!-- Page Title and Actions -->
-            <v-card class="mb-2 m-2 p-2" flat>
+            <v-card class="mb-2 m-2 p-2" variant="flat">
                 <v-card-title class="d-flex justify-space-between align-center">
                     <div class="d-flex align-center">
                         <div>
@@ -566,7 +567,7 @@ Vue.component('indicator-dsd', {
                             :loading="isValidating"
                             small
                         >
-                            <v-icon left small>mdi-check-circle</v-icon>
+                            <v-icon start size="small">mdi-check-circle</v-icon>
                             {{$t("validate") || "Validate"}}
                         </v-btn>
                         <v-btn 
@@ -575,7 +576,7 @@ Vue.component('indicator-dsd', {
                             @click="importColumns"
                             small
                         >
-                            <v-icon left small>mdi-upload</v-icon>
+                            <v-icon start size="small">mdi-upload</v-icon>
                             {{$t("import") || "Import"}}
                         </v-btn>
                         <v-btn 
@@ -587,7 +588,7 @@ Vue.component('indicator-dsd', {
                             :disabled="columns.length === 0"
                             small
                         >
-                            <v-icon left small>mdi-auto-mode</v-icon>
+                            <v-icon start size="small">mdi-auto-mode</v-icon>
                             Code lists
                         </v-btn>
                     </div>
@@ -598,7 +599,7 @@ Vue.component('indicator-dsd', {
             <div v-if="validationResult" class="m-2" style="margin-top: 16px;">
                 <v-expansion-panels v-model="showValidationPanel" :value="[0]">
                     <v-expansion-panel>
-                        <v-expansion-panel-header>
+                        <v-expansion-panel-title>
                             <div class="d-flex align-center">
                                 <v-icon 
                                     :color="validationResult.valid ? 'success' : 'error'" 
@@ -624,8 +625,8 @@ Vue.component('indicator-dsd', {
                                     </div>
                                 </div>
                             </div>
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
                             <div v-if="validationResult">
                                 <!-- Summary -->
                                 <v-alert 
@@ -662,52 +663,52 @@ Vue.component('indicator-dsd', {
                                 <!-- Errors -->
                                 <v-expansion-panels v-if="validationResult.errors && validationResult.errors.length > 0" class="mb-4">
                                     <v-expansion-panel>
-                                        <v-expansion-panel-header>
+                                        <v-expansion-panel-title>
                                             <div class="d-flex align-center">
                                                 <v-icon color="error" class="mr-2">mdi-alert</v-icon>
                                                 <strong class="text-error">
                                                     {{$t("errors") || "Errors"}} ({{validationResult.errors.length}})
                                                 </strong>
                                             </div>
-                                        </v-expansion-panel-header>
-                                        <v-expansion-panel-content>
-                                            <v-list dense>
+                                        </v-expansion-panel-title>
+                                        <v-expansion-panel-text>
+                                            <v-list density="compact">
                                                 <v-list-item v-for="(error, idx) in validationResult.errors" :key="idx" class="px-0">
                                                     <v-list-item-icon class="mr-2">
-                                                        <v-icon color="error" small>mdi-close-circle</v-icon>
+                                                        <v-icon color="error" size="small">mdi-close-circle</v-icon>
                                                     </v-list-item-icon>
-                                                    <v-list-item-content>
+                                                    
                                                         <v-list-item-title class="text-error">{{error}}</v-list-item-title>
-                                                    </v-list-item-content>
+                                                    
                                                 </v-list-item>
                                             </v-list>
-                                        </v-expansion-panel-content>
+                                        </v-expansion-panel-text>
                                     </v-expansion-panel>
                                 </v-expansion-panels>
 
                                 <!-- Warnings -->
                                 <v-expansion-panels v-if="validationResult.warnings && validationResult.warnings.length > 0">
                                     <v-expansion-panel>
-                                        <v-expansion-panel-header>
+                                        <v-expansion-panel-title>
                                             <div class="d-flex align-center">
                                                 <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
                                                 <strong class="text-warning">
                                                     {{$t("warnings") || "Warnings"}} ({{validationResult.warnings.length}})
                                                 </strong>
                                             </div>
-                                        </v-expansion-panel-header>
-                                        <v-expansion-panel-content>
-                                            <v-list dense>
+                                        </v-expansion-panel-title>
+                                        <v-expansion-panel-text>
+                                            <v-list density="compact">
                                                 <v-list-item v-for="(warning, idx) in validationResult.warnings" :key="idx" class="px-0">
                                                     <v-list-item-icon class="mr-2">
-                                                        <v-icon color="warning" small>mdi-alert-circle</v-icon>
+                                                        <v-icon color="warning" size="small">mdi-alert-circle</v-icon>
                                                     </v-list-item-icon>
-                                                    <v-list-item-content>
+                                                    
                                                         <v-list-item-title class="text-warning">{{warning}}</v-list-item-title>
-                                                    </v-list-item-content>
+                                                    
                                                 </v-list-item>
                                             </v-list>
-                                        </v-expansion-panel-content>
+                                        </v-expansion-panel-text>
                                     </v-expansion-panel>
                                 </v-expansion-panels>
 
@@ -719,7 +720,7 @@ Vue.component('indicator-dsd', {
                                 </div>
                                 -->
                             </div>
-                        </v-expansion-panel-content>
+                        </v-expansion-panel-text>
                     </v-expansion-panel>
                 </v-expansion-panels>
             </div>
@@ -754,7 +755,7 @@ Vue.component('indicator-dsd', {
                                 @click="toggleSortOrder"
                                 class="mt-0"
                             >
-                                <v-icon small>{{sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'}}</v-icon>
+                                <v-icon size="small">{{sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'}}</v-icon>
                             </v-btn>
                         </div>
                     </div>
@@ -781,7 +782,7 @@ Vue.component('indicator-dsd', {
                                 color="error"
                                 class="mt-0"
                             >
-                                <v-icon small>mdi-delete</v-icon>
+                                <v-icon size="small">mdi-delete</v-icon>
                             </v-btn>
                             
                             <!-- Spacer to push refresh icon to the right -->
@@ -795,7 +796,7 @@ Vue.component('indicator-dsd', {
                                 :loading="loading"
                                 class="mt-0"
                             >
-                                <v-icon small>mdi-refresh</v-icon>
+                                <v-icon size="small">mdi-refresh</v-icon>
                             </v-btn>
                         </div>
                     </div>
@@ -809,7 +810,7 @@ Vue.component('indicator-dsd', {
                         <div v-else-if="!hasGroupedColumns" class="pa-4 text-center text-muted">
                             {{$t("no_columns_found") || "No columns found"}}
                         </div>
-                        <v-list v-else dense>
+                        <v-list v-else density="compact">
                             <template v-for="group in groupedColumns">
                                 <v-subheader :key="group.groupKey" class="font-weight-bold text-uppercase" style="height: 36px;">
                                     {{group.groupLabel}}
@@ -852,7 +853,7 @@ Vue.component('indicator-dsd', {
                                         color="grey"
                                     >mdi-help-circle</v-icon>
                                 </v-list-item-avatar>
-                                <v-list-item-content>
+                                
                                     <v-list-item-title>{{column.name}}</v-list-item-title>
                                     <v-list-item-subtitle v-if="column.label || (column.metadata && column.metadata.value_label_column)">
                                         <span v-if="column.label">{{column.label}}</span>
@@ -860,7 +861,7 @@ Vue.component('indicator-dsd', {
                                             <span v-if="column.label"> · </span>{{$t("value_label_column") || "Label col"}}: {{column.metadata.value_label_column}}
                                         </span>
                                     </v-list-item-subtitle>
-                                </v-list-item-content>
+                                
                                 <v-list-item-action v-if="hasEmptyName(column)">
                                     <v-icon 
                                         color="warning" 
@@ -889,7 +890,7 @@ Vue.component('indicator-dsd', {
                             block
                             class="mt-0"
                         >
-                            <v-icon left small>mdi-plus</v-icon>
+                            <v-icon start size="small">mdi-plus</v-icon>
                             {{$t("add_column") || "Add column"}}
                         </v-btn>
                     </div>
@@ -910,7 +911,7 @@ Vue.component('indicator-dsd', {
                                     @click="colNavigate('first')"
                                     :disabled="edit_item === 0"
                                 >
-                                    <v-icon small>mdi-chevron-double-left</v-icon>
+                                    <v-icon size="small">mdi-chevron-double-left</v-icon>
                                 </v-btn>
                                 <v-btn 
                                     icon 
@@ -918,7 +919,7 @@ Vue.component('indicator-dsd', {
                                     @click="colNavigate('prev')"
                                     :disabled="edit_item === 0"
                                 >
-                                    <v-icon small>mdi-chevron-left</v-icon>
+                                    <v-icon size="small">mdi-chevron-left</v-icon>
                                 </v-btn>
                                 <v-btn 
                                     icon 
@@ -926,7 +927,7 @@ Vue.component('indicator-dsd', {
                                     @click="colNavigate('next')"
                                     :disabled="edit_item >= columns.length - 1"
                                 >
-                                    <v-icon small>mdi-chevron-right</v-icon>
+                                    <v-icon size="small">mdi-chevron-right</v-icon>
                                 </v-btn>
                                 <v-btn 
                                     icon 
@@ -934,7 +935,7 @@ Vue.component('indicator-dsd', {
                                     @click="colNavigate('last')"
                                     :disabled="edit_item >= columns.length - 1"
                                 >
-                                    <v-icon small>mdi-chevron-double-right</v-icon>
+                                    <v-icon size="small">mdi-chevron-double-right</v-icon>
                                 </v-btn>
                                 <v-btn 
                                     icon 
@@ -943,7 +944,7 @@ Vue.component('indicator-dsd', {
                                     @click="deleteColumn"
                                     class="ml-2"
                                 >
-                                    <v-icon small>mdi-delete</v-icon>
+                                    <v-icon size="small">mdi-delete</v-icon>
                                 </v-btn>
                             </div>
                         </div>

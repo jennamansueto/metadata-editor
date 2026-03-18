@@ -1,5 +1,6 @@
 //vue-main-form-component ///////////////////////////////////////////////////
-Vue.component('form-main', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['form-main'] = {
     props: ['title', 'items', 'depth', 'css_class','path'],
     data() {
         return {

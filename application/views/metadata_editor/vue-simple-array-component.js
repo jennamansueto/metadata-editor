@@ -1,5 +1,6 @@
 //vue grid component
-Vue.component('simple-array-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['simple-array-component'] = {
     props:['value','columns','path', 'field'],
     data: function () {    
         return {

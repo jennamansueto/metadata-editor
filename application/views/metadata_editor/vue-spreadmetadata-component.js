@@ -1,5 +1,6 @@
 //spread metadata for variables
-Vue.component('spread-metadata', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['spread-metadata'] = {
     props:['variables','value'],
     data: function () {    
         return {
@@ -231,7 +232,7 @@ Vue.component('spread-metadata', {
                                 <span v-if="variable_matches.length > 0" class="grey--text text--darken-1 font-weight-regular">[{{ variable_matches.length }} {{ $t('matches') }}]</span>
                             </v-toolbar-title>
                             <v-spacer></v-spacer>
-                            <v-btn small icon @click="$emit('input', false)">
+                            <v-btn size="small" icon @click="$emit('input', false)">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                         </v-toolbar>
@@ -247,11 +248,11 @@ Vue.component('spread-metadata', {
                                             </v-checkbox>                                            
                                         
                                         <v-tooltip bottom max-width="280">
-                                            <template v-slot:activator="{ on }">
-                                                <div v-on="on" class="d-inline-block">
+                                            <template v-slot:activator="{ props: activatorProps }">
+                                                <div v-bind="activatorProps" class="d-inline-block">
                                                     <v-checkbox v-model="options" value="documentation" hide-details class="mt-0 v-font-weight-normal">
                                                         <template v-slot:label>
-                                                            <span class="body-2">{{ $t('variable_documentation') }}</span> <v-icon small color="info">mdi-information-outline</v-icon>
+                                                            <span class="body-2">{{ $t('variable_documentation') }}</span> <v-icon size="small" color="info">mdi-information-outline</v-icon>
                                                         </template>
                                                     </v-checkbox>
                                                 </div>
@@ -259,11 +260,11 @@ Vue.component('spread-metadata', {
                                             <span>{{ $t('variable_documentation_tooltip') }}</span>
                                         </v-tooltip>
                                         <v-tooltip bottom max-width="280">
-                                            <template v-slot:activator="{ on }">
-                                                <div v-on="on" class="d-inline-block">
+                                            <template v-slot:activator="{ props: activatorProps }">
+                                                <div v-bind="activatorProps" class="d-inline-block">
                                                     <v-checkbox v-model="options" value="categories" hide-details class="mt-0 v-font-weight-normal">
                                                         <template v-slot:label>
-                                                            <span class="body-2">{{ $t('categories') }}</span> <v-icon small color="info">mdi-information-outline</v-icon>
+                                                            <span class="body-2">{{ $t('categories') }}</span> <v-icon size="small" color="info">mdi-information-outline</v-icon>
                                                         </template>
                                                     </v-checkbox>
                                                 </div>
@@ -271,11 +272,11 @@ Vue.component('spread-metadata', {
                                             <span>{{ $t('categories_tooltip') }}</span>
                                         </v-tooltip>
                                         <v-tooltip bottom max-width="280">
-                                            <template v-slot:activator="{ on }">
-                                                <div v-on="on" class="d-inline-block">
+                                            <template v-slot:activator="{ props: activatorProps }">
+                                                <div v-bind="activatorProps" class="d-inline-block">
                                                     <v-checkbox v-model="options" value="question" hide-details class="mt-0 v-font-weight-normal">
                                                         <template v-slot:label>
-                                                            <span class="body-2">{{ $t('question_and_instructions') }}</span> <v-icon small color="info">mdi-information-outline</v-icon>
+                                                            <span class="body-2">{{ $t('question_and_instructions') }}</span> <v-icon size="small" color="info">mdi-information-outline</v-icon>
                                                         </template>
                                                     </v-checkbox>
                                                 </div>
@@ -287,13 +288,13 @@ Vue.component('spread-metadata', {
                                         <div class="d-flex align-center mb-2" v-if="variable_matches.length > 0">
                                             <span class="body-2 mr-2">{{ $t('filter_by_fid')}}:</span>
                                             <v-menu offset-y left>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn x-small depressed v-bind="attrs" v-on="on" class="text-capitalize">
+                                                <template v-slot:activator="{ props: activatorProps }">
+                                                    <v-btn size="x-small" variant="flat" v-bind="activatorProps" class="text-capitalize">
                                                         {{ currentFilterLabel }}
-                                                        <v-icon right small>mdi-chevron-down</v-icon>
+                                                        <v-icon end size="small">mdi-chevron-down</v-icon>
                                                     </v-btn>
                                                 </template>
-                                                <v-list dense>
+                                                <v-list density="compact">
                                                     <v-list-item v-for="opt in filterFidOptions" :key="opt.value" @click="filterFid = opt.value">
                                                         <v-list-item-title class="body-2">{{ opt.text }}</v-list-item-title>
                                                     </v-list-item>
@@ -304,7 +305,7 @@ Vue.component('spread-metadata', {
                                         <div v-if="filteredVariableMatches.length === 0" class="body-2 grey--text">
                                             {{ variable_matches.length === 0 ? $t('no_matches_found') : $t('no_matches_for_filter') }}
                                         </div>
-                                        <v-simple-table v-else dense class="elevation-1" style="font-size: 0.875rem; min-height: 0;">
+                                        <v-table v-else dense class="elevation-1" style="font-size: 0.875rem; min-height: 0;">
                                             <thead>
                                                 <tr>
                                                     <th class="text-left" style="width: 48px;">
@@ -337,22 +338,22 @@ Vue.component('spread-metadata', {
                                                     <td>{{ match.name }}</td>
                                                     <td><span v-if="match.metadata && match.metadata.var_format">{{match.metadata.var_format.type}}</span></td>
                                                     <td>
-                                                        <v-icon v-if="match.type_match" small color="success">mdi-check-circle</v-icon>
-                                                        <v-icon v-else small color="grey">mdi-close-circle</v-icon>
+                                                        <v-icon v-if="match.type_match" size="small" color="success">mdi-check-circle</v-icon>
+                                                        <v-icon v-else size="small" color="grey">mdi-close-circle</v-icon>
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                        </v-simple-table>
+                                        </v-table>
                                     </v-col>
                                 </v-row>
                             </v-container>
                         </v-card-text>
                         <v-divider></v-divider>
                         <v-card-actions class="pa-4 flex-grow-0">
-                            <v-btn small color="primary" @click="spreadMetadata">
+                            <v-btn size="small" color="primary" @click="spreadMetadata">
                                 {{ $t('spread_metadata') }}
                             </v-btn>
-                            <v-btn small text @click="$emit('input', false)">
+                            <v-btn size="small" variant="text" @click="$emit('input', false)">
                                 {{ $t('cancel') }}
                             </v-btn>
                         </v-card-actions>

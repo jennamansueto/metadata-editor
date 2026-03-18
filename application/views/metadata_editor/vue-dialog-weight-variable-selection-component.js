@@ -1,4 +1,5 @@
-Vue.component('dialog-weight-variable-selection', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-weight-variable-selection'] = {
     props:['value',"selected_items","variables"],
     data() {
         return {
@@ -88,7 +89,7 @@ Vue.component('dialog-weight-variable-selection', {
                                     <input type="radio" name="variable-selected" v-model="selection" :value="item.uid" :id="item.uid"/>
                                 </v-list-item-action>
 
-                                <v-list-item-content>
+                                
                                 <v-list-item-title>
                                     <label :for="item.uid" class="text-normal">
                                     {{item.name}} -
@@ -96,7 +97,7 @@ Vue.component('dialog-weight-variable-selection', {
                                     </label>
                                 </v-list-item-title>
 
-                                </v-list-item-content>
+                                
 
                                 <v-list-item-action>
                                     
@@ -118,7 +119,7 @@ Vue.component('dialog-weight-variable-selection', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="closeDialog" >
+                    <v-btn color="primary" variant="text" @click="closeDialog" >
                     {{$t("close")}}
                     </v-btn>
                     </v-card-actions>

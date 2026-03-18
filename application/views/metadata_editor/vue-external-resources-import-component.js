@@ -1,5 +1,6 @@
 //external resources import from RDF/JSON
-Vue.component('external-resources-import', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['external-resources-import'] = {
     props: ['index'],
     data() {
         return {

@@ -1,5 +1,6 @@
 /// Project export json component
-Vue.component('project-export-json-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['project-export-json-component'] = {
     props:['value'],
     data () {
         return {
@@ -105,10 +106,10 @@ Vue.component('project-export-json-component', {
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="exportJson" >
+                    <v-btn color="primary" variant="text" @click="exportJson" >
                         {{$t('export')}}
                     </v-btn>
-                    <v-btn color="primary" text @click="dialog=false;" >
+                    <v-btn color="primary" variant="text" @click="dialog=false;" >
                         {{$t('close')}}
                     </v-btn>
                     </v-card-actions>

@@ -1,5 +1,6 @@
 /// publish project options
-Vue.component('publish-options', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['publish-options'] = {
     props:['value'],
     data: function () {    
         return {
@@ -578,13 +579,13 @@ Vue.component('publish-options', {
 
                     <v-expansion-panels multiple v-model="panels" class="mt-3">
                         <v-expansion-panel v-show="catalog !== false && catalog !== null">
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                             <div>
                                 <v-icon v-if="study_info && study_info.status !== 'failed' && study_info.status !== 'error'" color="success" class="mr-2">mdi-check-circle</v-icon>
                                 {{$t("study_in_catalog")}} (NADA)
                                 </div>
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
                                 <div v-if="study_info && study_info.status !== 'failed' && study_info.status !== 'error'" class="mb-3">
                                     <pre class="pa-3 bg-light border rounded text-left" style="max-height:400px;overflow:auto;font-size:0.85em;"><code>{{ studyInfoJson }}</code></pre>
                                 </div>
@@ -594,13 +595,13 @@ Vue.component('publish-options', {
                                      </span>
                                     <span v-else-if="study_info === null">{{ $t("loading") }}...</span>
                                 </div>
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel>
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                                 {{$t("project_options")}}
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
 
                             <div class="mb-4">
                                 
@@ -701,17 +702,17 @@ Vue.component('publish-options', {
                                     
                                 </table>                            
                             </div>
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                         </v-expansion-panel>
 
                         <v-expansion-panel>
-                            <v-expansion-panel-header>
+                            <v-expansion-panel-title>
                                 <div>{{$t("external_resources")}}
                                     <div class="text-secondary text-muted text-xs text-small text-normal">{{$t("select_external_resources_to_be_published")}}</div>
                                 </div>
                                 
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
                                 <div class="mt-3">
                                         <v-switch
                                         v-model="resources_overwrite"
@@ -748,7 +749,7 @@ Vue.component('publish-options', {
                                 <div v-else class="alert alert-warning">
                                 {{$t("no_external_resources_found")}}
                                 </div>
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                         </v-expansion-panel>
 
                     </v-expansion-panels>
@@ -883,7 +884,7 @@ Vue.component('publish-options', {
 
                         <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="dialog_process=false" v-if="is_publishing==false">
+                        <v-btn color="primary" variant="text" @click="dialog_process=false" v-if="is_publishing==false">
                         {{$t('close')}}
                         </v-btn>
                         </v-card-actions>

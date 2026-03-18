@@ -2,7 +2,8 @@
  * Batch set summary stats options by interval type (discrete or continuous).
  * Applies to all variables in the current file that match the selected type.
  */
-Vue.component('dialog-batch-sum-stats-options', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-batch-sum-stats-options'] = {
     props: {
         value: { type: Boolean, default: false },
         file_id: { type: [String, Number], default: null },
@@ -92,7 +93,7 @@ Vue.component('dialog-batch-sum-stats-options', {
         applyDefaultsForIntervalType() {
             const defaults = this._defaultOptionsForIntervalType(this.interval_type);
             Object.keys(defaults).forEach(k => {
-                this.$set(this.sum_stats_options, k, defaults[k]);
+                this.sum_stats_options[k] = defaults[k]);
             });
         },
         _varIntervalType(v) {
@@ -114,13 +115,13 @@ Vue.component('dialog-batch-sum-stats-options', {
                     const data = response.data || {};
                     const n = data.updated != null ? data.updated : 0;
                     vm.message_success = vm.$t('batch_sum_stats_applied', { count: n }) || (n + ' variable(s) updated.');
-                    EventBus.$emit('onSuccess', vm.message_success);
+                    EventBus.emit('onSuccess', vm.message_success);
                     vm.$emit('applied');
                 })
                 .catch(function (error) {
                     const msg = (error.response && error.response.data && error.response.data.message) ? error.response.data.message : (error.message || 'Request failed');
                     vm.message_error = msg;
-                    EventBus.$emit('onFail', msg);
+                    EventBus.emit('onFail', msg);
                 })
                 .then(function () {
                     vm.applying = false;
@@ -153,24 +154,24 @@ Vue.component('dialog-batch-sum-stats-options', {
                         </div>
                     </div>
 
-                    <v-alert v-if="matchCount === 0" type="warning" dense outlined class="mt-3 mb-0">
+                    <v-alert v-if="matchCount === 0" type="warning" density="compact" variant="outlined" class="mt-3 mb-0">
                         {{ $t('batch_sum_stats_no_match') }}
                     </v-alert>
-                    <v-alert v-else type="info" dense outlined class="mt-3 mb-0">
+                    <v-alert v-else type="info" density="compact" variant="outlined" class="mt-3 mb-0">
                         {{ $t('batch_sum_stats_will_apply', { count: matchCount }) }}
                     </v-alert>
 
-                    <v-alert v-if="message_success" type="success" dense outlined class="mt-3 mb-0">
+                    <v-alert v-if="message_success" type="success" density="compact" variant="outlined" class="mt-3 mb-0">
                         {{ message_success }}
                     </v-alert>
-                    <v-alert v-if="message_error" type="error" dense outlined class="mt-3 mb-0">
+                    <v-alert v-if="message_error" type="error" density="compact" variant="outlined" class="mt-3 mb-0">
                         {{ message_error }}
                     </v-alert>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions class="px-4 pb-4 pt-3">
                     <v-spacer></v-spacer>
-                    <v-btn text @click="closeDialog" :disabled="applying">{{ $t('close') }}</v-btn>
+                    <v-btn variant="text" @click="closeDialog" :disabled="applying">{{ $t('close') }}</v-btn>
                     <v-btn color="primary" :disabled="!canApply" :loading="applying" @click="apply">
                         {{ $t('apply') }}
                     </v-btn>

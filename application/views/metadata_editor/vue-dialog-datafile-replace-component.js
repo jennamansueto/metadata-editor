@@ -1,4 +1,5 @@
-Vue.component('dialog-datafile-replace', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['dialog-datafile-replace'] = {
     props:['value','file_id'],
     data() {
         return {
@@ -141,9 +142,9 @@ Vue.component('dialog-datafile-replace', {
                       ></v-progress-circular>
 
                         
-                        <v-btn color="primary" text :disabled="!file || is_processing==true"  @click="replaceFile">Replace file</v-btn>
+                        <v-btn color="primary" variant="text" :disabled="!file || is_processing==true"  @click="replaceFile">Replace file</v-btn>
 
-                        <v-btn color="primary" text @click="closeDialog" >
+                        <v-btn color="primary" variant="text" @click="closeDialog" >
                             Close
                         </v-btn>
                     </v-card-actions>

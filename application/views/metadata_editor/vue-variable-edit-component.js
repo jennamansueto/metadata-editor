@@ -1,5 +1,6 @@
 ///variable edit form
-Vue.component('variable-edit', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variable-edit'] = {
     props:['variable','index_key','multi_key'],
     data: function () {    
         return {
@@ -63,13 +64,13 @@ Vue.component('variable-edit', {
 
         // Initialize sum_stats_options properly with Vue.set for reactivity
         if (!this.variable.sum_stats_options){
-            Vue.set(this.variable, 'sum_stats_options', JSON.parse(JSON.stringify(this.sum_stats_options)));
+            this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
         } else {
             // Ensure all required properties exist
             const defaultOptions = JSON.parse(JSON.stringify(this.sum_stats_options));
             for (const key in defaultOptions) {
                 if (!(key in this.variable.sum_stats_options)) {
-                    Vue.set(this.variable.sum_stats_options, key, defaultOptions[key]);
+                    this.variable.sum_stats_options[key] = defaultOptions[key]);
                 }
             }
         }
@@ -91,7 +92,7 @@ Vue.component('variable-edit', {
         Variable:{
             get(){
                 if (!this.variable.sum_stats_options) {
-                    Vue.set(this.variable, 'sum_stats_options', JSON.parse(JSON.stringify(this.sum_stats_options)));
+                    this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
                 }
                 return this.variable;
             },
@@ -312,17 +313,17 @@ Vue.component('variable-edit', {
                 //check variable format type e.g. numeric, character
                 if (this.variable.var_format && this.variable.var_format.type){
                     if (this.variable.var_format.type=='character'){
-                        Vue.delete(this.variable, 'var_wgt_id');
+                        delete this.variable['var_wgt_id'];
                         alert(this.$t('character_variable_cannot_be_weighted', {variable_name: this.variable.name}));                        
                         return;
                     }
                 }
 
-                Vue.set(this.variable, 'var_wgt_id', e);
-                Vue.set(this.variable, 'update_required', true);
+                this.variable['var_wgt_id'] = e);
+                this.variable['update_required'] = true);
             }
             else{
-                Vue.delete(this.variable, 'var_wgt_id');                
+                delete this.variable['var_wgt_id'];                
             }
         },
         sectionEnabled: function(section){
@@ -446,12 +447,12 @@ Vue.component('variable-edit', {
         ensureSumStatsOptions: function() {
             // Ensure sum_stats_options exists and has all required properties
             if (!this.variable.sum_stats_options) {
-                Vue.set(this.variable, 'sum_stats_options', JSON.parse(JSON.stringify(this.sum_stats_options)));
+                this.variable['sum_stats_options'] = JSON.parse(JSON.stringify(this.sum_stats_options)));
             } else {
                 const defaultOptions = JSON.parse(JSON.stringify(this.sum_stats_options));
                 for (const key in defaultOptions) {
                     if (!(key in this.variable.sum_stats_options)) {
-                        Vue.set(this.variable.sum_stats_options, key, defaultOptions[key]);
+                        this.variable.sum_stats_options[key] = defaultOptions[key]);
                     }
                 }
             }
@@ -459,12 +460,12 @@ Vue.component('variable-edit', {
         
         onSumStatsOptionChange: function(option, value) {
             // Handle changes to sum_stats_options with proper reactivity
-            Vue.set(this.Variable.sum_stats_options, option, value);
+            this.Variable.sum_stats_options[option] = value);
             
             // Special handling for weighted statistics
             if (option === 'wgt' && !value) {
-                Vue.set(this.Variable.sum_stats_options, 'mean_wgt', false);
-                Vue.set(this.Variable.sum_stats_options, 'stdev_wgt', false);
+                this.Variable.sum_stats_options['mean_wgt'] = false);
+                this.Variable.sum_stats_options['stdev_wgt'] = false);
             }
             
             // Flag refresh stats only when a change requires re-running the data API:
@@ -472,7 +473,7 @@ Vue.component('variable-edit', {
             // Display/export-only options (min, max, mean, stdev, vald, missing, mean_wgt, stdev_wgt, wgt)
             // and freq turned to false do not require refresh.
             if (option === 'freq' && value === true) {
-                Vue.set(this.variable, 'update_required', true);
+                this.variable['update_required'] = true);
             }
         }
 
@@ -487,7 +488,7 @@ Vue.component('variable-edit', {
                 <v-tab key="documentation" href="#documentation">{{$t('documentation')}}</v-tab>
                 <v-tab key="json" href="#json">{{$t('json')}}</v-tab>
 
-                <v-tab-item key="statistics" value="statistics">
+                <v-window-item key="statistics" value="statistics">
                 
                     <!-- statistics tab -->
                     <div style="overflow:auto;padding:10px;font-size:smaller;">
@@ -613,8 +614,8 @@ Vue.component('variable-edit', {
                     </div>
                     <!-- end statistics tab -->
                 
-                </v-tab-item>
-                <v-tab-item key="weights" value="weights">
+                </v-window-item>
+                <v-window-item key="weights" value="weights">
                     <div class="p-3">
                         <variable-weights-component
                             :key="variable.var_wgt_id" 
@@ -623,17 +624,17 @@ Vue.component('variable-edit', {
                             :variables="Variables">
                         </variable-weights-component>
                     </div>
-                </v-tab-item>
-                <v-tab-item key="json" value="json">
+                </v-window-item>
+                <v-window-item key="json" value="json">
                     <pre>{{variable}}</pre>
-                </v-tab-item>
-                <v-tab-item key="documentation" value="documentation">
+                </v-window-item>
+                <v-window-item key="documentation" value="documentation">
                     
                     <variable-edit-documentation
                         :variable="variable"
                     ></variable-edit-documentation>    
 
-                </v-tab-item>
+                </v-window-item>
             </v-tabs>
         </template>
 

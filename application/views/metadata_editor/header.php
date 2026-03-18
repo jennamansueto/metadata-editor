@@ -22,12 +22,12 @@
                 @click="saveProject"
                 style="margin-top:5px;"
             >
-                <v-icon left>mdi-content-save</v-icon>
+                <v-icon start>mdi-content-save</v-icon>
                 {{$t('Save')}}
             </v-btn>
 
             <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
+                <template v-slot:activator="{ props: activatorProps }">
                         <v-btn
                         color="error"
                         dark
@@ -36,9 +36,9 @@
                         @click="cancelProject"
                         style="margin-left:15px;margin-top:5px"
                         v-bind="attrs"
-                        v-on="on"                        
+                        v-bind="activatorProps"                        
                     >
-                        <v-icon left>mdi-restore-alert</v-icon>            
+                        <v-icon start>mdi-restore-alert</v-icon>            
                     </v-btn>                    
                 </template>
                 <span>{{$t('Cancel changes')}}</span>
@@ -52,7 +52,7 @@
             @click="saveProject"
             style="margin-top:5px;"
         >
-            <v-icon left>mdi-content-save</v-icon>
+            <v-icon start>mdi-content-save</v-icon>
             {{$t('Save')}}
         </v-btn>
         </template>
@@ -63,14 +63,14 @@
                 dark
                 outlined             
                 >
-                <v-icon left>mdi-lock</v-icon>
+                <v-icon start>mdi-lock</v-icon>
                 <span v-if="ProjectIsLocked">{{$t('locked')}}</span>
                 <span v-else>{{$t('read_only')}}</span>
             </v-btn>
         </template>
 
         <!--
-        <v-btn color="primary"  large icon  style="margin-left:23px;">
+        <v-btn color="primary" size="large" icon  style="margin-left:23px;">
             <v-icon>mdi-alpha-t-box-outline</v-icon>
         </v-btn>
         -->
@@ -78,11 +78,11 @@
     <template>
     <div class="text-center">
         <v-menu min-width="600px">
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ props: activatorProps }">
             
             <v-btn 
                 v-bind="attrs"
-                v-on="on"
+                v-bind="activatorProps"
                 icon
                 large
                 color="primary"
@@ -96,7 +96,7 @@
         <v-container>
             <v-row>
                 <v-col cols="6">
-                    <v-list dense>
+                    <v-list density="compact">
                     <v-subheader>{{$t('Project')}}</v-subheader>
                         <v-list-item-group       
                             color="primary"
@@ -201,7 +201,7 @@
                 </v-col>
                 <v-col cols="6">
                     
-                    <v-list dense>
+                    <v-list density="compact">
                         <v-subheader v-if="UserHasEditAccess">{{$t('Metadata')}}</v-subheader>
                         <v-list-item-group color="primary">
                         

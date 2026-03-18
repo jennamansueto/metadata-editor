@@ -1,4 +1,5 @@
-Vue.component('hello', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['hello'] = {
     props: ['title', 'items', 'depth', 'css_class','path', 'field'],
     data() {
         return {

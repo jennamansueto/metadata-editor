@@ -1,5 +1,6 @@
 ///// nested-section-preview
-Vue.component('nested-section-preview', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nested-section-preview'] = {
     props:['value','columns','path','title'],
     data: function () {    
         return {
@@ -97,7 +98,7 @@ Vue.component('nested-section-preview', {
             console.log(field_xpath,event);
             _.set(this.field_data,field_xpath,event);
             console.log(this.field_data);
-            Vue.set(this.field_data, 0, this.field_data[0]);
+            this.field_data[0] = this.field_data[0]);
         },
         toggleChildren(index) {
             if (!this.active_sections.includes(index)) {

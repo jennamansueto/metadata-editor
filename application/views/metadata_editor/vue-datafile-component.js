@@ -1,5 +1,6 @@
 /// datafile view form
-Vue.component('datafile', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['datafile'] = {
     props:['file_id','value'],
     data: function () {    
         return {
@@ -53,7 +54,7 @@ Vue.component('datafile', {
             for(i=0;i<this.dataFiles.length;i++){
                 if (this.dataFiles[i].file_id==this.fid){
                     this.dataFiles[i]
-                    vm.$set(this.dataFiles, i, data);
+                    this.dataFiles[i] = data);
                     return;
                 }
             }

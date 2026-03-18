@@ -1,5 +1,6 @@
 /// project generate pdf documentation
-Vue.component('generate-pdf', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['generate-pdf'] = {
     props:['value'],
     data: function () {    
         return {            
@@ -144,7 +145,7 @@ Vue.component('generate-pdf', {
                         <div class="mb-4">{{$t("pdf_documentation_note")}}</div>
 
                         <!-- PDF Generation Options -->
-                        <v-card outlined class="mb-4">
+                        <v-card variant="outlined" class="mb-4">
                             <v-card-text>
                                 <!-- Template Selection -->
                                 <div class="mb-2">{{$t("select_template")}}</div>
@@ -189,7 +190,7 @@ Vue.component('generate-pdf', {
                                     @click="generatePDF()"
                                     class="mr-3"
                                 >
-                                    <v-icon left>mdi-file-pdf-box</v-icon>
+                                    <v-icon start>mdi-file-pdf-box</v-icon>
                                     {{$t("generate_pdf")}}
                                 </v-btn>
                                 
@@ -199,7 +200,7 @@ Vue.component('generate-pdf', {
                                     large 
                                     @click="downloadPDF()"
                                 >
-                                    <v-icon left>mdi-download</v-icon>
+                                    <v-icon start>mdi-download</v-icon>
                                     {{$t("download_pdf")}} [{{$t("created")}} {{momentAgo(pdf_info.created)}}]
                                 </v-btn>
                             </div>

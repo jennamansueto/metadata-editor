@@ -126,9 +126,9 @@
                                     <v-list-item-icon>
                                         <v-icon>mdi-filter</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content>
+                                    
                                         <v-list-item-title>{{$t('All')}}</v-list-item-title>
-                                    </v-list-item-content>
+                                    
                                 </v-list-item>
                                 <v-list-item
                                     v-for="schema in sidebar_data_types"
@@ -140,9 +140,9 @@
                                         <img v-if="getSchemaIconSrc(schema)" :src="getSchemaIconSrc(schema)" :alt="schema.label">
                                         <span v-else class="schema-icon-placeholder">{{ getSchemaInitial(schema) }}</span>
                                     </div>
-                                    <v-list-item-content>
+                                    
                                         <v-list-item-title>{{ getSchemaLabel(schema) }}</v-list-item-title>
-                                    </v-list-item-content>
+                                    
                                 </v-list-item>
                             </v-list-item-group>
                         </v-list>
@@ -282,10 +282,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
 
-              <v-btn :disabled="!importJSON" small color="primary" text @click="importTemplate">
+              <v-btn :disabled="!importJSON" size="small" color="primary" variant="text" @click="importTemplate">
                 {{$t('import')}}
               </v-btn>
-              <v-btn small text @click="dialog_import_template = false">
+              <v-btn size="small" variant="text" @click="dialog_import_template = false">
                 {{$t('cancel')}}
               </v-btn>
 
@@ -310,59 +310,59 @@
             <v-list-item-icon>
               <v-icon>mdi-share</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="shareTemplate(menu_active_template_id)"><v-btn text> {{$t('share')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="shareTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('share')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-content-duplicate</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="duplicateTemplate(menu_active_template_id)"><v-btn text> {{$t('duplicate')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="duplicateTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('duplicate')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-code-json</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="exportTemplate(menu_active_template_id)"><v-btn text> {{$t('export')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="exportTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('export')}}</v-btn></v-list-item-title>
           </v-list-item>
           <template v-if="!menu_active_template_core">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon>mdi-delete-outline</v-icon>
               </v-list-item-icon>
-              <v-list-item-title @click="deleteTemplate(menu_active_template_id)"><v-btn text> {{$t('delete')}}</v-btn></v-list-item-title>
+              <v-list-item-title @click="deleteTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('delete')}}</v-btn></v-list-item-title>
             </v-list-item>            
           </template>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-eye-outline</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="previewTemplate(menu_active_template_id)"><v-btn text> {{$t('preview')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="previewTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('preview')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-database-eye-outline</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="previewTableTemplate(menu_active_template_id)"><v-btn text> {{$t('table')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="previewTableTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('table')}}</v-btn></v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-file-pdf-box</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="pdfTemplate(menu_active_template_id)"><v-btn text> {{$t('pdf')}}</v-btn></v-list-item-title>
+            <v-list-item-title @click="pdfTemplate(menu_active_template_id)"><v-btn variant="text"> {{$t('pdf')}}</v-btn></v-list-item-title>
           </v-list-item>  
           
           <v-list-item>
             <v-list-item-icon>
                 <v-icon>mdi-content-copy</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="viewTemplateRevisions(menu_active_template_id)"><v-btn text> {{$t('revisions')}}</v-btn></v-list-item-title>        
+            <v-list-item-title @click="viewTemplateRevisions(menu_active_template_id)"><v-btn variant="text"> {{$t('revisions')}}</v-btn></v-list-item-title>        
           </v-list-item>
 
           <v-list-item>
             <v-list-item-icon>
                 <v-icon>mdi-key</v-icon>
             </v-list-item-icon>
-            <v-list-item-title @click="updateTemplateUUID(menu_active_template_id)"><v-btn text> {{$t('UUID')}}</v-btn></v-list-item-title>        
+            <v-list-item-title @click="updateTemplateUUID(menu_active_template_id)"><v-btn variant="text"> {{$t('UUID')}}</v-btn></v-list-item-title>        
           </v-list-item>
 
         </v-list>
@@ -946,7 +946,7 @@
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    // MIGRATE: app.component('VueJsonPretty', VueJsonPretty.default)
 
   </script>
 </body>

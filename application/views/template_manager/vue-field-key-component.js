@@ -1,5 +1,6 @@
 ///vue component for editing KEY field
-Vue.component('vue-key-field', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['vue-key-field'] = {
     props:['value'],
     data: function () {    
         return {

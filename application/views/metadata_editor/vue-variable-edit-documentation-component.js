@@ -1,5 +1,6 @@
 ///variable documentation tab
-Vue.component('variable-edit-documentation', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['variable-edit-documentation'] = {
     props:['variable'],
     data: function () {    
         return {
@@ -175,7 +176,7 @@ Vue.component('variable-edit-documentation', {
             if (key.indexOf(".") !== -1 && this.variable[key]){
                 delete this.variable[key];
             }
-            Vue.set(this.variable,key,value);
+            this.variable[key] = value);
         },
         updateSection: function (obj)
         {
@@ -221,10 +222,10 @@ Vue.component('variable-edit-documentation', {
                                 </v-btn>
                         </v-list-item>                            
                         <v-divider></v-divider>                            
-                        <v-list dense v-if="!drawer_mini">
+                        <v-list density="compact" v-if="!drawer_mini">
                         <v-list-item
                             v-for="section in VariableTemplate.items" :key="section.key" link>
-                            <v-list-item-content>
+                            
                              <template v-if="section.type=='section'">
                                 <v-list-item-title>{{ section.title }}</v-list-item-title>
                             
@@ -237,7 +238,7 @@ Vue.component('variable-edit-documentation', {
                                 <input type="checkbox" :checked="isItemEnabled(section.key)" @change="toggleItem(section.key)"/> {{section.title}}
                                 </div>
                             </template>
-                            </v-list-item-content>
+                            
                         </v-list-item>
                         </v-list>                        
                     </v-navigation-drawer>                        

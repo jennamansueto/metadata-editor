@@ -1,5 +1,6 @@
 //vue table component
-Vue.component('table-component', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['table-component'] = {
     props:['value','columns','path', 'field'],
     data: function () {    
         return {

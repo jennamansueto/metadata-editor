@@ -1,5 +1,6 @@
 /// geospatial feature data explorer
-Vue.component('geospatial-feature-data', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['geospatial-feature-data'] = {
     props:['feature_id'],
     data: function () {    
         return {
@@ -305,7 +306,7 @@ Vue.component('geospatial-feature-data', {
                                                             <div class="d-flex align-center justify-start">
                                                                 <span class="font-weight-bold">{{ header.text }}</span>
                                                                 <v-tooltip bottom>
-                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <template v-slot:activator="{ props: activatorProps }">
                                                                         <v-icon 
                                                                             v-if="getHeaderMetadata(header.value)" 
                                                                             small 
@@ -313,7 +314,7 @@ Vue.component('geospatial-feature-data', {
                                                                             @click="showCharacteristicInfo(getHeaderMetadata(header.value))"
                                                                             style="cursor: pointer;"
                                                                             v-bind="attrs"
-                                                                            v-on="on"
+                                                                            v-bind="activatorProps"
                                                                         >
                                                                             mdi-information-outline
                                                                         </v-icon>

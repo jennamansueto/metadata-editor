@@ -1,5 +1,6 @@
 ///// nested-array-component.js
-Vue.component('nested-array', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['nested-array'] = {
     props:['value','columns','path','title','field'],
     data: function () {    
         return {
@@ -93,7 +94,7 @@ Vue.component('nested-array', {
                     <v-expansion-panels :value="0" :multiple="true" :disabled="isFieldReadOnly">
                         <draggable tag="v-expansion-panel" :list="local_data" handle=".handle">
                         <v-expansion-panel v-for="(item,index) in local_data">
-                        <v-expansion-panel-header>
+                        <v-expansion-panel-title>
 
                         <v-row class="handle">
                             <v-col sm="6" md="8" align="start">
@@ -108,8 +109,8 @@ Vue.component('nested-array', {
                             </v-col>
                         </v-row>
 
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
                             <template>
                                 <div v-for="(column,idx_col) in localColumns" scope="row" :key="column.key" >
 
@@ -166,7 +167,7 @@ Vue.component('nested-array', {
                             
                             </template>
 
-                        </v-expansion-panel-content>
+                        </v-expansion-panel-text>
                         </v-expansion-panel>
                         </draggable>
                     </v-expansion-panels>

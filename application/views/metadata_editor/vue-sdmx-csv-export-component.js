@@ -1,5 +1,6 @@
 /// SDMX CSV Export Options Component
-Vue.component('sdmx-csv-export-options', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['sdmx-csv-export-options'] = {
     props:['value'],
     data: function () {    
         return {
@@ -182,7 +183,7 @@ Vue.component('sdmx-csv-export-options', {
         <div class="import-options-component mt-5 p-3">
             <v-card>
                 <v-card-title>
-                    <v-icon left>mdi-file-document-arrow-right-outline</v-icon>
+                    <v-icon start>mdi-file-document-arrow-right-outline</v-icon>
                     {{$t("Export SDMX CSV")}}
                 </v-card-title>
                 <v-card-subtitle>{{$t("sdmx_csv_export_note")}}</v-card-subtitle>
@@ -191,10 +192,10 @@ Vue.component('sdmx-csv-export-options', {
                 
                 <v-expansion-panels multiple v-model="panels">
                     <v-expansion-panel>
-                        <v-expansion-panel-header>
+                        <v-expansion-panel-title>
                             {{$t("SDMX Parameters")}}
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
                             <div class="mb-4">
                                 <table class="table table-sm table-bordered table-hover table-striped mb-0 pb-0" style="font-size:small;">
                                     <tr>
@@ -238,7 +239,7 @@ Vue.component('sdmx-csv-export-options', {
                                     </table-grid-component>
                                 </div>
                             </div>
-                        </v-expansion-panel-content>
+                        </v-expansion-panel-text>
                     </v-expansion-panel>
                 </v-expansion-panels>
 
@@ -251,12 +252,12 @@ Vue.component('sdmx-csv-export-options', {
                 </div>
 
                 <v-btn color="primary" @click="onExportOptions()">
-                    <v-icon left>mdi-download</v-icon>
+                    <v-icon start>mdi-download</v-icon>
                     {{$t("export_csv")}}
                 </v-btn>
                 
                 <v-btn color="secondary" @click="resetExportOptions()" class="ml-2">
-                    <v-icon left>mdi-refresh</v-icon>
+                    <v-icon start>mdi-refresh</v-icon>
                     {{$t("reset_options")}}
                 </v-btn>
 

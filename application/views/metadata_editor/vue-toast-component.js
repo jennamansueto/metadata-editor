@@ -1,4 +1,5 @@
-Vue.component('v-toast', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['v-toast'] = {
     props: [],
     data() {
         return {
@@ -9,13 +10,13 @@ Vue.component('v-toast', {
     },
     mounted:function(){        
         let vm=this;
-        EventBus.$on('onSuccess', function(data) {
+        EventBus.on('onSuccess', function(data) {
             vm.text=data;
             vm.snackbar=true;
             isSuccess=true;
           });
 
-          EventBus.$on('onFail', function(data) {
+          EventBus.on('onFail', function(data) {
             vm.text=data;
             vm.snackbar=true;
             isSuccess=false;

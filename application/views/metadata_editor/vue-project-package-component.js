@@ -1,5 +1,6 @@
 /// project export package component
-Vue.component('project-package', {
+window.AppComponents = window.AppComponents || {};
+window.AppComponents['project-package'] = {
     props:['value'],
     data: function () {    
         return {
