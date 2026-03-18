@@ -64,7 +64,7 @@ window.AppComponents['geospatial-feature-data'] = {
             // Add data headers
             const dataHeaders = this.feature_data.headers.map(header => {
                 if (!header) return null;
-                const characteristic = this.characteristics.find(char => char && char.name === header);
+                const characteristic = this.characteristics.find(char => char && char.name === header;
                 console.log(`Header: ${header}, Found characteristic:`, characteristic);
                 if (characteristic) {
                     console.log('Characteristic fields:', Object.keys(characteristic));
@@ -81,7 +81,7 @@ window.AppComponents['geospatial-feature-data'] = {
                     label: characteristic ? characteristic.label : null,
                     metadata: characteristic ? characteristic.metadata : null
                 };
-            }).filter(header => header !== null);
+            }).filter(header => header !== null;
             
             return headers.concat(dataHeaders);
         },
@@ -104,7 +104,7 @@ window.AppComponents['geospatial-feature-data'] = {
             // First try to find the feature in the store
             if (this.$store && this.$store.state.geospatial_features && this.$store.state.geospatial_features.length > 0) {
                 const features = this.$store.state.geospatial_features;
-                this.feature = features.find(f => f.id == this.feature_id);
+                this.feature = features.find(f => f.id == this.feature_id;
                 
                 if (this.feature && this.feature.data_file) {
                     this.loadCharacteristics().then(() => {
@@ -221,17 +221,17 @@ window.AppComponents['geospatial-feature-data'] = {
         },
         
         getHeaderMetadata: function(headerValue) {
-            const characteristic = this.characteristics.find(char => char.name === headerValue);
+            const characteristic = this.characteristics.find(char => char.name === headerValue;
             return characteristic ? characteristic.metadata : null;
         },
         
         getHeaderDataType: function(headerValue) {
-            const characteristic = this.characteristics.find(char => char.name === headerValue);
+            const characteristic = this.characteristics.find(char => char.name === headerValue;
             return characteristic ? characteristic.data_type : 'unknown';
         },
         
         getHeaderLabel: function(headerValue) {
-            const characteristic = this.characteristics.find(char => char.name === headerValue);
+            const characteristic = this.characteristics.find(char => char.name === headerValue;
             return characteristic ? characteristic.label : null;
         },
     },  

@@ -353,7 +353,7 @@ const VueExternalResourcesCreate = {
             if (obj.key.indexOf(".") !== -1 && this.Resource[obj.key]){
                 delete this.Resource[obj.key];
             }
-            this.Resource[obj.key] = obj.value);
+            this.Resource[obj.key] = obj.value;
         },
     },
     computed: {

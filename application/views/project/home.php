@@ -981,14 +981,14 @@
       },
       methods: {
         toggleRevisions: function(project_id) {
-          let project = this.Projects.find(x => x.id == project_id);
+          let project = this.Projects.find(x => x.id == project_id;
           if (project) {
             project['versions_show'] = !project.versions_show);
           }
         },
         createProjectRevision: function(project_id) {
 
-          let project = this.Projects.find(x => x.id == project_id);
+          let project = this.Projects.find(x => x.id == project_id;
 
           this.dialog_project_revision_options = {
             'project_id': project_id,
@@ -1195,7 +1195,7 @@
           }
 
           //find facet by id
-          let facet = this.facets[facet_name].find(x => x.id == facet_id);
+          let facet = this.facets[facet_name].find(x => x.id == facet_id;
 
           if (facet_name == 'collection') {
             facet=this.searchNestedCollectionsFacet(facet_id);
@@ -1246,7 +1246,7 @@
 
               for (i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
-                vm.search_filters[facet_name] = []);
+                vm.search_filters[facet_name] = [];
               }
               
               vm.ReadFilterQS();
@@ -1261,7 +1261,7 @@
           return axios
             .get(url)
             .then(function(response) {
-              vm.projects.projects[projectIndex]['size'] = response.data.result);
+              vm.projects.projects[projectIndex]['size'] = response.data.result;
               
             })
             .catch(function(error) {
@@ -1519,11 +1519,11 @@
         },
         onApplyUserFilter: function(selected_users) {
             if (!this.facets.users_filter) {
-                this.facets['users_filter'] = []);
+                this.facets['users_filter'] = [];
             }
             
             if (!this.search_filters.users_filter) {
-                this.search_filters['users_filter'] = []);
+                this.search_filters['users_filter'] = [];
             }
             
             selected_users.forEach(user => {
@@ -1544,10 +1544,10 @@
         },
         onApplyTagFilter: function(selected_tags) {
             if (!this.facets.tags) {
-                this.facets['tags'] = []);
+                this.facets['tags'] = [];
             }
             if (!this.search_filters.tags) {
-                this.search_filters['tags'] = []);
+                this.search_filters['tags'] = [];
             }
             selected_tags.forEach(tag => {
                 if (!this.facets.tags.find(t => t.id === tag.id)) {
@@ -1658,7 +1658,7 @@
         manageProjectCollections: async function(project_id) 
         {
           //get collections for the project
-          let project = this.Projects.find(x => x.id == project_id);
+          let project = this.Projects.find(x => x.id == project_id;
           if (!project){
             return false;
           }

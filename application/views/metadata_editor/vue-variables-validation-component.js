@@ -275,11 +275,11 @@ window.AppComponents['variables-validation'] = {
             var items = vm.getSuggestAffectedItems(actionType, scopeAll);
             items.forEach(function(item) {
                 var newName = vm.suggestNewName(item, actionType, vm.batchPrefix);
-                vm.proposedNewNames[item.name] = newName);
+                vm.proposedNewNames[item.name] = newName;
             });
         },
         updateProposedName: function(name, value) {
-            this.proposedNewNames[name] = value);
+            this.proposedNewNames[name] = value;
         },
         resetRowSuggestion: function(item) {
             this.proposedNewNames[item.name] = this.getDefaultSuggestion(item));

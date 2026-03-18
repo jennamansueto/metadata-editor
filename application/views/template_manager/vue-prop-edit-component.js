@@ -82,13 +82,13 @@ window.AppComponents['prop-edit'] = {
                   'label':item
                 });
               });
-              this.prop["enum"] = enum_list);
+              this.prop["enum"] = enum_list;
               return enum_list;
             }
             return this.prop.enum;
           },
           set(newValue) {
-            this.prop["enum"] = newValue);
+            this.prop["enum"] = newValue;
           }
         },
         PropEnumStoreColumn:{
@@ -99,7 +99,7 @@ window.AppComponents['prop-edit'] = {
             return 'both';
           },
           set: function(newValue){
-            this.prop["enum_store_column"] = newValue);
+            this.prop["enum_store_column"] = newValue;
           }
         },
     },
@@ -144,23 +144,23 @@ window.AppComponents['prop-edit'] = {
       },
       EnumListUpdate: function(e) {
         if (Array.isArray(e)){
-          this.prop["enum"] = e);
+          this.prop["enum"] = e;
         }
         if (!this.prop.enum) {
-          this.prop["enum"] = []);
+          this.prop["enum"] = [];
         }
       },
       DefaultUpdate: function (e){
         if (Array.isArray(e)){
-          this.prop["default"] = e);
+          this.prop["default"] = e;
         }
         if (!this.prop.default) {
-          this.prop["default"] = []);
+          this.prop["default"] = [];
         }
       },
       RulesUpdate: function (e)
       {
-        this.prop["rules"] = e);
+        this.prop["rules"] = e;
       },
       HasAdditionalPrefix(value){
         return value.indexOf('additional.')==0;

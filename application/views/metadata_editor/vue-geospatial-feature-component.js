@@ -93,12 +93,12 @@ window.AppComponents['geospatial-feature'] = {
         },
         updateCharacteristics: function (key,value)
         {            
-            this.ActiveCharacteristic[key] = value);
+            this.ActiveCharacteristic[key] = value;
             console.log("updating value for key",key,value);
         },
         updateFeature: function (key,value)
         {            
-            this.Feature[key] = value);
+            this.Feature[key] = value;
             console.log("updating value for key",key,value);
         },
         getTemplateByKey: function(key){

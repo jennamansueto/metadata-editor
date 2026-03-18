@@ -46,13 +46,13 @@ window.AppComponents['variable-categories'] = {
             }
             
             // Clear categories arrays
-            this.variable['var_catgry'] = []);
-            this.variable['var_catgry_labels'] = []);
+            this.variable['var_catgry'] = [];
+            this.variable['var_catgry_labels'] = [];
             
             if (!this.variable.sum_stats_options) {
-                this.variable['sum_stats_options'] = {});
+                this.variable['sum_stats_options'] = {};
             }
-            this.variable.sum_stats_options['freq'] = false);
+            this.variable.sum_stats_options['freq'] = false;
             
             // Emit update event
             this.$emit('update:value', this.variable);
@@ -76,7 +76,7 @@ window.AppComponents['variable-categories'] = {
                 )
             }
 
-            this.variable['var_catgry_labels'] = labels);
+            this.variable['var_catgry_labels'] = labels;
         },
         GetFieldTitle: function (code, default_title='') {
             let template_field=this.FindTemplateByItemKey(this.VariableTemplate.items,code);

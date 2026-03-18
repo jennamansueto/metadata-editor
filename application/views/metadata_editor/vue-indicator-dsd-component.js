@@ -111,7 +111,7 @@ window.AppComponents['indicator-dsd'] = {
         },
         editColumnByColumn: function(column) {
             // Find the index of the column in the original columns array
-            const index = this.columns.findIndex(col => col.id === column.id);
+            const index = this.columns.findIndex(col => col.id === column.id;
             if (index !== -1) {
                 this.editColumn(index);
             }
@@ -387,7 +387,7 @@ window.AppComponents['indicator-dsd'] = {
             if (this.edit_item === null) {
                 return;
             }
-            this.columns[this.edit_item] = column);
+            this.columns[this.edit_item] = column;
             if (column && column.id) {
                 this.saveColumnDebounce();
             }
@@ -397,7 +397,7 @@ window.AppComponents['indicator-dsd'] = {
             var col = this.columns[this.edit_item];
             if (!col) return;
             if (!col.metadata) {
-                col['metadata'] = {});
+                col['metadata'] = {};
             }
             col.metadata['value_label_column'] = newValue == null ? '' : String(newValue));
             if (col.id && this.columnHasChanges(col)) {

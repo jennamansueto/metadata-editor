@@ -1192,7 +1192,7 @@ const AnalyticsSection = {
                 const date = new Date(today);
                 date.setDate(date.getDate() - i);
                 const isoDate = date.toISOString().split('T')[0];
-                const found = chartData.find(item => item.date === isoDate);
+                const found = chartData.find(item => item.date === isoDate;
                 labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 values.push(found ? parseInt(found.views, 10) : 0);
             }
@@ -1253,7 +1253,7 @@ const AnalyticsSection = {
             const labels = [];
             const values = [];
             for (let i = 0; i < 24; i++) {
-                const found = chartData.find(item => parseInt(item.hour, 10) === i);
+                const found = chartData.find(item => parseInt(item.hour, 10) === i;
                 if (i === 0) {
                     labels.push('12 AM');
                 } else if (i < 12) {

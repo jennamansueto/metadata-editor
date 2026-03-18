@@ -54,7 +54,7 @@ window.AppComponents['indicator-dsd-edit'] = {
     created: function() {
         // Initialize code_list if not present
         if (!this.column.code_list) {
-            this.column['code_list'] = []);
+            this.column['code_list'] = [];
         }
 
         // Initialize code_list_reference if not present
@@ -70,7 +70,7 @@ window.AppComponents['indicator-dsd-edit'] = {
 
         // Initialize metadata if not present
         if (!this.column.metadata) {
-            this.column['metadata'] = {});
+            this.column['metadata'] = {};
         }
         if (!this.column.metadata.hasOwnProperty('value_label_column')) {
             this.column.metadata['value_label_column'] = this.column.metadata.value_label_column || '');
@@ -94,9 +94,9 @@ window.AppComponents['indicator-dsd-edit'] = {
         onValueLabelColumnInput: function(value) {
             var val = value == null ? '' : String(value);
             if (!this.column.metadata) {
-                this.column['metadata'] = {});
+                this.column['metadata'] = {};
             }
-            this.column.metadata['value_label_column'] = val);
+            this.column.metadata['value_label_column'] = val;
             // Emit both so parent can sync and save; dedicated event ensures value_label_column is never missed
             this.$emit('value-label-column-change', val);
             var self = this;
@@ -113,7 +113,7 @@ window.AppComponents['indicator-dsd-edit'] = {
                     description: row && row.description != null ? row.description : ''
                 };
             });
-            this.column['code_list'] = normalized);
+            this.column['code_list'] = normalized;
             this.OnValueUpdate();
         },
         clearCodeListReference: function() {

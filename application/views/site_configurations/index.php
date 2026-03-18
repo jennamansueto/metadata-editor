@@ -85,7 +85,7 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
 					$_curr_code  = ($_curr && isset($_curr['code']))      ? $_curr['code']      : '';
 					$_curr_disp  = ($_curr && isset($_curr['display']))   ? $_curr['display']   : '';
 					$_curr_dir   = ($_curr && isset($_curr['direction'])) ? $_curr['direction'] : '';
-					$_is_enabled = ($_curr !== null);
+					$_is_enabled = ($_curr !== null;
 					?>
 					<tr>
 						<td class="text-center align-middle">

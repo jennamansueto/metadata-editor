@@ -1,10 +1,11 @@
 <script>
-        Vue.use(Vuex)
-        Vue.use(VueDeepSet)     
+        // Vue.use() calls removed - plugins registered via app.use() in entry point
+        // VueDeepSet removed - Vue 3 proxy reactivity handles deep setting natively
 
-        window.bus = new Vue();//todo remove?
+        window.bus = mitt();
 
-        Vue.mixin({
+        // Mixin stored globally, will be applied via app.mixin() in entry point
+        window.__globalMixin = {
             methods: {
                 normalizeClassID: function(class_id){
                     return class_id.replace(/\./g, "-");
@@ -132,7 +133,7 @@
                     return( arrData );
                 }
             }
-        })
+        };
         
         <?php
             echo $this->load->view("vue/vue-global-eventbus.js",null,true);
@@ -357,7 +358,8 @@
 
         ]
 
-        const router = new VueRouter({
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
             routes
         })
 
@@ -377,7 +379,7 @@
             next();
         })
 
-        var store = new Vuex.Store({
+        var store = Vuex.createStore({
             state: {
                 user_has_edit_access:user_has_edit_access,
                 active_section: "not set",
@@ -872,7 +874,7 @@
                     return resp;
                 },
             },
-            mutations: VueDeepSet.extendMutation({
+            mutations: {
                 // other mutations
                 data_model (state,data) {
                     console.log("value added");
@@ -910,12 +912,12 @@
                     state.metadata_types=data;
                 },
                 variables(state,data){
-                    state.variables[data.fid] = data.variables);
+                    state.variables[data.fid] = data.variables;
                 },
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
-                        state.variables[data.fid] = []);
-                        state.variables[data.fid][data.fid] = {});
+                        state.variables[data.fid] = [];
+                        state.variables[data.fid][data.fid] = {};
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;
@@ -929,7 +931,7 @@
                 variables_active_tab(state,data){
                     state.variables_active_tab=data;
                 }
-            })            
+            }            
         })
 
 
@@ -967,128 +969,57 @@
         };
 
   
-        VeeValidate.extend('idno', {
-            validate: isUniqueIDNO,
-            getMessage: (field, params, data) => {
-                return data.message;
-            },
-            message: 'Please enter a unique value.'
-        });
+        // vee-validate 4.x uses defineRule instead of extend
+        if (typeof VeeValidate !== 'undefined' && VeeValidate.defineRule) {
+            VeeValidate.defineRule('idno', async (value) => {
+                let result = await isUniqueIDNO(value);
+                if (result.valid) return true;
+                return result.data ? result.data.message : 'Please enter a unique value.';
+            });
 
-        VeeValidate.extend('is_uri', {
-            validate(value){
-                
+            VeeValidate.defineRule('is_uri', (value) => {
                 try { 
-                    return Boolean(new URL(value)); 
+                    return Boolean(new URL(value)) || 'Value must be a URL e.g. http://example.com'; 
                 }
                 catch(e){ 
-                    return false; 
+                    return 'Value must be a URL e.g. http://example.com'; 
                 }
-            },
-            getMessage: (field, params, data) => {
-                return data.message;
-            },
-            message: 'Value must be a URL e.g. http://example.com'
-        });
+            });
 
-        //ignore validation if a required field is empty ('',null or undefined)
-        VeeValidate.extend('required', {
-            validate (value) {
-                return {
-                    required: true,
-                    valid: ['', null, undefined].indexOf(value) === -1
-                };        
-            },
-            computesRequired: true
-            //message: 'This is a required field'
-        });
-
-        // Data type validation: checks for type mismatch (e.g., array/object where string expected)
-        VeeValidate.extend('data_type', {
-            validate(value, [fieldType]) {
-
-                // fieldType comes from field.type passed as parameter
-                
-                // Skip data_type validation for dropdown fields - they have their own validation through enum selection
-                // and the v-model may be an enum object for display purposes
-                if (fieldType === 'dropdown' || fieldType === 'dropdown-custom') {
-                    return true;
+            VeeValidate.defineRule('required', (value) => {
+                if (['', null, undefined].indexOf(value) !== -1) {
+                    return 'This field is required';
                 }
-                
-                // Map field types to expected types
-                const typeMap = {
-                    'text': 'string',
-                    'string': 'string',
-                    'textarea': 'string',
-                    'number': 'number',
-                    'integer': 'number',
-                    'array': 'array'
-                };
-                
+                return true;
+            });
+
+            VeeValidate.defineRule('data_type', (value, [fieldType]) => {
+                if (fieldType === 'dropdown' || fieldType === 'dropdown-custom') return true;
+                const typeMap = { 'text':'string','string':'string','textarea':'string','number':'number','integer':'number','array':'array' };
                 const expectedType = typeMap[fieldType];
-                
-                // Skip validation for unsupported types
-                if (!expectedType) {
-                    return true;
-                }
-                
-                // Skip if empty - let 'required' rule handle empty values
-                if (value === null || value === undefined || value === '' || 
-                    (Array.isArray(value) && value.length === 0)) {
-                    return true;
-                }
-                
-                // Determine actual type of the value
-                const actualType = Array.isArray(value) ? 'array' : 
-                                 (typeof value === 'object' && value !== null) ? 'object' : 
-                                 typeof value;
-                
+                if (!expectedType) return true;
+                if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) return true;
+                const actualType = Array.isArray(value) ? 'array' : (typeof value === 'object' && value !== null) ? 'object' : typeof value;
                 let isValid = false;
-                let typeMismatch = false;
-                
-                if (expectedType === 'array') {
-                    // For array type, value must be an array
-                    isValid = Array.isArray(value);
-                    typeMismatch = !isValid && (actualType === 'object' || actualType === 'string');
-                } else if (expectedType === 'string') {
-                    // For string type, value must be a string (not array or object)
-                    isValid = actualType === 'string';
-                    typeMismatch = !isValid && (actualType === 'array' || actualType === 'object');
-                } else if (expectedType === 'number') {
-                    // For number type, value must be a number
-                    isValid = actualType === 'number';
-                    typeMismatch = !isValid;
+                if (expectedType === 'array') isValid = Array.isArray(value);
+                else if (expectedType === 'string') isValid = actualType === 'string';
+                else if (expectedType === 'number') isValid = actualType === 'number';
+                if (!isValid && (actualType !== expectedType)) {
+                    return `Expected ${expectedType}, found ${actualType}. To fix, delete the field value and then type/select a new value.`;
                 }
-                
-                if (typeMismatch) {
-                    // Construct error message with expected and actual types
-                    const errorMessage = `Expected ${expectedType}, found ${actualType}. To fix, delete the field value and then type/select a new value.`;
-                    
-                    // Return error message via params
-                    return {
-                        valid: false,
-                        data: {
-                            message: errorMessage
-                        }
-                    };
-                }
-                
-                return isValid;
-            },
-            getMessage: (field, params, data) => {
-                // data.message contains the error message from validate function
-                return data && data.message ? data.message : 'Invalid value. To fix, delete the field value and then type/select a new value';
-            },
-            message: 'Invalid value. To fix, delete the field value and then type/select a new value'
-        });
-
-    // MIGRATE: app.component('ValidationProvider', VeeValidate.ValidationProvider);
-    // MIGRATE: app.component('ValidationObserver', VeeValidate.ValidationObserver);
+                return isValid || true;
+            });
+        }
 
     const { Splitpanes, Pane } = splitpanes;
 
-
-    Vue.component("pane", Pane);
-    Vue.component("splitpanes", Splitpanes);
-    //Vue.component("draggable", draggable);
+    // Store component references globally for registration in entry points
+    window.AppComponents = window.AppComponents || {};
+    if (typeof VeeValidate !== 'undefined') {
+        if (VeeValidate.Form) window.AppComponents['VForm'] = VeeValidate.Form;
+        if (VeeValidate.Field) window.AppComponents['VField'] = VeeValidate.Field;
+        if (VeeValidate.ErrorMessage) window.AppComponents['ErrorMessage'] = VeeValidate.ErrorMessage;
+    }
+    window.AppComponents['pane'] = Pane;
+    window.AppComponents['splitpanes'] = Splitpanes;
 </script>

@@ -101,7 +101,7 @@ window.AppComponents['variable-groups'] = {
 
             if (this.activeItem){
                 if (!this.activeItem.variable_groups){
-                    this.activeItem['variable_groups'] = []);
+                    this.activeItem['variable_groups'] = [];
                 }
                 this.activeItem.variable_groups.push({
                     "vgid": 'VG'+(parseInt(this.getMaxVgId())+1),
@@ -219,7 +219,7 @@ window.AppComponents['variable-groups'] = {
         OnVariableSelection: function(selected){
             this.showDialog=false;
             if (!this.activeItem.variables){
-                this.activeItem['variables'] = []);
+                this.activeItem['variables'] = [];
             }
             this.activeItem.variables.push(...selected);
         },
@@ -251,7 +251,7 @@ window.AppComponents['variable-groups'] = {
             if (key.indexOf(".") !== -1 && this.activeItem[key]){
                 delete this.activeItem[key];
             }
-            this.activeItem[key] = value);
+            this.activeItem[key] = value;
         },
         updateSection: function (obj)
         {

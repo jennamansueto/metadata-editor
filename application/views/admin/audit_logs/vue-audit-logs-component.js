@@ -261,7 +261,7 @@ window.AppComponents['vue-audit-logs-component'] = {
             }
             
             // Set loading state
-            this.loading_details[logId] = true);
+            this.loading_details[logId] = true;
             
             // Make API call to get detailed information
             fetch(`${CI.site_url}/api/audit_logs/info/${logId}`, {
@@ -275,7 +275,7 @@ window.AppComponents['vue-audit-logs-component'] = {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    this.detailed_logs[logId] = data.data);
+                    this.detailed_logs[logId] = data.data;
                 } else {
                     console.error('Error loading log details:', data.message);
                 }
@@ -284,7 +284,7 @@ window.AppComponents['vue-audit-logs-component'] = {
                 console.error('Error loading log details:', error);
             })
             .finally(() => {
-                this.loading_details[logId] = false);
+                this.loading_details[logId] = false;
             });
         }
     },

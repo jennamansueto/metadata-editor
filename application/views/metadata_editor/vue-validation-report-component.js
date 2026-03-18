@@ -440,7 +440,7 @@ window.AppComponents['validation-report'] = {
                             
                             // Ensure additional section exists
                             if (!metadata.additional) {
-                                metadata['additional'] = {});
+                                metadata['additional'] = {};
                             }
                             
                             // Set value in additional section using dot notation

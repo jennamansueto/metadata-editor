@@ -731,7 +731,7 @@
         },
         EnumListUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-            this.ActiveNode["enum"] = []);
+            this.ActiveNode["enum"] = [];
           }
         },
         DefaultUpdate: function(e) {
@@ -740,7 +740,7 @@
           }
         },
         RulesUpdate: function(e) {
-          this.ActiveNode["rules"] = e);
+          this.ActiveNode["rules"] = e;
         },
         removeField: function() {
           const nodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
@@ -760,7 +760,7 @@
               let propIndex = -1;
               
               // First, try direct object reference (most reliable)
-              propIndex = propsArray.findIndex(p => p === vm.ActiveNode);
+              propIndex = propsArray.findIndex(p => p === vm.ActiveNode;
               
               // If not found, try by prop_key
               if (propIndex === -1 && propKeyToDelete) {
@@ -782,7 +782,7 @@
               if (propIndex === -1 && propKeyToDelete && propKeyToDelete.includes('.')) {
                 const keyPart = propKeyToDelete.split('.').pop();
                 propIndex = propsArray.findIndex(p => {
-                  return (p.key === keyPart) || (p.key === activeNodeKey);
+                  return (p.key === keyPart) || (p.key === activeNodeKey;
                 });
               }
               
@@ -932,13 +932,13 @@
               // If pasting into an array/nested_array and the cut item is a prop, add to props
               if ((this.ActiveNode.type === 'array' || this.ActiveNode.type === 'nested_array') && this.cut_fields[i].isProp) {
                 if (!this.ActiveNode.props) {
-                  this.ActiveNode["props"] = []);
+                  this.ActiveNode["props"] = [];
                 }
                 this.ActiveNode.props.push(this.cut_fields[i].node);
               } else {
                 // Regular paste to items
                 if (!this.ActiveNode.items) {
-                  this.ActiveNode["items"] = []);
+                  this.ActiveNode["items"] = [];
                 }
                 this.ActiveNode.items.push(this.cut_fields[i].node);
               }
@@ -993,7 +993,7 @@
           }
 
           if (!this.ActiveNode.items) {
-            this.ActiveNode["items"] = []);
+            this.ActiveNode["items"] = [];
           }
 
           this.ActiveNode.items.push(this.ActiveCoreNode);
@@ -1042,7 +1042,7 @@
           
           // Ensure UserTemplate.items exists
           if (!this.UserTemplate.items) {
-            this.UserTemplate["items"] = []);
+            this.UserTemplate["items"] = [];
           }
           
           // Check if container already exists
@@ -1129,7 +1129,7 @@
           // If parent is array/nested_array, add as prop; otherwise add as child item
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              parentNode["props"] = []);
+              parentNode["props"] = [];
             }
             const propKey = new_node_key;
             const propKeyShort = propKey.split('.').pop();
@@ -1145,7 +1145,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              parentNode["items"] = []);
+              parentNode["items"] = [];
             }
 
             parentNode.items.push({
@@ -1204,7 +1204,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              parentNode["props"] = []);
+              parentNode["props"] = [];
             }
             newArrayNode.prop_key = new_node_key;
             newArrayNode.key = new_node_key.split('.').pop();
@@ -1212,7 +1212,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              parentNode["items"] = []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newArrayNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1259,7 +1259,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-              parentNode["props"] = []);
+              parentNode["props"] = [];
             }
             newNestedNode.prop_key = new_node_key;
             newNestedNode.key = new_node_key.split('.').pop();
@@ -1267,7 +1267,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-              parentNode["items"] = []);
+              parentNode["items"] = [];
             }
             parentNode.items.push(newNestedNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1292,7 +1292,7 @@
           if (Array.isArray(this.tree_active_items)) {
             const idx = this.tree_active_items.indexOf(oldKey);
             if (idx !== -1) {
-              this.tree_active_items[idx] = e);
+              this.tree_active_items[idx] = e;
             }
           }
           if (Array.isArray(this.initiallyOpen) && this.initiallyOpen.indexOf(e) === -1) {
@@ -1799,14 +1799,14 @@
                   'label': item
                 });
               });
-              this.ActiveNode["enum"] = enum_list);
+              this.ActiveNode["enum"] = enum_list;
               return enum_list;
             }
             return this.ActiveNode.enum || [];
           },
           set: function(newValue) {
             if (!this.ActiveNode) return;
-            this.ActiveNode["enum"] = newValue);
+            this.ActiveNode["enum"] = newValue;
           }
         },
         ActiveNodeEnumStoreColumn:{
@@ -1819,7 +1819,7 @@
           },
           set: function(newValue){
             if (!this.ActiveNode) return;
-            this.ActiveNode["enum_store_column"] = newValue);
+            this.ActiveNode["enum_store_column"] = newValue;
         }
           
         },

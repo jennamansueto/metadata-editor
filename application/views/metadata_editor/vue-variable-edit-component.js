@@ -319,8 +319,8 @@ window.AppComponents['variable-edit'] = {
                     }
                 }
 
-                this.variable['var_wgt_id'] = e);
-                this.variable['update_required'] = true);
+                this.variable['var_wgt_id'] = e;
+                this.variable['update_required'] = true;
             }
             else{
                 delete this.variable['var_wgt_id'];                
@@ -460,12 +460,12 @@ window.AppComponents['variable-edit'] = {
         
         onSumStatsOptionChange: function(option, value) {
             // Handle changes to sum_stats_options with proper reactivity
-            this.Variable.sum_stats_options[option] = value);
+            this.Variable.sum_stats_options[option] = value;
             
             // Special handling for weighted statistics
             if (option === 'wgt' && !value) {
-                this.Variable.sum_stats_options['mean_wgt'] = false);
-                this.Variable.sum_stats_options['stdev_wgt'] = false);
+                this.Variable.sum_stats_options['mean_wgt'] = false;
+                this.Variable.sum_stats_options['stdev_wgt'] = false;
             }
             
             // Flag refresh stats only when a change requires re-running the data API:
@@ -473,7 +473,7 @@ window.AppComponents['variable-edit'] = {
             // Display/export-only options (min, max, mean, stdev, vald, missing, mean_wgt, stdev_wgt, wgt)
             // and freq turned to false do not require refresh.
             if (option === 'freq' && value === true) {
-                this.variable['update_required'] = true);
+                this.variable['update_required'] = true;
             }
         }
 

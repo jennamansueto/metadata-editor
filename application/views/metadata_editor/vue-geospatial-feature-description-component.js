@@ -118,10 +118,10 @@ window.AppComponents['geospatial-feature-description'] = {
             
             // Ensure description.feature_catalogue exists
             if (!this.projectMetadata.description) {
-                this.projectMetadata['description'] = {});
+                this.projectMetadata['description'] = {};
             }
             if (!this.projectMetadata.description.feature_catalogue) {
-                this.projectMetadata.description['feature_catalogue'] = {});
+                this.projectMetadata.description['feature_catalogue'] = {};
             }
             
             // Handle nested paths (like versionDate.date, versionDate.type)

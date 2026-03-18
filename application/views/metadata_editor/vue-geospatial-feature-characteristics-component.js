@@ -135,7 +135,7 @@ window.AppComponents['geospatial-feature-characteristics'] = {
             
             this.selectedCharacteristic = characteristic;
             // Find the index of the selected characteristic
-            this.selectedRowIndex = this.characteristics.findIndex(c => c.id === characteristic.id);
+            this.selectedRowIndex = this.characteristics.findIndex(c => c.id === characteristic.id;
             
             // Create a local copy for editing
             this.editedCharacteristic = JSON.parse(JSON.stringify(characteristic));
@@ -321,7 +321,7 @@ window.AppComponents['geospatial-feature-characteristics'] = {
                     this.loadCharacteristics();
                     // Update selected characteristic if it's the same one (skip warning since we just saved)
                     if (this.selectedCharacteristic && this.selectedCharacteristic.id === characteristic.id) {
-                        const updatedChar = this.characteristics.find(c => c.id === characteristic.id);
+                        const updatedChar = this.characteristics.find(c => c.id === characteristic.id;
                         if (updatedChar) {
                             this.selectCharacteristic(updatedChar, true);
                         }
@@ -494,7 +494,7 @@ window.AppComponents['geospatial-feature-characteristics'] = {
         },
         
         getRowClass: function(item) {
-            const index = this.characteristics.findIndex(c => c.id === item.id);
+            const index = this.characteristics.findIndex(c => c.id === item.id;
             let classes = 'char_row';
             if (index === this.selectedRowIndex) {
                 classes += ' selected-row';
@@ -676,7 +676,7 @@ window.AppComponents['geospatial-feature-characteristics'] = {
                     this.loadCharacteristics();
                     // Update selected characteristic (skip warning since we just saved)
                     if (this.selectedCharacteristic && this.selectedCharacteristic.id === characteristic.id) {
-                        const updatedChar = this.characteristics.find(c => c.id === characteristic.id);
+                        const updatedChar = this.characteristics.find(c => c.id === characteristic.id;
                         if (updatedChar) {
                             this.selectCharacteristic(updatedChar, true);
                         }

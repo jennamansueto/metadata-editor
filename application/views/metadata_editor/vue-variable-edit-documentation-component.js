@@ -176,7 +176,7 @@ window.AppComponents['variable-edit-documentation'] = {
             if (key.indexOf(".") !== -1 && this.variable[key]){
                 delete this.variable[key];
             }
-            this.variable[key] = value);
+            this.variable[key] = value;
         },
         updateSection: function (obj)
         {

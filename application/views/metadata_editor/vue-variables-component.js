@@ -516,7 +516,7 @@ window.AppComponents['variables'] = {
                                     sum_stats_options_[sum_stats_key]=this.variableMultiple[field_name][sum_stats_key];
                                 }
                             }
-                            variable_['sum_stats_options'] = sum_stats_options_);
+                            variable_['sum_stats_options'] = sum_stats_options_;
                         }
                         else{
 

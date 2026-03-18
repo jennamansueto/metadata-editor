@@ -54,7 +54,7 @@ window.AppComponents['datafile'] = {
             for(i=0;i<this.dataFiles.length;i++){
                 if (this.dataFiles[i].file_id==this.fid){
                     this.dataFiles[i]
-                    this.dataFiles[i] = data);
+                    this.dataFiles[i] = data;
                     return;
                 }
             }

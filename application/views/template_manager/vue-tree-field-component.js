@@ -484,10 +484,10 @@ window.AppComponents['nada-treeview-field'] = {
           
           // Fallback: directly add to UserTemplate if parent method not available
           if (!this.UserTemplate || !this.UserTemplate.items) {
-            this.UserTemplate["items"] = []);
+            this.UserTemplate["items"] = [];
           }
           
-          const exists = this.UserTemplate.items.some(i => i && i.key === item.key);
+          const exists = this.UserTemplate.items.some(i => i && i.key === item.key;
           if (exists) {
             return false;
           }
@@ -525,7 +525,7 @@ window.AppComponents['nada-treeview-field'] = {
           
           this.selected_item = item;
           if (!activeNode.items) {
-            activeNode["items"] = []);
+            activeNode["items"] = [];
           }
           
           // Clone the item to avoid reference issues
@@ -554,12 +554,12 @@ window.AppComponents['nada-treeview-field'] = {
                     
           // Ensure items array exists
           if (!actualNode.items) {
-            actualNode["items"] = []);
+            actualNode["items"] = [];
           }
           
           // Use Vue.set to add the item at the new index to ensure reactivity
           const newIndex = actualNode.items.length;
-          actualNode.items[newIndex] = itemToAdd);
+          actualNode.items[newIndex] = itemToAdd;
           
           // Also update activeNode if it's different
           if (actualNode !== activeNode && activeNode.items) {
@@ -584,7 +584,7 @@ window.AppComponents['nada-treeview-field'] = {
 
               this.selected_item = item;
               if (!activeNode.items) {
-                activeNode["items"] = []);
+                activeNode["items"] = [];
               }
               
               // Clone the item to avoid reference issues
@@ -597,7 +597,7 @@ window.AppComponents['nada-treeview-field'] = {
             } else if (item.isProp) {
               // This is a prop (from props array) - add to props
               if (!activeNode.props) {
-                activeNode["props"] = []);
+                activeNode["props"] = [];
               }
               
               // Check if prop already exists
@@ -637,7 +637,7 @@ window.AppComponents['nada-treeview-field'] = {
 
               this.selected_item = item;
               if (!activeNode.items) {
-                activeNode["items"] = []);
+                activeNode["items"] = [];
               }
               
               // Clone the item and remove temporary properties
@@ -650,7 +650,7 @@ window.AppComponents['nada-treeview-field'] = {
           } else {
             // For array or nested_array props: add to props array
             if (!activeNode.props) {
-              activeNode["props"] = []);
+              activeNode["props"] = [];
             }
             
             // Check if prop already exists
