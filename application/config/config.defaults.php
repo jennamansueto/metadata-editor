@@ -23,6 +23,13 @@ $config['cache_disabled'] = 1;
 //site's default language
 $config['language'] = 'english';
 
+//PDF cover page customization
+$config['pdf_cover_primary_color'] = '#0969da';
+$config['pdf_cover_text_color'] = '#ffffff';
+$config['pdf_cover_accent_color'] = '#0969da';
+$config['pdf_cover_design'] = 'default';
+$config['pdf_cover_logo'] = '';
+
 //enabled languages (JSON array)
 $config['supported_languages'] = json_encode(array(
     array('folder' => 'english', 'code' => 'en', 'display' => 'English',  'direction' => 'ltr'),

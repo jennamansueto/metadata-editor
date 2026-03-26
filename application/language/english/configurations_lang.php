@@ -86,6 +86,24 @@ $lang['analytics_config_file_note']="These settings are read-only and configured
 $lang['yes']="Yes";
 $lang['no']="No";
 
+$lang['pdf_cover_page_settings']="PDF Cover Page";
+$lang['pdf_cover_primary_color']="Banner background color";
+$lang['pdf_cover_text_color']="Banner text color";
+$lang['pdf_cover_accent_color']="Accent color";
+$lang['pdf_cover_design']="Cover page design";
+$lang['pdf_cover_design_default']="Default (full-width banner)";
+$lang['pdf_cover_design_minimal']="Minimal (thin accent line)";
+$lang['pdf_cover_design_modern']="Modern (side stripe)";
+$lang['pdf_cover_logo']="Organization logo";
+$lang['pdf_cover_logo_upload']="Upload logo";
+$lang['pdf_cover_logo_remove']="Remove logo";
+$lang['pdf_cover_logo_note']="PNG, JPG, or GIF. Max 2 MB.";
+$lang['pdf_cover_logo_uploaded']="Logo uploaded successfully";
+$lang['pdf_cover_logo_removed']="Logo removed";
+$lang['pdf_cover_preview']="Preview";
+$lang['pdf_cover_current_logo']="Current logo";
+$lang['pdf_cover_no_logo']="No logo uploaded";
+
 $lang['support_and_updates']="Support &amp; Updates";
 $lang['installed_version']="Installed version";
 $lang['latest_version']="Latest version";

@@ -106,8 +106,23 @@ class PDF_Report{
 		$mpdf->defaultfooterline = 0; 	// 1 to include line below header/above footer
 		$mpdf->setFooter('{PAGENO}');
 
-		//coverpage
-		$coverpage=$this->ci->load->view('pdf_reports/coverpage',array('project'=>$this->project),TRUE);
+		//coverpage - load customization settings from DB
+		$this->ci->load->model('Configurations_model');
+		$cover_settings = array(
+			'primary_color' => $this->ci->Configurations_model->get_config_item('pdf_cover_primary_color') ?: '#0969da',
+			'text_color'    => $this->ci->Configurations_model->get_config_item('pdf_cover_text_color') ?: '#ffffff',
+			'accent_color'  => $this->ci->Configurations_model->get_config_item('pdf_cover_accent_color') ?: '#0969da',
+			'design'        => $this->ci->Configurations_model->get_config_item('pdf_cover_design') ?: 'default',
+			'logo'          => $this->ci->Configurations_model->get_config_item('pdf_cover_logo') ?: '',
+		);
+		// Resolve logo to absolute path for mPDF
+		if (!empty($cover_settings['logo'])) {
+			$logo_abs = FCPATH . ltrim($cover_settings['logo'], '/');
+			$cover_settings['logo_abs'] = file_exists($logo_abs) ? $logo_abs : '';
+		} else {
+			$cover_settings['logo_abs'] = '';
+		}
+		$coverpage=$this->ci->load->view('pdf_reports/coverpage',array('project'=>$this->project, 'cover'=>$cover_settings),TRUE);
 		$mpdf->AddPage();
 		$mpdf->Bookmark(t("cover"),0);
 		$mpdf->WriteHTML( $coverpage );
