@@ -36,17 +36,23 @@ Vue.component('keyword-suggest', {
             if (!Array.isArray(current)) {
                 return [];
             }
+            var columns = (this.field && this.field.props) ? this.field.props : [];
+            var firstKey = columns.length > 0 ? columns[0].key : null;
             var keywords = [];
             for (var i = 0; i < current.length; i++) {
                 var item = current[i];
                 if (typeof item === 'string') {
                     keywords.push(item.toLowerCase().trim());
                 } else if (typeof item === 'object' && item !== null) {
-                    var keys = Object.keys(item);
-                    for (var j = 0; j < keys.length; j++) {
-                        var val = item[keys[j]];
-                        if (typeof val === 'string' && val.trim() !== '') {
-                            keywords.push(val.toLowerCase().trim());
+                    if (firstKey && typeof item[firstKey] === 'string' && item[firstKey].trim() !== '') {
+                        keywords.push(item[firstKey].toLowerCase().trim());
+                    } else {
+                        var keys = Object.keys(item);
+                        for (var j = 0; j < keys.length; j++) {
+                            var val = item[keys[j]];
+                            if (typeof val === 'string' && val.trim() !== '') {
+                                keywords.push(val.toLowerCase().trim());
+                            }
                         }
                     }
                 }
