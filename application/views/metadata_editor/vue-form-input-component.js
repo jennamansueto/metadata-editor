@@ -111,6 +111,13 @@ Vue.component("form-input", {
         
       },
     },
+    isKeywordField() {
+      if (!this.field || !this.field.key) {
+        return false;
+      }
+      var key = this.field.key.toLowerCase();
+      return key.indexOf('keyword') !== -1;
+    },
     formTextFieldStyle() {
       return this.$store.state.formTextFieldStyle;
     },
@@ -141,7 +148,13 @@ Vue.component("form-input", {
                 </div>
                 <div v-else-if="field.type=='array'">                
                     <div class="form-field form-field-table">
-                        <label :for="'field-' + field.key">{{field.title}}</label>
+                        <label :for="'field-' + field.key">{{field.title}}
+                            <keyword-suggest
+                                v-if="isKeywordField"
+                                v-model="local"
+                                :field="field"
+                            ></keyword-suggest>
+                        </label>
                         <span class="small" v-if="field.help_text" role="button" data-toggle="collapse" :data-target="'#field-toggle-' + normalizeClassID(field.key)" ><i class="far fa-question-circle"></i></span>
                         <small :id="'field-toggle-' + normalizeClassID(field.key)" class="collapse help-text form-text text-muted mb-2">{{field.help_text}}</small>
                         <table-grid-component 

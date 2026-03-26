@@ -23,6 +23,12 @@ $config['cache_disabled'] = 1;
 //site's default language
 $config['language'] = 'english';
 
+//LLM/AI keyword suggestion settings
+$config['llm_api_url'] = '';
+$config['llm_api_key'] = '';
+$config['llm_model'] = 'gpt-4o-mini';
+$config['llm_default_temperature'] = '0.7';
+
 //enabled languages (JSON array)
 $config['supported_languages'] = json_encode(array(
     array('folder' => 'english', 'code' => 'en', 'display' => 'English',  'direction' => 'ltr'),
