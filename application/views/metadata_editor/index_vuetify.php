@@ -108,7 +108,7 @@
     
   <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-scrollto.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vee-validate4.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vee-validate.full.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/splitpanes3.umd.min.js"></script>
     
   <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
