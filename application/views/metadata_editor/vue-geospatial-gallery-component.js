@@ -31,9 +31,12 @@ Vue.component('geospatial-gallery', {
         hasBoundingBox: function(newVal) {
             if (newVal) {
                 this.mapInitRetries = 0;
+                this.destroyMap();
                 this.$nextTick(function() {
                     this.initializeMap();
                 }.bind(this));
+            } else {
+                this.destroyMap();
             }
         }
     },
