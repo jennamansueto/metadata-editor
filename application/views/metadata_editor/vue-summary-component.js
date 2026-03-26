@@ -156,13 +156,8 @@ Vue.component('summary-component', {
                 if (resp.data && resp.data.status === 'success'){
                     vm.dialog_lock_version=false;
                     window.bus.$emit('onSuccess', vm.$t('version_created_successfully'));
-                    // Update Vuex store to reflect the new version
-                    vm.$store.state.project_version_info={
-                        version_number: vm.lock_version_number.trim(),
-                        version_created: Math.floor(Date.now()/1000),
-                        version_notes: vm.lock_version_notes.trim(),
-                        version_created_by: null
-                    };
+                    // The draft project's version info stays unchanged;
+                    // only the locked copy carries the version number.
                 } else {
                     vm.lock_error_message=resp.data.message || vm.$t('version_creation_failed');
                 }
