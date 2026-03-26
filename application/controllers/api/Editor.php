@@ -1735,4 +1735,111 @@ class Editor extends MY_REST_Controller
 				$user_id);
 		}
 	}
+
+
+	/**
+	 * 
+	 * Create a locked version snapshot of a project
+	 * 
+	 * POST /api/editor/lock/{sid}
+	 * 
+	 * Body parameters:
+	 * - version_number: string (required) - Semantic version number (e.g., "1.0.0")
+	 * - version_notes: string (optional) - Notes about this version
+	 * 
+	 */
+	function lock_post($sid=null)
+	{
+		try{
+			$sid=$this->get_sid($sid);
+			$user=$this->api_user();
+			$user_id=$this->get_api_user_id();
+			$this->editor_acl->user_has_project_access($sid,$permission='edit',$user);
+
+			$options=$this->raw_json_input();
+
+			if (!isset($options['version_number']) || empty(trim($options['version_number']))){
+				throw new Exception("VALIDATION_ERROR: Parameter `version_number` is required");
+			}
+
+			$version_number=trim($options['version_number']);
+			$version_notes=isset($options['version_notes']) ? trim($options['version_notes']) : '';
+
+			$version_id=$this->Editor_model->create_locked_version($sid, $version_number, $version_notes, $user_id);
+
+			// Log the lock/version event
+			$this->audit_log->log_event(
+				$obj_type='project',
+				$obj_id=$sid,
+				$action='lock-version',
+				$metadata=array(
+					'version_id'=>$version_id,
+					'version_number'=>$version_number,
+					'version_notes'=>$version_notes
+				),
+				$user_id
+			);
+
+			$response=array(
+				'status'=>'success',
+				'version_id'=>$version_id,
+				'version_number'=>$version_number,
+				'message'=>"Version $version_number created successfully"
+			);
+			$this->set_response($response, REST_Controller::HTTP_OK);
+		}
+		catch(Exception $e){
+			$error_output=array(
+				'status'=>'failed',
+				'message'=>$e->getMessage()
+			);
+			$this->set_response($error_output, REST_Controller::HTTP_BAD_REQUEST);
+		}
+	}
+
+
+	/**
+	 * 
+	 * Get version history for a project
+	 * 
+	 * GET /api/editor/versions/{sid}
+	 * 
+	 */
+	function versions_get($sid=null)
+	{
+		try{
+			$sid=$this->get_sid($sid);
+			$this->editor_acl->user_has_project_access($sid,$permission='view',$this->api_user);
+
+			$versions=$this->Editor_model->get_project_versions($sid);
+
+			// Enrich versions with user names via direct DB lookup
+			foreach($versions as &$version){
+				if (isset($version['version_created_by']) && $version['version_created_by']){
+					$this->db->select('username');
+					$this->db->where('id', $version['version_created_by']);
+					$user_row=$this->db->get('users')->row_array();
+					if ($user_row){
+						$version['version_created_by_name']=$user_row['username'];
+					}
+				}
+			}
+
+			$response=array(
+				'status'=>'success',
+				'result'=>array(
+					'versions'=>$versions,
+					'total'=>count($versions)
+				)
+			);
+			$this->set_response($response, REST_Controller::HTTP_OK);
+		}
+		catch(Exception $e){
+			$error_output=array(
+				'status'=>'failed',
+				'message'=>$e->getMessage()
+			);
+			$this->set_response($error_output, REST_Controller::HTTP_BAD_REQUEST);
+		}
+	}
 }

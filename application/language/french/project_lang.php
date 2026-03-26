@@ -601,5 +601,22 @@ $lang['code_list'] = "Liste de codes";
 $lang['code_list_reference'] = "Référence de liste de codes";
 $lang['uri'] = "URI";
 
+// Locking and versioning
+$lang['locked']='Verrouillé';
+$lang['read_only']='Lecture seule';
+$lang['lock_and_version']='Verrouiller et versionner';
+$lang['lock_version_description']='Créer un instantané verrouillé en lecture seule de ce projet. Le projet actuel restera modifiable pour les futures mises à jour.';
+$lang['version_number']='Numéro de version';
+$lang['version_notes']='Notes de version';
+$lang['version_notes_placeholder']='Décrivez ce qui a changé dans cette version...';
+$lang['lock_version_submit']='Créer la version';
+$lang['version_number_required']='Le numéro de version est requis';
+$lang['version_created_successfully']='Version créée avec succès';
+$lang['version_creation_failed']='Échec de la création de la version';
+$lang['version_history']='Historique des versions';
+$lang['version_history_load_error']="Échec du chargement de l'historique des versions";
+$lang['no_versions_found']="Aucune version n'a encore été créée";
+$lang['latest']='Dernière (brouillon)';
+
 /* End of file project_lang.php */
 /* Location: ./application/language/french/project_lang.php */

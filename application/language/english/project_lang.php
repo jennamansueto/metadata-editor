@@ -748,5 +748,22 @@ $lang['skip_existing_columns']='Skip existing columns';
 $lang['upload_another']='Upload Another File';
 
 
+// Locking and versioning
+$lang['locked']='Locked';
+$lang['read_only']='Read only';
+$lang['lock_and_version']='Lock & Version';
+$lang['lock_version_description']='Create a locked, read-only snapshot of this project. The current project will remain editable for future updates.';
+$lang['version_number']='Version number';
+$lang['version_notes']='Version notes';
+$lang['version_notes_placeholder']='Describe what changed in this version...';
+$lang['lock_version_submit']='Create Version';
+$lang['version_number_required']='Version number is required';
+$lang['version_created_successfully']='Version created successfully';
+$lang['version_creation_failed']='Failed to create version';
+$lang['version_history']='Version History';
+$lang['version_history_load_error']='Failed to load version history';
+$lang['no_versions_found']='No versions have been created yet';
+$lang['latest']='Latest (draft)';
+
 /* End of file project_lang.php */
 /* Location: ./application/language/english/project_lang.php */

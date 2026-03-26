@@ -637,6 +637,23 @@ $lang['code_list'] = "Kod ro'yxati";
 $lang['code_list_reference'] = "Kod ro'yxati havolasi";
 $lang['uri'] = "URI";
 
+// Locking and versioning
+$lang['locked']='Qulflangan';
+$lang['read_only']="Faqat o'qish";
+$lang['lock_and_version']='Qulflash va versiya';
+$lang['lock_version_description']="Ushbu loyihaning qulflangan, faqat o'qish uchun mo'ljallangan suratini yarating. Joriy loyiha kelajakdagi yangilanishlar uchun tahrirlanadigan bo'lib qoladi.";
+$lang['version_number']='Versiya raqami';
+$lang['version_notes']='Versiya eslatmalari';
+$lang['version_notes_placeholder']="Ushbu versiyada nimalar o'zgarganini tasvirlang...";
+$lang['lock_version_submit']='Versiya yaratish';
+$lang['version_number_required']='Versiya raqami talab qilinadi';
+$lang['version_created_successfully']='Versiya muvaffaqiyatli yaratildi';
+$lang['version_creation_failed']='Versiya yaratib bo\'lmadi';
+$lang['version_history']='Versiyalar tarixi';
+$lang['version_history_load_error']='Versiyalar tarixini yuklab bo\'lmadi';
+$lang['no_versions_found']='Hali versiyalar yaratilmagan';
+$lang['latest']='Oxirgi (qoralama)';
+
 /* End of file project_lang.php */
 /* Location: ./application/language/uzbek/project_lang.php */
 
