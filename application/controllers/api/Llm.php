@@ -101,7 +101,11 @@ class Llm extends MY_REST_Controller {
 		}
 
 		// Read optional temperature from POST body
-		$input = $this->raw_json_input();
+		try {
+			$input = $this->raw_json_input();
+		} catch (Exception $e) {
+			$input = null;
+		}
 		$temperature = null;
 		if (is_array($input) && isset($input['temperature'])) {
 			$temperature = (float) $input['temperature'];
