@@ -2228,6 +2228,11 @@ class Editor_model extends CI_Model {
 			throw new Exception("PROJECT_NOT_FOUND: Project with ID $sid not found");
 		}
 
+		// Prevent creating a version from a locked project
+		if ($this->is_project_locked($sid)) {
+			throw new Exception("PROJECT_IS_LOCKED: Cannot create a version from a locked project. Use the main project instead.");
+		}
+
 		// Determine the main project ID (if this project is already a version, use its pid)
 		$main_project_id = $this->get_main_project_id($sid);
 
