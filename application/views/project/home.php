@@ -750,7 +750,7 @@
 
     //routes
     const routes = [{
-        path: '<?php echo site_url("editor");?>',
+        path: '<?php echo parse_url(site_url("editor"), PHP_URL_PATH);?>',
         component: Home,
         name: 'home'
       },
