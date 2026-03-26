@@ -45,13 +45,13 @@ Vue.component('variable-categories', {
             }
             
             // Clear categories arrays
-             = [];
-             = [];
+             this.variable.var_catgry = [];
+             this.variable.var_catgry_labels = [];
             
             if (!this.variable.sum_stats_options) {
-                 = {};
+                 this.variable.sum_stats_options = {};
             }
-             = false;
+             this.variable.sum_stats_options.freq = false;
             
             // Emit update event
             this.$emit('update:value', this.variable);
@@ -75,7 +75,7 @@ Vue.component('variable-categories', {
                 )
             }
 
-             = labels;
+             this.variable.var_catgry_labels = labels;
         },
         GetFieldTitle: function (code, default_title='') {
             let template_field=this.FindTemplateByItemKey(this.VariableTemplate.items,code);

@@ -550,10 +550,9 @@
       }
     })
 
+    const tmgr_vuetify = Vuetify.createVuetify();
+
     var tmgr_app = Vue.createApp({
-      i18n,
-      store,
-      vuetify: Vuetify.createVuetify(),
       data() {
         return {
           user_template_info: user_template_info,
@@ -714,7 +713,7 @@
               item.props.forEach((prop, propIdx) => {
                 const propKey = prop.prop_key || prop.key;
                 if (propKey === item_key) {
-                  delete ;
+                  item.props.splice(propIdx, 1);
                 }
                 // Recursively check nested props
                 if (prop.props) {
@@ -723,27 +722,27 @@
               });
             }
             if (item.key == item_key || (item.prop_key && item.prop_key == item_key)) {
-              delete ;
+              tree.splice(idx, 1);
             }
           });
         },
         EnumUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-             = [{}];
+             this.ActiveNode.enum = [{}];
           }
         },
         EnumListUpdate: function(e) {
           if (!this.ActiveNode.enum) {
-             = [];
+             this.ActiveNode.enum = [];
           }
         },
         DefaultUpdate: function(e) {
           if (!this.ActiveNode.default) {
-             = [{}];
+             this.ActiveNode.default = [{}];
           }
         },
         RulesUpdate: function(e) {
-           = e;
+           this.ActiveNode.rules = e;
         },
         removeField: function() {
           const nodeKey = this.ActiveNode.key || this.ActiveNode.prop_key;
@@ -790,7 +789,7 @@
               }
               
               if (propIndex !== -1) {
-                delete ;
+                propsArray.splice(propIndex, 1);
                 vm.ActiveNode = {};
                 vm.tree_active_items = [];
                 return true;
@@ -935,13 +934,13 @@
               // If pasting into an array/nested_array and the cut item is a prop, add to props
               if ((this.ActiveNode.type === 'array' || this.ActiveNode.type === 'nested_array') && this.cut_fields[i].isProp) {
                 if (!this.ActiveNode.props) {
-                   = [];
+                   this.ActiveNode.props = [];
                 }
                 this.ActiveNode.props.push(this.cut_fields[i].node);
               } else {
                 // Regular paste to items
                 if (!this.ActiveNode.items) {
-                   = [];
+                   this.ActiveNode.items = [];
                 }
                 this.ActiveNode.items.push(this.cut_fields[i].node);
               }
@@ -996,7 +995,7 @@
           }
 
           if (!this.ActiveNode.items) {
-             = [];
+             this.ActiveNode.items = [];
           }
 
           this.ActiveNode.items.push(this.ActiveCoreNode);
@@ -1045,7 +1044,7 @@
           
           // Ensure UserTemplate.items exists
           if (!this.UserTemplate.items) {
-             = [];
+             this.UserTemplate.items = [];
           }
           
           // Check if container already exists
@@ -1132,7 +1131,7 @@
           // If parent is array/nested_array, add as prop; otherwise add as child item
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-               = [];
+               parentNode.props = [];
             }
             const propKey = new_node_key;
             const propKeyShort = propKey.split('.').pop();
@@ -1148,7 +1147,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-               = [];
+               parentNode.items = [];
             }
 
             parentNode.items.push({
@@ -1207,7 +1206,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-               = [];
+               parentNode.props = [];
             }
             newArrayNode.prop_key = new_node_key;
             newArrayNode.key = new_node_key.split('.').pop();
@@ -1215,7 +1214,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-               = [];
+               parentNode.items = [];
             }
             parentNode.items.push(newArrayNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1262,7 +1261,7 @@
 
           if (parentNode.type === 'array' || parentNode.type === 'nested_array') {
             if (!parentNode.props) {
-               = [];
+               parentNode.props = [];
             }
             newNestedNode.prop_key = new_node_key;
             newNestedNode.key = new_node_key.split('.').pop();
@@ -1270,7 +1269,7 @@
             this.ActiveNode = parentNode.props[parentNode.props.length - 1];
           } else {
             if (!parentNode.items) {
-               = [];
+               parentNode.items = [];
             }
             parentNode.items.push(newNestedNode);
             this.ActiveNode = parentNode.items[parentNode.items.length - 1];
@@ -1295,7 +1294,7 @@
           if (Array.isArray(this.tree_active_items)) {
             const idx = this.tree_active_items.indexOf(oldKey);
             if (idx !== -1) {
-               = e;
+               this.tree_active_items[idx] = e;
             }
           }
           if (Array.isArray(this.initiallyOpen) && this.initiallyOpen.indexOf(e) === -1) {
@@ -1802,14 +1801,14 @@
                   'label': item
                 });
               });
-               = enum_list;
+               this.ActiveNode.enum = enum_list;
               return enum_list;
             }
             return this.ActiveNode.enum || [];
           },
           set: function(newValue) {
             if (!this.ActiveNode) return;
-             = newValue;
+             this.ActiveNode.enum = newValue;
           }
         },
         ActiveNodeEnumStoreColumn:{
@@ -1822,7 +1821,7 @@
           },
           set: function(newValue){
             if (!this.ActiveNode) return;
-             = newValue;
+             this.ActiveNode.default = newValue;
         }
           
         },
@@ -1994,6 +1993,10 @@
         },
       }
     });
+    tmgr_app.use(i18n);
+    tmgr_app.use(store);
+    tmgr_app.use(tmgr_vuetify);
+    tmgr_app.mount('#app');
   </script>
 
 

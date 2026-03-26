@@ -453,17 +453,9 @@
             },
         })
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      i18n,
-      el: '#app',
-      vuetify: vuetify,
-      router: router,
-      data: {
+    vue_app = Vue.createApp({
+      data() {
+        return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -498,6 +490,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
+        };
       },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
@@ -948,12 +941,19 @@
           reader.readAsText(file);
         }
       }
-    })
+    });
+    vue_app.use(i18n);
+    vue_app.use(router);
+    vue_app.use(vuetify);
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        vue_app.use(GlobalLoginPlugin);
+    }
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    vue_app.component('VueJsonPretty', VueJsonPretty.default)
 
+    vue_app.mount('#app');
   </script>
 </body>
 

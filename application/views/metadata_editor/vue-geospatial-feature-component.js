@@ -92,12 +92,12 @@ Vue.component('geospatial-feature', {
         },
         updateCharacteristics: function (key,value)
         {            
-             = value;
+             this.ActiveCharacteristic[key] = value;
             console.log("updating value for key",key,value);
         },
         updateFeature: function (key,value)
         {            
-             = value;
+             this.Feature[key] = value;
             console.log("updating value for key",key,value);
         },
         getTemplateByKey: function(key){

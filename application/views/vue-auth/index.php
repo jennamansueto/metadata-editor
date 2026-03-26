@@ -28,12 +28,13 @@
         var CI = {
       'base_url': '<?php echo site_url(); ?>'
     };
-        var app = new Vue({
-        el: "#app",
-        data: {
-            msg: "Vuejs Example with CDN",
-            email:'',
-            password:''
+        var app = Vue.createApp({
+        data() {
+            return {
+                msg: "Vuejs Example with CDN",
+                email:'',
+                password:''
+            };
         },
         methods:{
             login: function() {
@@ -61,6 +62,7 @@
             },
         }
         });
+        app.mount('#app');
     </script>
   </body>
 </html>

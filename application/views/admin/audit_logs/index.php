@@ -181,8 +181,6 @@
 
     // Initialize Vue app
     var audit_app = Vue.createApp({
-        i18n,
-        vuetify: vuetify,
         data() {
             return {
                 // App data if needed

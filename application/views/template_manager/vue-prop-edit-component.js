@@ -81,13 +81,13 @@ Vue.component('prop-edit', {
                   'label':item
                 });
               });
-               = enum_list;
+               this.prop.enum = enum_list;
               return enum_list;
             }
             return this.prop.enum;
           },
           set(newValue) {
-             = newValue;
+             this.prop.enum = newValue;
           }
         },
         PropEnumStoreColumn:{
@@ -98,7 +98,7 @@ Vue.component('prop-edit', {
             return 'both';
           },
           set: function(newValue){
-             = newValue;
+             this.prop.default = newValue;
           }
         },
     },
@@ -143,23 +143,23 @@ Vue.component('prop-edit', {
       },
       EnumListUpdate: function(e) {
         if (Array.isArray(e)){
-           = e;
+           this.prop.enum = e;
         }
         if (!this.prop.enum) {
-           = [];
+           this.prop.enum = [];
         }
       },
       DefaultUpdate: function (e){
         if (Array.isArray(e)){
-           = e;
+           this.prop.default = e;
         }
         if (!this.prop.default) {
-           = [];
+           this.prop.default = [];
         }
       },
       RulesUpdate: function (e)
       {
-         = e;
+         this.prop.rules = e;
       },
       HasAdditionalPrefix(value){
         return value.indexOf('additional.')==0;

@@ -278,10 +278,10 @@ Vue.component('variables-validation', {
             });
         },
         updateProposedName: function(name, value) {
-             = value;
+            this.proposedNewNames[name] = value;
         },
         resetRowSuggestion: function(item) {
-             = this.getDefaultSuggestion(item);
+            this.proposedNewNames[item.name] = this.getDefaultSuggestion(item);
         },
         openApplyConfirm: function() {
             this.pendingRenamesCount = this.renamesToApply.length;

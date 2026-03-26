@@ -692,7 +692,7 @@ Vue.component('validation-report', {
         togglePreview: function(path) {
             // Handle both path strings and numeric indices (including 0)
             const key = path !== null && path !== undefined ? String(path) : 'default';
-             = !this.expanded_previews[key];
+            this.expanded_previews[key] = !this.expanded_previews[key];
         },
         /**
          * Check if preview is expanded for an issue

@@ -542,7 +542,7 @@ Vue.component('indicator-dsd-import', {
             this.hasUnsavedChanges = true;
         },
         setRequiredFieldLabelColumn: function(fieldKey, csvColumn) {
-             = csvColumn || '';
+            this.requiredFieldLabelColumns[fieldKey] = csvColumn || '';
             this.hasUnsavedChanges = true;
         },
         isRequiredFieldMapped: function(mapping) {

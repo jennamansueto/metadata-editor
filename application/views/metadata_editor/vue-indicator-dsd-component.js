@@ -386,7 +386,7 @@ Vue.component('indicator-dsd', {
             if (this.edit_item === null) {
                 return;
             }
-             = column;
+             this.columns[this.edit_item] = column;
             if (column && column.id) {
                 this.saveColumnDebounce();
             }
@@ -396,9 +396,9 @@ Vue.component('indicator-dsd', {
             var col = this.columns[this.edit_item];
             if (!col) return;
             if (!col.metadata) {
-                 = {};
+                 col.metadata = {};
             }
-             = newValue == null ? '' : String(newValue);
+             col.metadata.value_label_column = newValue == null ? '' : String(newValue);
             if (col.id && this.columnHasChanges(col)) {
                 this.saveColumnDebounce();
             }

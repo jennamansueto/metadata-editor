@@ -100,7 +100,7 @@ Vue.component('variable-groups', {
 
             if (this.activeItem){
                 if (!this.activeItem.variable_groups){
-                     = [];
+                    this.activeItem.variable_groups = [];
                 }
                 this.activeItem.variable_groups.push({
                     "vgid": 'VG'+(parseInt(this.getMaxVgId())+1),
@@ -218,7 +218,7 @@ Vue.component('variable-groups', {
         OnVariableSelection: function(selected){
             this.showDialog=false;
             if (!this.activeItem.variables){
-                 = [];
+                this.activeItem.variables = [];
             }
             this.activeItem.variables.push(...selected);
         },
@@ -250,7 +250,7 @@ Vue.component('variable-groups', {
             if (key.indexOf(".") !== -1 && this.activeItem[key]){
                 delete this.activeItem[key];
             }
-             = value;
+            this.proposedNewNames[name] = value;
         },
         updateSection: function (obj)
         {

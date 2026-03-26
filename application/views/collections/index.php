@@ -212,9 +212,9 @@
             { path: '/edit/:id', component: EditCollection, name:"edit" },
             { path: '/manage-users/:id', component: ManageAccess, name:"manage-access" },
             {
-                path: '*',
-                component: Home,
-                name:"home"
+                    path: '/:pathMatch(.*)*',
+                    component: Home,
+                    name:"home"
             }
         ]
 
@@ -252,19 +252,18 @@
             },
         })
 
-        // Use GlobalLoginPlugin for session handling
-        if (typeof GlobalLoginPlugin !== 'undefined') {
-            Vue.use(GlobalLoginPlugin);
-        }
-
-        vue_app = new Vue({
-            el: '#app',
-            i18n: i18n,
-            router: router,
-            vuetify: vuetify,
-            data: {                
+        vue_app = Vue.createApp({
+            data() {
+                return {};
             }
-        })
+        });
+        vue_app.use(i18n);
+        vue_app.use(router);
+        vue_app.use(vuetify);
+        if (typeof GlobalLoginPlugin !== 'undefined') {
+            vue_app.use(GlobalLoginPlugin);
+        }
+        vue_app.mount('#app');
     </script>
 
     <?php $this->load->view('common/analytics'); ?>

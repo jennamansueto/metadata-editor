@@ -515,7 +515,7 @@ Vue.component('variables', {
                                     sum_stats_options_[sum_stats_key]=this.variableMultiple[field_name][sum_stats_key];
                                 }
                             }
-                             = sum_stats_options_;
+                             variable_.sum_stats_options = sum_stats_options_;
                         }
                         else{
 
@@ -527,7 +527,7 @@ Vue.component('variables', {
                             }
 
                             //variable_[field_name]=JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
-                             = JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
+                             variable_[field_name] = JSON.parse(JSON.stringify(this.variableMultiple[field_name]));
                         }
                     }
                 }

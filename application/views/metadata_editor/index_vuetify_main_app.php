@@ -912,12 +912,12 @@
                     state.metadata_types=data;
                 },
                 variables(state,data){
-                     = data.variables;
+                     state.variables[data.fid] = data.variables;
                 },
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
-                         = [];
-                         = {};
+                         state.variables[data.fid] = [];
+                         state.variables[data.fid] = {};
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;

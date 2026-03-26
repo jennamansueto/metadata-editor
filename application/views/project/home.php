@@ -813,17 +813,9 @@
 
     Vue.mixin(momentMixin);
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify: vuetify,
-      router: router,
-      data: {
+    vue_app = Vue.createApp({
+      data() {
+        return {
         page_layout: 'list',
         projects: [],
         project_size_info:[],
@@ -882,6 +874,7 @@
         dialog_project_revision: false,
         dialog_project_revision_options: {},
         dialog_project_revision_key: 0,
+        };
       },
       created: async function() {
         //reload projects on window focus
@@ -990,7 +983,7 @@
         toggleRevisions: function(project_id) {
           let project = this.Projects.find(x => x.id == project_id);
           if (project) {
-             = !project.versions_show;
+             project.versions_show = !project.versions_show;
           }
         },
         createProjectRevision: function(project_id) {
@@ -1253,7 +1246,7 @@
 
               for (i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
-                 = [];
+                 vm.search_filters[facet_name] = [];
               }
               
               vm.ReadFilterQS();
@@ -1268,7 +1261,7 @@
           return axios
             .get(url)
             .then(function(response) {
-               = response.data.result;
+               vm.projects.projects[projectIndex].size = response.data.result;
               
             })
             .catch(function(error) {
@@ -1512,7 +1505,7 @@
           this.loadProjects();
         },
         removeFilter: function(filter_type, value_idx) {
-         delete ;
+         this.search_filters[filter_type].splice(value_idx, 1);
         },
         getFilterChipColor: function(filter_type) {
           const colorMap = {
@@ -1526,11 +1519,11 @@
         },
         onApplyUserFilter: function(selected_users) {
             if (!this.facets.users_filter) {
-                 = [];
+                 this.facets.users_filter = [];
             }
             
             if (!this.search_filters.users_filter) {
-                 = [];
+                 this.search_filters.users_filter = [];
             }
             
             selected_users.forEach(user => {
@@ -1551,10 +1544,10 @@
         },
         onApplyTagFilter: function(selected_tags) {
             if (!this.facets.tags) {
-                 = [];
+                 this.facets.tags = [];
             }
             if (!this.search_filters.tags) {
-                 = [];
+                 this.search_filters.tags = [];
             }
             selected_tags.forEach(tag => {
                 if (!this.facets.tags.find(t => t.id === tag.id)) {
@@ -1843,7 +1836,14 @@
         }
 
       }
-    })
+    });
+    vue_app.use(i18n);
+    vue_app.use(router);
+    vue_app.use(vuetify);
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        vue_app.use(GlobalLoginPlugin);
+    }
+    vue_app.mount('#app');
   </script>
 
   <?php $this->load->view('common/analytics'); ?>
