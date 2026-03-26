@@ -2211,8 +2211,8 @@ const ActivityDashboard = {
     },
     computed: {
         totalProjects() {
-            const trend = this.data.project_creation_trend || [];
-            return trend.reduce((sum, m) => sum + m.count, 0);
+            const status = this.data.projects_by_status || {};
+            return (status.published || 0) + (status.draft || 0);
         },
         projectsThisMonth() {
             const trend = this.data.project_creation_trend || [];
