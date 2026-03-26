@@ -202,6 +202,25 @@ Vue.component('summary-component', {
                         <div class="project-validation-container">                            
                             <template-validation-component></template-validation-component>                            
                         </div>
+
+                        <div class="mt-5">
+                            <v-card>
+                                <v-card-title class="d-flex justify-space-between">
+                                    <h6>
+                                        <v-icon class="mr-1" small>mdi-stethoscope</v-icon>
+                                        {{$t("Project Diagnostic")}}
+                                    </h6>
+                                    <v-btn x-small outlined color="primary" @click="$router.push('/project-diagnostic')">
+                                        {{$t("View Details")}}
+                                    </v-btn>
+                                </v-card-title>
+                                <v-card-text>
+                                    <div class="text-body-2 text-muted">
+                                        {{$t("Run metadata quality checks to identify missing fields, placeholder values, and documentation improvements.")}}
+                                    </div>
+                                </v-card-text>
+                            </v-card>
+                        </div>
                     </div>
 
                     <div class="col-6" >

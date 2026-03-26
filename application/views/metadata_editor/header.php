@@ -188,6 +188,14 @@
                                 <?php echo t("pdf_documentation"); ?>
                             </v-list-item-title>
                             </v-list-item>                             
+                            <v-list-item @click="onRouterLinkClick('/project-diagnostic')">
+                                <v-list-item-icon>
+                                    <v-icon>mdi-stethoscope</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-title>
+                                    {{$t('Project Diagnostic')}}
+                                </v-list-item-title>
+                            </v-list-item>
                             <v-list-item @click="onRouterLinkClick('/change-log')">
                                 <v-list-item-icon>
                                     <v-icon>mdi-content-copy</v-icon>
