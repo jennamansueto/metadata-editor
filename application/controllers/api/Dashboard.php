@@ -202,5 +202,28 @@ class Dashboard extends MY_REST_Controller {
             ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Get activity dashboard data
+     * 
+     * Returns comprehensive project and user activity statistics
+     * for the admin activity dashboard.
+     */
+    public function activity_dashboard_get()
+    {
+        try {
+            $data = $this->Dashboard_model->get_activity_dashboard_data();
+
+            $this->set_response([
+                'success' => true,
+                'data' => $data
+            ], REST_Controller::HTTP_OK);
+        } catch (Exception $e) {
+            $this->set_response([
+                'success' => false,
+                'error' => 'Failed to fetch activity dashboard data: ' . $e->getMessage()
+            ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
         
 }

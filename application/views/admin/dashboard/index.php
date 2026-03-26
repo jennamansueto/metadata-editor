@@ -713,6 +713,10 @@
                     </p>
                 </div>
                 <div class="d-flex align-center">
+                    <v-btn class="mr-2" text color="primary" :to="{ path: '/activity' }" href="#/activity">
+                        <v-icon left>mdi-chart-timeline-variant</v-icon>
+                        <?php echo t('Activity'); ?>
+                    </v-btn>
                     <v-btn class="mr-2" text color="primary" :to="{ path: '/api-log-aggregates' }" href="#/api-log-aggregates">
                         <v-icon left>mdi-traffic-light</v-icon>
                     <?php echo t('API Log Aggregates'); ?>
@@ -1028,6 +1032,273 @@
         </v-row>
 
         <v-overlay :value="running" absolute>
+            <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+        </v-overlay>
+    </v-container>
+</script>
+
+<script type="text/x-template" id="activity-dashboard-template">
+    <v-container class="pa-4">
+        <v-row class="mb-4">
+            <v-col cols="12" class="d-flex justify-space-between align-center">
+                <div>
+                    <h1 class="text-h4 font-weight-medium"><?php echo t('Activity Dashboard'); ?></h1>
+                    <p class="text-caption grey--text mt-1" v-if="lastUpdated">
+                        <v-icon small>mdi-clock-outline</v-icon>
+                        <?php echo t('Last updated'); ?>: {{ lastUpdated }}
+                    </p>
+                </div>
+                <div class="d-flex align-center">
+                    <v-btn class="mr-2" text color="primary" :to="{ path: '/' }" href="#/">
+                        <v-icon left>mdi-view-dashboard-outline</v-icon>
+                        <?php echo t('Back to Dashboard'); ?>
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        icon
+                        @click="refreshData"
+                        :loading="refreshing"
+                        :disabled="refreshing">
+                        <v-icon>mdi-refresh</v-icon>
+                    </v-btn>
+                </div>
+            </v-col>
+        </v-row>
+
+        <!-- Summary Cards -->
+        <v-row>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="48" color="primary">mdi-folder-multiple-outline</v-icon>
+                        <div class="stats-number primary--text">{{ formatNumber(totalProjects) }}</div>
+                        <div class="stats-label"><?php echo t('Total Projects'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="48" color="success">mdi-account-group-outline</v-icon>
+                        <div class="stats-number success--text">{{ formatNumber(data.total_contributors || 0) }}</div>
+                        <div class="stats-label"><?php echo t('Active Contributors'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="48" color="info">mdi-folder-star-outline</v-icon>
+                        <div class="stats-number info--text">{{ formatNumber(collectionStats.total_collections || 0) }}</div>
+                        <div class="stats-label"><?php echo t('Collections'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="d-flex">
+                <v-card class="flex-grow-1">
+                    <v-card-text class="text-center pa-4">
+                        <v-icon size="48" color="orange">mdi-calendar-month-outline</v-icon>
+                        <div class="stats-number orange--text">{{ formatNumber(projectsThisMonth) }}</div>
+                        <div class="stats-label"><?php echo t('Projects This Month'); ?></div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Charts Row -->
+        <v-row class="mt-4">
+            <v-col cols="12" md="8">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="primary">mdi-chart-bar</v-icon>
+                        <?php echo t('Project Creation Trend'); ?>
+                        <v-spacer></v-spacer>
+                        <span class="text-caption grey--text"><?php echo t('Last 12 months'); ?></span>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="projectTrendChart" height="80"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="deep-purple">mdi-chart-donut</v-icon>
+                        <?php echo t('Projects by Type'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="projectTypeChart" height="200"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- User Registrations Chart -->
+        <v-row class="mt-4">
+            <v-col cols="12" md="8">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="success">mdi-account-plus-outline</v-icon>
+                        <?php echo t('User Registrations'); ?>
+                        <v-spacer></v-spacer>
+                        <span class="text-caption grey--text"><?php echo t('Last 12 months'); ?></span>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <canvas ref="userRegChart" height="80"></canvas>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+                <v-card class="d-flex flex-column" style="height: 100%;">
+                    <v-card-title>
+                        <v-icon class="mr-2" color="info">mdi-folder-star-outline</v-icon>
+                        <?php echo t('Collection Stats'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text class="flex-grow-1">
+                        <div class="d-flex align-center mb-4">
+                            <div class="text-h5 font-weight-medium info--text mr-4" style="width: 80px;">{{ formatNumber(collectionStats.total_collections || 0) }}</div>
+                            <div class="text-body-2 grey--text"><?php echo t('Total Collections'); ?></div>
+                        </div>
+                        <v-divider class="my-3"></v-divider>
+                        <div class="d-flex align-center mb-4">
+                            <div class="text-h5 font-weight-medium success--text mr-4" style="width: 80px;">{{ formatNumber(collectionStats.collections_with_projects || 0) }}</div>
+                            <div class="text-body-2 grey--text"><?php echo t('With Projects'); ?></div>
+                        </div>
+                        <v-divider class="my-3"></v-divider>
+                        <div class="d-flex align-center">
+                            <div class="text-h5 font-weight-medium primary--text mr-4" style="width: 80px;">{{ formatNumber(collectionStats.total_assignments || 0) }}</div>
+                            <div class="text-body-2 grey--text"><?php echo t('Project Assignments'); ?></div>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Tables Row -->
+        <v-row class="mt-4">
+            <v-col cols="12" md="6">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="amber darken-2">mdi-trophy-outline</v-icon>
+                        <?php echo t('Top Contributors'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <v-simple-table dense v-if="topContributors.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><?php echo t('User'); ?></th>
+                                    <th class="text-right"><?php echo t('Projects'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(user, index) in topContributors" :key="user.id">
+                                    <td>
+                                        <v-chip x-small :color="index < 3 ? 'amber darken-2' : 'grey'" :text-color="index < 3 ? 'white' : ''">
+                                            {{ index + 1 }}
+                                        </v-chip>
+                                    </td>
+                                    <td>
+                                        <div class="text-body-2 font-weight-medium">{{ user.username }}</div>
+                                        <div class="text-caption grey--text">{{ user.email }}</div>
+                                    </td>
+                                    <td class="text-right">
+                                        <v-chip small color="primary" outlined>{{ user.project_count }}</v-chip>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                        <div v-else class="text-center py-8 grey--text">
+                            <?php echo t('No contributor data available'); ?>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="green">mdi-login</v-icon>
+                        <?php echo t('Recent User Logins'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <v-simple-table dense v-if="userLogins.length > 0" fixed-header style="max-height:400px;overflow:auto;">
+                            <thead>
+                                <tr>
+                                    <th><?php echo t('User'); ?></th>
+                                    <th><?php echo t('Last Login'); ?></th>
+                                    <th><?php echo t('Status'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="user in userLogins" :key="user.id">
+                                    <td>
+                                        <div class="text-body-2 font-weight-medium">{{ user.username }}</div>
+                                        <div class="text-caption grey--text">{{ user.email }}</div>
+                                    </td>
+                                    <td class="text-caption">{{ formatTimestamp(user.last_login) }}</td>
+                                    <td>
+                                        <v-chip x-small :color="user.active ? 'success' : 'grey'" text-color="white">
+                                            {{ user.active ? '<?php echo t('Active'); ?>' : '<?php echo t('Inactive'); ?>' }}
+                                        </v-chip>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                        <div v-else class="text-center py-8 grey--text">
+                            <?php echo t('No login data available'); ?>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Recent Modifications Table -->
+        <v-row class="mt-4">
+            <v-col cols="12">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="blue">mdi-history</v-icon>
+                        <?php echo t('Recent Project Modifications'); ?>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <v-simple-table dense v-if="recentModifications.length > 0" fixed-header style="max-height:500px;overflow:auto;">
+                            <thead>
+                                <tr>
+                                    <th><?php echo t('ID'); ?></th>
+                                    <th><?php echo t('Title'); ?></th>
+                                    <th><?php echo t('Type'); ?></th>
+                                    <th><?php echo t('Modified By'); ?></th>
+                                    <th><?php echo t('Modified'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="project in recentModifications" :key="project.id">
+                                    <td><code class="text-caption">{{ project.idno }}</code></td>
+                                    <td class="text-body-2" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ project.title }}</td>
+                                    <td>
+                                        <v-chip x-small color="primary" outlined>{{ project.type || 'unknown' }}</v-chip>
+                                    </td>
+                                    <td class="text-caption">{{ project.changed_by || project.created_by || '—' }}</td>
+                                    <td class="text-caption">{{ formatTimestamp(project.changed || project.created) }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                        <div v-else class="text-center py-8 grey--text">
+                            <?php echo t('No recent modifications'); ?>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <v-overlay :value="loading" absolute>
             <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
         </v-overlay>
     </v-container>
@@ -1926,10 +2197,205 @@ const ApiLogsAggregates = {
     }
 };
 
+const ActivityDashboard = {
+    template: '#activity-dashboard-template',
+    mixins: [formattingMixin],
+    data() {
+        return {
+            loading: true,
+            refreshing: false,
+            lastUpdated: null,
+            data: {},
+            chartInstances: {}
+        };
+    },
+    computed: {
+        totalProjects() {
+            const status = this.data.projects_by_status || {};
+            return (status.published || 0) + (status.draft || 0);
+        },
+        projectsThisMonth() {
+            const trend = this.data.project_creation_trend || [];
+            return trend.length > 0 ? trend[trend.length - 1].count : 0;
+        },
+        collectionStats() {
+            return this.data.collection_stats || {};
+        },
+        topContributors() {
+            return this.data.top_contributors || [];
+        },
+        userLogins() {
+            return this.data.user_login_history || [];
+        },
+        recentModifications() {
+            return this.data.recent_modifications || [];
+        }
+    },
+    methods: {
+        async fetchData() {
+            try {
+                const response = await axios.get('<?php echo site_url('api/dashboard/activity_dashboard'); ?>');
+                if (response.data && response.data.success) {
+                    this.data = response.data.data;
+                    this.lastUpdated = new Date().toLocaleTimeString();
+                    this.$nextTick(() => {
+                        this.renderCharts();
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch activity dashboard data:', error);
+            } finally {
+                this.loading = false;
+                this.refreshing = false;
+            }
+        },
+        async refreshData() {
+            this.refreshing = true;
+            this.destroyCharts();
+            await this.fetchData();
+        },
+        formatTimestamp(ts) {
+            if (!ts) return '—';
+            const date = new Date(parseInt(ts, 10) * 1000);
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 60000) return '<?php echo t('Just now'); ?>';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' <?php echo t('min ago'); ?>';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' <?php echo t('hours ago'); ?>';
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        },
+        renderCharts() {
+            this.renderProjectTrendChart();
+            this.renderProjectTypeChart();
+            this.renderUserRegChart();
+        },
+        destroyCharts() {
+            Object.values(this.chartInstances).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            this.chartInstances = {};
+        },
+        renderProjectTrendChart() {
+            const canvas = this.$refs.projectTrendChart;
+            if (!canvas) return;
+            const trend = this.data.project_creation_trend || [];
+            this.chartInstances.projectTrend = new Chart(canvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: trend.map(m => m.label),
+                    datasets: [{
+                        label: '<?php echo t('Projects Created'); ?>',
+                        data: trend.map(m => m.count),
+                        backgroundColor: 'rgba(25, 118, 210, 0.7)',
+                        borderColor: '#1976D2',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }
+                    }
+                }
+            });
+        },
+        renderProjectTypeChart() {
+            const canvas = this.$refs.projectTypeChart;
+            if (!canvas) return;
+            const types = this.data.projects_by_type || [];
+            const colors = ['#1976D2', '#4CAF50', '#FF9800', '#9C27B0', '#F44336', '#00BCD4', '#795548', '#607D8B', '#E91E63', '#3F51B5'];
+            this.chartInstances.projectType = new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: types.map(t => t.type),
+                    datasets: [{
+                        data: types.map(t => t.count),
+                        backgroundColor: colors.slice(0, types.length),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                                    return context.label + ': ' + context.raw + ' (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        renderUserRegChart() {
+            const canvas = this.$refs.userRegChart;
+            if (!canvas) return;
+            const regs = this.data.monthly_user_registrations || [];
+            this.chartInstances.userReg = new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: regs.map(m => m.label),
+                    datasets: [{
+                        label: '<?php echo t('New Users'); ?>',
+                        data: regs.map(m => m.count),
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: '#4CAF50'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }
+                    }
+                }
+            });
+        }
+    },
+    mounted() {
+        this.fetchData();
+    },
+    beforeDestroy() {
+        this.destroyCharts();
+    }
+};
+
 const router = new VueRouter({
     mode: 'hash',
     routes: [
         { path: '/', component: DashboardHome },
+        { path: '/activity', component: ActivityDashboard },
         { path: '/analytics-aggregates', component: AnalyticsAggregates },
         { path: '/api-log-aggregates', component: ApiLogsAggregates },
         { path: '*', redirect: '/' }
