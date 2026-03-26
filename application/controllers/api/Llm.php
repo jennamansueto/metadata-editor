@@ -66,7 +66,7 @@ class Llm extends MY_REST_Controller {
 
 		// Check project-level access
 		try {
-			$this->editor_acl->user_has_project_access($project_id, 'view');
+			$this->editor_acl->user_has_project_access($project_id, 'view', $this->api_user);
 		} catch (Exception $e) {
 			$this->response(array(
 				'status'  => 'failed',

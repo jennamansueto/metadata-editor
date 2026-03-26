@@ -103,7 +103,7 @@ Vue.component('keyword-suggest', {
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 vm.loading = false;
-                if (data.status === 'success' && data.data && Array.isArray(data.data.keywords)) {
+                if (data.status === 'success' && data.data && Array.isArray(data.data.keywords) && !data.data.error) {
                     vm.is_mock = !!data.data.mock;
                     vm.suggestions = data.data.keywords.map(function (kw) {
                         var isDuplicate = vm.existingKeywords.indexOf(kw.toLowerCase().trim()) !== -1;
