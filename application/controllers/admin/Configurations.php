@@ -258,6 +258,65 @@ class Configurations extends MY_Controller {
 		}
 	}
 	
+	/**
+	 * Upload a logo image for the PDF cover page.
+	 * Accepts PNG, JPG, GIF up to 2 MB. Stores in files/pdf_cover/.
+	 */
+	function upload_cover_logo()
+	{
+		$upload_dir = FCPATH . 'files/pdf_cover/';
+		if (!is_dir($upload_dir)) {
+			mkdir($upload_dir, 0755, true);
+		}
+
+		$config_upload = array(
+			'upload_path'   => $upload_dir,
+			'allowed_types' => 'gif|jpg|jpeg|png',
+			'max_size'      => 2048,
+			'file_name'     => 'cover_logo_' . time()
+		);
+
+		$this->load->library('upload', $config_upload);
+
+		if ($this->upload->do_upload('logo_file')) {
+			$upload_data = $this->upload->data();
+
+			// Remove old logo only after successful upload
+			$old_logo = $this->Configurations_model->get_config_item('pdf_cover_logo');
+			if (!empty($old_logo)) {
+				$old_path = FCPATH . ltrim($old_logo, '/');
+				if (file_exists($old_path)) {
+					@unlink($old_path);
+				}
+			}
+
+			$relative_path = 'files/pdf_cover/' . $upload_data['file_name'];
+			$this->Configurations_model->upsert('pdf_cover_logo', $relative_path);
+			$this->session->set_flashdata('message', t('pdf_cover_logo_uploaded'));
+		} else {
+			$this->session->set_flashdata('error', $this->upload->display_errors('', ''));
+		}
+
+		redirect('admin/configurations');
+	}
+
+	/**
+	 * Remove the PDF cover page logo.
+	 */
+	function remove_cover_logo()
+	{
+		$logo = $this->Configurations_model->get_config_item('pdf_cover_logo');
+		if (!empty($logo)) {
+			$path = FCPATH . ltrim($logo, '/');
+			if (file_exists($path)) {
+				@unlink($path);
+			}
+			$this->Configurations_model->upsert('pdf_cover_logo', '');
+		}
+		$this->session->set_flashdata('message', t('pdf_cover_logo_removed'));
+		redirect('admin/configurations');
+	}
+
 	function increment_js_css_ver()
 	{
 		$options=array();
