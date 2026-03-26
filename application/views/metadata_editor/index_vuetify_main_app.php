@@ -917,7 +917,6 @@
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
                          state.variables[data.fid] = [];
-                         state.variables[data.fid] = {};
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;

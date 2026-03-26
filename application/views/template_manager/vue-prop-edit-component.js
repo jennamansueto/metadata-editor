@@ -98,7 +98,7 @@ Vue.component('prop-edit', {
             return 'both';
           },
           set: function(newValue){
-             this.prop.default = newValue;
+             this.prop.enum_store_column = newValue;
           }
         },
     },

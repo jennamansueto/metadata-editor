@@ -250,7 +250,7 @@ Vue.component('variable-groups', {
             if (key.indexOf(".") !== -1 && this.activeItem[key]){
                 delete this.activeItem[key];
             }
-            this.proposedNewNames[name] = value;
+            this.activeItem[key] = value;
         },
         updateSection: function (obj)
         {

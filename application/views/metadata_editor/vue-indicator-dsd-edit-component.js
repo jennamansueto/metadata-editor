@@ -69,7 +69,7 @@ Vue.component('indicator-dsd-edit', {
 
         // Initialize metadata if not present
         if (!this.column.metadata) {
-             this.column.code_list_reference = {};
+             this.column.metadata = {};
         }
         if (!this.column.metadata.hasOwnProperty('value_label_column')) {
              this.column.metadata.value_label_column = this.column.metadata.value_label_column || '';
@@ -112,7 +112,7 @@ Vue.component('indicator-dsd-edit', {
                     description: row && row.description != null ? row.description : ''
                 };
             });
-             this.column.metadata.value_label_column = normalized;
+             this.column.code_list = normalized;
             this.OnValueUpdate();
         },
         clearCodeListReference: function() {

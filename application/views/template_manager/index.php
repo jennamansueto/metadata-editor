@@ -1821,7 +1821,7 @@
           },
           set: function(newValue){
             if (!this.ActiveNode) return;
-             this.ActiveNode.default = newValue;
+             this.ActiveNode.enum_store_column = newValue;
         }
           
         },

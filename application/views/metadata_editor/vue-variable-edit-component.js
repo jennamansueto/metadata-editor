@@ -459,12 +459,12 @@ Vue.component('variable-edit', {
         
         onSumStatsOptionChange: function(option, value) {
             // Handle changes to sum_stats_options with proper reactivity
-             this.variable.sum_stats_options[key] = value;
+             this.variable.sum_stats_options[option] = value;
             
             // Special handling for weighted statistics
             if (option === 'wgt' && !value) {
-                 this.variable.update_required = false;
-                 this.variable.update_required_summary = false;
+                 this.variable.sum_stats_options.mean_wgt = false;
+                 this.variable.sum_stats_options.stdev_wgt = false;
             }
             
             // Flag refresh stats only when a change requires re-running the data API:
