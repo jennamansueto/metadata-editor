@@ -238,6 +238,45 @@ h2{font-size:1.2em;font-weight:bold;border-bottom:1px solid gainsboro;padding-bo
     <?php endif;?>
 </fieldset>
 
+<fieldset class="field-expanded ">
+	<legend><i class="fas fa-robot mr-3" style="color:#007bff;"></i>AI/LLM Keyword Suggestion</legend>
+
+	<div class="field">
+		<label for="llm_api_url">API Endpoint URL</label>
+		<input class="form-control" name="llm_api_url" type="text" id="llm_api_url" placeholder="https://api.openai.com/v1" value="<?php echo get_form_value('llm_api_url', isset($llm_api_url) ? $llm_api_url : ''); ?>"/>
+		<span class="field-note">OpenAI-compatible chat completions endpoint (e.g. https://api.openai.com/v1)</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_api_key">API Key</label>
+		<input class="form-control" name="llm_api_key" type="password" id="llm_api_key" placeholder="sk-..." value="<?php echo get_form_value('llm_api_key', isset($llm_api_key) ? $llm_api_key : ''); ?>"/>
+		<span class="field-note">Your API key (stored in the database, never exposed to the frontend)</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_model">Model</label>
+		<input class="form-control" name="llm_model" type="text" id="llm_model" placeholder="gpt-4o-mini" value="<?php echo get_form_value('llm_model', isset($llm_model) ? $llm_model : 'gpt-4o-mini'); ?>"/>
+		<span class="field-note">Model name (e.g. gpt-4o-mini, gpt-4o, gpt-3.5-turbo)</span>
+	</div>
+
+	<div class="field">
+		<label for="llm_default_temperature">Default Temperature</label>
+		<input class="form-control input-fixed-3" name="llm_default_temperature" type="text" id="llm_default_temperature" value="<?php echo get_form_value('llm_default_temperature', isset($llm_default_temperature) ? $llm_default_temperature : '0.7'); ?>"/>
+		<span class="field-note">Value between 0.0 (deterministic) and 1.0 (creative). Default: 0.7</span>
+	</div>
+
+	<div class="field">
+		<?php
+			$_llm_configured = !empty($llm_api_key) && !empty($llm_api_url);
+		?>
+		<?php if ($_llm_configured): ?>
+			<span class="text-success"><i class="fas fa-check-circle"></i> LLM is configured. Keyword suggestions will use the API.</span>
+		<?php else: ?>
+			<span class="text-muted"><i class="fas fa-info-circle"></i> LLM is not configured. Keyword suggestions will use mock mode.</span>
+		<?php endif; ?>
+	</div>
+</fieldset>
+
 <?php echo form_close();?>
 
 <fieldset class="field-expanded">

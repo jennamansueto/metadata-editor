@@ -182,6 +182,7 @@
             echo $this->load->view("metadata_editor/vue-grid-preview-component.js",null,true);
 
             //nested
+            echo $this->load->view("metadata_editor/vue-keyword-suggest-component.js",null,true);
             echo $this->load->view("metadata_editor/vue-nested-section-component.js",null,true);
             echo $this->load->view("metadata_editor/vue-form-input-component.js",null,true);
             echo $this->load->view("metadata_editor/vue-nested-array-component.js",null,true);
