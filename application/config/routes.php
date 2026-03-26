@@ -117,6 +117,7 @@ $route['api/validation/(:num)/template_extra_fields'] = "api/validation/template
 $route['api/validation/(:num)/move_to_additional'] = "api/validation/move_to_additional/$1";
 $route['api/validation/(:num)/remove_fields'] = "api/validation/remove_fields/$1";
 $route['api/validation/(:num)/fix_array_as_object'] = "api/validation/fix_array_as_object/$1";
+$route['api/validation/(:num)/diagnostic'] = "api/validation/diagnostic/$1";
 
 
 /* End of file routes.php */

@@ -900,4 +900,803 @@ class Validation extends MY_REST_Controller
             $this->set_response($error_output, REST_Controller::HTTP_BAD_REQUEST);
         }
     }
+
+    /**
+     * Get diagnostic report for a project
+     * Provides detailed metadata quality analysis including completeness scores,
+     * missing required/recommended fields, field quality checks, and type-specific checks.
+     * 
+     * @param int $sid Project ID
+     */
+    function diagnostic_get($sid=null)
+    {
+        try{
+            $sid = $this->get_sid($sid);
+            $project = $this->Editor_model->get_row($sid);
+
+            if (!$project){
+                throw new Exception("project not found");
+            }
+
+            $this->editor_acl->user_has_project_access($sid, $permission='view');
+
+            $metadata = $project['metadata'];
+            if (!is_array($metadata)) {
+                $metadata = array();
+            }
+            $type = $project['type'];
+            $template_uid = isset($project['template_uid']) && !empty($project['template_uid']) ? $project['template_uid'] : null;
+
+            $result = array(
+                'project_id' => $sid,
+                'type' => $type,
+                'template_uid' => $template_uid,
+                'overall_score' => 0,
+                'categories' => array(),
+                'summary' => array(
+                    'total_checks' => 0,
+                    'passed' => 0,
+                    'warnings' => 0,
+                    'errors' => 0
+                )
+            );
+
+            // Category 1: Core Metadata Completeness
+            $core_checks = $this->_diagnostic_core_metadata($metadata, $type);
+            $result['categories'][] = $core_checks;
+
+            // Category 2: Template Required Fields (conditional)
+            if ($template_uid) {
+                $this->load->model('Editor_template_model');
+                $template = $this->Editor_template_model->get_template_by_uid($template_uid);
+                if ($template && isset($template['template'])) {
+                    $template_checks = $this->_diagnostic_template_fields($metadata, $template['template']);
+                    $result['categories'][] = $template_checks;
+                }
+            }
+
+            // Category 3: Documentation Quality
+            $doc_checks = $this->_diagnostic_documentation_quality($metadata, $type);
+            $result['categories'][] = $doc_checks;
+
+            // Category 4: Type-Specific Checks
+            $type_checks = $this->_diagnostic_type_specific($sid, $metadata, $type);
+            if ($type_checks) {
+                $result['categories'][] = $type_checks;
+            }
+
+            // Category 5: Field Quality
+            $quality_checks = $this->_diagnostic_field_quality($metadata, $type);
+            $result['categories'][] = $quality_checks;
+
+            // Calculate summary
+            $total_checks = 0;
+            $passed = 0;
+            $warnings = 0;
+            $errors = 0;
+            foreach ($result['categories'] as $cat) {
+                $total_checks += $cat['total_checks'];
+                $passed += $cat['passed'];
+                $warnings += $cat['warnings'];
+                $errors += $cat['errors'];
+            }
+
+            $result['summary']['total_checks'] = $total_checks;
+            $result['summary']['passed'] = $passed;
+            $result['summary']['warnings'] = $warnings;
+            $result['summary']['errors'] = $errors;
+
+            if ($total_checks > 0) {
+                $result['overall_score'] = round(($passed / $total_checks) * 100);
+            }
+
+            $response = array(
+                'status' => 'success',
+                'diagnostic' => $result
+            );
+
+            $this->set_response($response, REST_Controller::HTTP_OK);
+        }
+        catch(Exception $e){
+            $error_output = array(
+                'status' => 'failed',
+                'message' => $e->getMessage()
+            );
+            $this->set_response($error_output, REST_Controller::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Diagnostic: Check core metadata fields presence
+     */
+    private function _diagnostic_core_metadata($metadata, $type)
+    {
+        $issues = array();
+        $checks = 0;
+        $passed = 0;
+
+        $core_fields = $this->_get_core_fields($type);
+
+        foreach ($core_fields as $field) {
+            $checks++;
+            $value = $this->_get_nested_value($metadata, $field['path']);
+            $has_value = $this->_has_meaningful_value($value);
+
+            if ($has_value) {
+                $passed++;
+            } else {
+                $issues[] = array(
+                    'severity' => $field['severity'],
+                    'field' => $field['path'],
+                    'label' => $field['label'],
+                    'message' => $field['label'] . ' is missing or empty',
+                    'recommendation' => $field['recommendation']
+                );
+            }
+        }
+
+        $warnings = 0;
+        $errors = 0;
+        foreach ($issues as $issue) {
+            if ($issue['severity'] === 'error') {
+                $errors++;
+            } else {
+                $warnings++;
+            }
+        }
+
+        return array(
+            'id' => 'core_metadata',
+            'title' => 'Core Metadata',
+            'description' => 'Essential metadata fields that should be present in every project',
+            'icon' => 'mdi-file-document-outline',
+            'score' => $checks > 0 ? round(($passed / $checks) * 100) : 100,
+            'total_checks' => $checks,
+            'passed' => $passed,
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'issues' => $issues
+        );
+    }
+
+    /**
+     * Get core fields definition by project type
+     */
+    private function _get_core_fields($type)
+    {
+        $common = array(
+            array(
+                'path' => 'doc_desc.idno',
+                'label' => 'Document ID (IDNO)',
+                'severity' => 'error',
+                'recommendation' => 'Provide a unique identifier for this project'
+            ),
+            array(
+                'path' => 'doc_desc.producers',
+                'label' => 'Document Producer',
+                'severity' => 'warning',
+                'recommendation' => 'Add information about who produced this metadata'
+            )
+        );
+
+        $type_fields = array();
+
+        switch ($type) {
+            case 'microdata':
+            case 'survey':
+                $type_fields = array(
+                    array('path' => 'study_desc.title_statement.title', 'label' => 'Study Title', 'severity' => 'error', 'recommendation' => 'Provide a descriptive title for the study'),
+                    array('path' => 'study_desc.title_statement.idno', 'label' => 'Study IDNO', 'severity' => 'error', 'recommendation' => 'Provide a unique identifier for the study'),
+                    array('path' => 'study_desc.authoring_entity', 'label' => 'Authoring Entity', 'severity' => 'warning', 'recommendation' => 'Add the organization or person responsible for the study'),
+                    array('path' => 'study_desc.study_info.abstract', 'label' => 'Abstract', 'severity' => 'warning', 'recommendation' => 'Write an abstract describing the study purpose and methodology'),
+                    array('path' => 'study_desc.study_info.coll_dates', 'label' => 'Data Collection Dates', 'severity' => 'warning', 'recommendation' => 'Specify when data was collected'),
+                    array('path' => 'study_desc.study_info.nation', 'label' => 'Country/Nation', 'severity' => 'warning', 'recommendation' => 'Specify the geographic coverage'),
+                    array('path' => 'study_desc.study_info.keywords', 'label' => 'Keywords', 'severity' => 'warning', 'recommendation' => 'Add keywords to improve discoverability'),
+                    array('path' => 'study_desc.study_info.topics', 'label' => 'Topics', 'severity' => 'warning', 'recommendation' => 'Classify the study by topic'),
+                    array('path' => 'study_desc.method.data_collection.sampling_procedure', 'label' => 'Sampling Procedure', 'severity' => 'warning', 'recommendation' => 'Describe the sampling methodology'),
+                );
+                break;
+
+            case 'geospatial':
+                $type_fields = array(
+                    array('path' => 'description.identification_info.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a descriptive title'),
+                    array('path' => 'description.identification_info.abstract', 'label' => 'Abstract', 'severity' => 'warning', 'recommendation' => 'Write a description of this geospatial dataset'),
+                    array('path' => 'description.identification_info.keywords', 'label' => 'Keywords', 'severity' => 'warning', 'recommendation' => 'Add keywords for discoverability'),
+                    array('path' => 'description.identification_info.extent', 'label' => 'Geographic Extent', 'severity' => 'warning', 'recommendation' => 'Define the geographic extent'),
+                    array('path' => 'description.distribution_info', 'label' => 'Distribution Info', 'severity' => 'warning', 'recommendation' => 'Add distribution and access information'),
+                );
+                break;
+
+            case 'document':
+                $type_fields = array(
+                    array('path' => 'document_description.title_statement.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a title for the document'),
+                    array('path' => 'document_description.type', 'label' => 'Document Type', 'severity' => 'warning', 'recommendation' => 'Specify the document type'),
+                    array('path' => 'document_description.date_published', 'label' => 'Date Published', 'severity' => 'warning', 'recommendation' => 'Add the publication date'),
+                    array('path' => 'document_description.authors', 'label' => 'Authors', 'severity' => 'warning', 'recommendation' => 'List the authors'),
+                    array('path' => 'document_description.abstract', 'label' => 'Abstract', 'severity' => 'warning', 'recommendation' => 'Provide a summary of the document'),
+                    array('path' => 'document_description.languages', 'label' => 'Languages', 'severity' => 'warning', 'recommendation' => 'Specify the document language(s)'),
+                );
+                break;
+
+            case 'indicator':
+            case 'timeseries':
+            case 'timeseries-db':
+                $type_fields = array(
+                    array('path' => 'series_description.idno', 'label' => 'Series IDNO', 'severity' => 'error', 'recommendation' => 'Provide a unique identifier'),
+                    array('path' => 'series_description.name', 'label' => 'Series Name', 'severity' => 'error', 'recommendation' => 'Provide the indicator/series name'),
+                    array('path' => 'series_description.definition_short', 'label' => 'Short Definition', 'severity' => 'warning', 'recommendation' => 'Add a brief definition'),
+                    array('path' => 'series_description.topics', 'label' => 'Topics', 'severity' => 'warning', 'recommendation' => 'Classify by topic'),
+                    array('path' => 'series_description.methodology', 'label' => 'Methodology', 'severity' => 'warning', 'recommendation' => 'Describe the methodology'),
+                );
+                break;
+
+            case 'table':
+                $type_fields = array(
+                    array('path' => 'table_description.title_statement.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a title for this table'),
+                    array('path' => 'table_description.title_statement.idno', 'label' => 'IDNO', 'severity' => 'error', 'recommendation' => 'Provide a unique identifier'),
+                    array('path' => 'table_description.description', 'label' => 'Description', 'severity' => 'warning', 'recommendation' => 'Add a description'),
+                );
+                break;
+
+            case 'image':
+                $type_fields = array(
+                    array('path' => 'image_description.iptc.headline', 'label' => 'Headline', 'severity' => 'error', 'recommendation' => 'Provide a headline'),
+                    array('path' => 'image_description.iptc.caption', 'label' => 'Caption', 'severity' => 'warning', 'recommendation' => 'Add a caption'),
+                    array('path' => 'image_description.iptc.keywords', 'label' => 'Keywords', 'severity' => 'warning', 'recommendation' => 'Add keywords'),
+                );
+                break;
+
+            case 'video':
+                $type_fields = array(
+                    array('path' => 'video_description.title_statement.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a title'),
+                    array('path' => 'video_description.description', 'label' => 'Description', 'severity' => 'warning', 'recommendation' => 'Add a description'),
+                );
+                break;
+
+            case 'script':
+                $type_fields = array(
+                    array('path' => 'script_description.title_statement.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a title'),
+                    array('path' => 'script_description.description', 'label' => 'Description', 'severity' => 'warning', 'recommendation' => 'Add a description'),
+                    array('path' => 'script_description.language', 'label' => 'Programming Language', 'severity' => 'warning', 'recommendation' => 'Specify the programming language'),
+                );
+                break;
+
+            default:
+                $type_fields = array(
+                    array('path' => 'title_statement.title', 'label' => 'Title', 'severity' => 'error', 'recommendation' => 'Provide a title'),
+                );
+                break;
+        }
+
+        return array_merge($common, $type_fields);
+    }
+
+    /**
+     * Diagnostic: Check template required and recommended fields
+     */
+    private function _diagnostic_template_fields($metadata, $template_data)
+    {
+        $issues = array();
+        $checks = 0;
+        $passed = 0;
+
+        if (isset($template_data['items']) && is_array($template_data['items'])) {
+            $this->_walk_template_for_diagnostic($template_data['items'], $metadata, $issues, $checks, $passed);
+        }
+
+        $warnings = 0;
+        $errors = 0;
+        foreach ($issues as $issue) {
+            if ($issue['severity'] === 'error') {
+                $errors++;
+            } else {
+                $warnings++;
+            }
+        }
+
+        return array(
+            'id' => 'template_fields',
+            'title' => 'Template Required Fields',
+            'description' => 'Fields marked as required or recommended in the active template',
+            'icon' => 'mdi-format-list-checks',
+            'score' => $checks > 0 ? round(($passed / $checks) * 100) : 100,
+            'total_checks' => $checks,
+            'passed' => $passed,
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'issues' => $issues
+        );
+    }
+
+    /**
+     * Walk template items to find required/recommended fields
+     */
+    private function _walk_template_for_diagnostic($items, $metadata, &$issues, &$checks, &$passed, $base_path = '')
+    {
+        if (!is_array($items)) {
+            return;
+        }
+
+        foreach ($items as $item) {
+            if (!isset($item['key'])) {
+                if (isset($item['items']) && is_array($item['items'])) {
+                    $this->_walk_template_for_diagnostic($item['items'], $metadata, $issues, $checks, $passed, $base_path);
+                }
+                continue;
+            }
+
+            $field_key = $item['key'];
+            $rules = isset($item['rules']) ? $item['rules'] : '';
+            $is_required = false;
+            $is_recommended = false;
+
+            if (is_string($rules)) {
+                // Use exact match to avoid matching required_if, required_with, etc.
+                $is_required = (bool)preg_match('/(?:^|\|)required(?:$|\|)/', $rules);
+            } elseif (is_array($rules)) {
+                $is_required = in_array('required', $rules);
+            }
+
+            if (isset($item['is_recommended']) && $item['is_recommended']) {
+                $is_recommended = true;
+            }
+
+            if ($is_required || $is_recommended) {
+                $checks++;
+                $value = $this->_get_nested_value($metadata, $field_key);
+                $has_value = $this->_has_meaningful_value($value);
+
+                if ($has_value) {
+                    $passed++;
+                } else {
+                    $label = isset($item['title']) ? $item['title'] : (isset($item['label']) ? $item['label'] : $field_key);
+                    $severity = $is_required ? 'error' : 'warning';
+                    $issues[] = array(
+                        'severity' => $severity,
+                        'field' => $field_key,
+                        'label' => $label,
+                        'message' => $label . ' is ' . ($is_required ? 'required' : 'recommended') . ' but missing or empty',
+                        'recommendation' => 'Fill in the ' . $label . ' field'
+                    );
+                }
+            }
+
+            if (isset($item['items']) && is_array($item['items'])) {
+                $this->_walk_template_for_diagnostic($item['items'], $metadata, $issues, $checks, $passed, $field_key);
+            }
+        }
+    }
+
+    /**
+     * Diagnostic: Documentation quality analysis
+     */
+    private function _diagnostic_documentation_quality($metadata, $type)
+    {
+        $issues = array();
+        $checks = 0;
+        $passed = 0;
+
+        // Check abstract/description length
+        $abstract = null;
+        switch ($type) {
+            case 'microdata':
+            case 'survey':
+                $abstract = $this->_get_nested_value($metadata, 'study_desc.study_info.abstract');
+                break;
+            case 'geospatial':
+                $abstract = $this->_get_nested_value($metadata, 'description.identification_info.abstract');
+                break;
+            case 'document':
+                $abstract = $this->_get_nested_value($metadata, 'document_description.abstract');
+                break;
+            case 'indicator':
+            case 'timeseries':
+            case 'timeseries-db':
+                $abstract = $this->_get_nested_value($metadata, 'series_description.definition_short');
+                break;
+        }
+
+        if ($abstract !== null) {
+            $checks++;
+            // Handle array abstracts (valid in DDI schemas where abstract can be repeatable)
+            if (is_array($abstract)) {
+                $abstract_text = implode(' ', array_filter(array_map(function($item) {
+                    return is_string($item) ? $item : '';
+                }, $abstract)));
+            } else {
+                $abstract_text = is_string($abstract) ? $abstract : '';
+            }
+            $abstract_len = strlen(trim($abstract_text));
+
+            if ($abstract_len >= 100) {
+                $passed++;
+            } else {
+                $issues[] = array(
+                    'severity' => 'warning',
+                    'field' => 'abstract',
+                    'label' => 'Abstract/Description Length',
+                    'message' => 'Abstract is too short (' . $abstract_len . ' characters). A good abstract should be at least 100 characters.',
+                    'recommendation' => 'Expand the abstract to provide a comprehensive description of the dataset'
+                );
+            }
+        }
+
+        // Check for keywords (only for types that have keyword paths)
+        $keywords = null;
+        switch ($type) {
+            case 'microdata':
+            case 'survey':
+                $keywords = $this->_get_nested_value($metadata, 'study_desc.study_info.keywords');
+                break;
+            case 'geospatial':
+                $keywords = $this->_get_nested_value($metadata, 'description.identification_info.keywords');
+                break;
+            case 'image':
+                $keywords = $this->_get_nested_value($metadata, 'image_description.iptc.keywords');
+                break;
+        }
+
+        // Only check keywords for types that have a known keyword path
+        if ($keywords !== null) {
+            $checks++;
+            if ($this->_has_meaningful_value($keywords) && is_array($keywords) && count($keywords) >= 3) {
+                $passed++;
+            } else {
+                $keyword_count = is_array($keywords) ? count($keywords) : 0;
+                $issues[] = array(
+                    'severity' => 'warning',
+                    'field' => 'keywords',
+                    'label' => 'Keywords Coverage',
+                    'message' => 'Project has ' . $keyword_count . ' keyword(s). At least 3 keywords are recommended for good discoverability.',
+                    'recommendation' => 'Add more keywords to help users find this dataset'
+                );
+            }
+        }
+
+        $warnings = 0;
+        $errors = 0;
+        foreach ($issues as $issue) {
+            if ($issue['severity'] === 'error') {
+                $errors++;
+            } else {
+                $warnings++;
+            }
+        }
+
+        return array(
+            'id' => 'documentation_quality',
+            'title' => 'Documentation Quality',
+            'description' => 'Quality and completeness of documentation and descriptions',
+            'icon' => 'mdi-text-box-check-outline',
+            'score' => $checks > 0 ? round(($passed / $checks) * 100) : 100,
+            'total_checks' => $checks,
+            'passed' => $passed,
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'issues' => $issues
+        );
+    }
+
+    /**
+     * Diagnostic: Type-specific checks
+     */
+    private function _diagnostic_type_specific($sid, $metadata, $type)
+    {
+        $issues = array();
+        $checks = 0;
+        $passed = 0;
+
+        switch ($type) {
+            case 'microdata':
+            case 'survey':
+                // Check for data files
+                $checks++;
+                $this->db->where('sid', (int)$sid);
+                $file_count = $this->db->count_all_results('editor_data_files');
+
+                if ($file_count > 0) {
+                    $passed++;
+                } else {
+                    $issues[] = array(
+                        'severity' => 'warning',
+                        'field' => 'data_files',
+                        'label' => 'Data Files',
+                        'message' => 'No data files have been uploaded for this microdata project',
+                        'recommendation' => 'Upload data files to document variables and generate summary statistics'
+                    );
+                }
+
+                // Check for variables
+                $checks++;
+                $this->db->where('sid', (int)$sid);
+                $var_count = $this->db->count_all_results('editor_variables');
+
+                if ($var_count > 0) {
+                    $passed++;
+
+                    // Check for variables without labels
+                    $checks++;
+                    $this->db->where('sid', (int)$sid);
+                    $this->db->where('(labl IS NULL OR TRIM(COALESCE(labl,\'\')) = \'\')', null, false);
+                    $unlabeled = $this->db->count_all_results('editor_variables');
+
+                    if ($unlabeled == 0) {
+                        $passed++;
+                    } else {
+                        $issues[] = array(
+                            'severity' => 'warning',
+                            'field' => 'variables',
+                            'label' => 'Variable Labels',
+                            'message' => $unlabeled . ' out of ' . $var_count . ' variable(s) have no label',
+                            'recommendation' => 'Add labels to all variables for better documentation'
+                        );
+                    }
+                } else {
+                    $issues[] = array(
+                        'severity' => 'warning',
+                        'field' => 'variables',
+                        'label' => 'Variables',
+                        'message' => 'No variables have been defined for this project',
+                        'recommendation' => 'Import data files to generate the variable dictionary'
+                    );
+                }
+                break;
+
+            case 'geospatial':
+                // Check for feature catalog
+                $checks++;
+                $features = $this->_get_nested_value($metadata, 'feature_catalogue');
+                if ($this->_has_meaningful_value($features)) {
+                    $passed++;
+                } else {
+                    $issues[] = array(
+                        'severity' => 'warning',
+                        'field' => 'feature_catalogue',
+                        'label' => 'Feature Catalog',
+                        'message' => 'No feature catalog defined for this geospatial dataset',
+                        'recommendation' => 'Add feature catalog information describing the dataset attributes'
+                    );
+                }
+                break;
+
+            case 'indicator':
+            case 'timeseries':
+            case 'timeseries-db':
+                // Check for DSD dimensions
+                $checks++;
+                $dsd = $this->_get_nested_value($metadata, 'series_description.dimensions');
+                if ($this->_has_meaningful_value($dsd)) {
+                    $passed++;
+                } else {
+                    $issues[] = array(
+                        'severity' => 'warning',
+                        'field' => 'series_description.dimensions',
+                        'label' => 'DSD Dimensions',
+                        'message' => 'No DSD dimensions defined for this indicator/timeseries project',
+                        'recommendation' => 'Define the data structure definition dimensions'
+                    );
+                }
+                break;
+
+            default:
+                return null;
+        }
+
+        if ($checks == 0) {
+            return null;
+        }
+
+        $warnings = 0;
+        $errors = 0;
+        foreach ($issues as $issue) {
+            if ($issue['severity'] === 'error') {
+                $errors++;
+            } else {
+                $warnings++;
+            }
+        }
+
+        return array(
+            'id' => 'type_specific',
+            'title' => 'Type-Specific Checks',
+            'description' => 'Checks specific to ' . $type . ' projects',
+            'icon' => 'mdi-cog-outline',
+            'score' => $checks > 0 ? round(($passed / $checks) * 100) : 100,
+            'total_checks' => $checks,
+            'passed' => $passed,
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'issues' => $issues
+        );
+    }
+
+    /**
+     * Diagnostic: Field quality checks (placeholder detection)
+     */
+    private function _diagnostic_field_quality($metadata, $type)
+    {
+        $issues = array();
+        $checks = 0;
+        $passed = 0;
+
+        // Define text fields to scan for placeholder values
+        $text_fields = $this->_get_text_fields_for_quality_check($type);
+
+        $placeholder_patterns = array(
+            '/^test$/i',
+            '/^todo$/i',
+            '/^tbd$/i',
+            '/^xxx+$/i',
+            '/^n\/a$/i',
+            '/^none$/i',
+            '/^placeholder$/i',
+            '/^sample$/i',
+            '/^dummy$/i',
+            '/^filler$/i',
+            '/^\.\.\.$/',
+            '/^---$/',
+            '/^\.$/'
+        );
+
+        foreach ($text_fields as $field) {
+            $value = $this->_get_nested_value($metadata, $field['path']);
+            if (!is_string($value) || empty(trim($value))) {
+                continue;
+            }
+
+            $checks++;
+            $trimmed = trim($value);
+            $is_placeholder = false;
+
+            foreach ($placeholder_patterns as $pattern) {
+                if (preg_match($pattern, $trimmed)) {
+                    $is_placeholder = true;
+                    break;
+                }
+            }
+
+            if ($is_placeholder) {
+                $issues[] = array(
+                    'severity' => 'warning',
+                    'field' => $field['path'],
+                    'label' => $field['label'],
+                    'message' => $field['label'] . ' contains placeholder value: "' . $trimmed . '"',
+                    'recommendation' => 'Replace with meaningful content'
+                );
+            } else {
+                $passed++;
+            }
+        }
+
+        $warnings = 0;
+        $errors = 0;
+        foreach ($issues as $issue) {
+            if ($issue['severity'] === 'error') {
+                $errors++;
+            } else {
+                $warnings++;
+            }
+        }
+
+        return array(
+            'id' => 'field_quality',
+            'title' => 'Field Quality',
+            'description' => 'Checks for placeholder values and incomplete content',
+            'icon' => 'mdi-check-decagram-outline',
+            'score' => $checks > 0 ? round(($passed / $checks) * 100) : 100,
+            'total_checks' => $checks,
+            'passed' => $passed,
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'issues' => $issues
+        );
+    }
+
+    /**
+     * Get text fields to scan for quality checks by type
+     */
+    private function _get_text_fields_for_quality_check($type)
+    {
+        $fields = array();
+
+        switch ($type) {
+            case 'microdata':
+            case 'survey':
+                $fields = array(
+                    array('path' => 'study_desc.title_statement.title', 'label' => 'Study Title'),
+                    array('path' => 'study_desc.study_info.abstract', 'label' => 'Abstract'),
+                    array('path' => 'study_desc.study_info.coll_dates', 'label' => 'Collection Dates'),
+                );
+                break;
+            case 'geospatial':
+                $fields = array(
+                    array('path' => 'description.identification_info.title', 'label' => 'Title'),
+                    array('path' => 'description.identification_info.abstract', 'label' => 'Abstract'),
+                );
+                break;
+            case 'document':
+                $fields = array(
+                    array('path' => 'document_description.title_statement.title', 'label' => 'Title'),
+                    array('path' => 'document_description.abstract', 'label' => 'Abstract'),
+                );
+                break;
+            case 'indicator':
+            case 'timeseries':
+            case 'timeseries-db':
+                $fields = array(
+                    array('path' => 'series_description.name', 'label' => 'Series Name'),
+                    array('path' => 'series_description.definition_short', 'label' => 'Short Definition'),
+                );
+                break;
+            case 'table':
+                $fields = array(
+                    array('path' => 'table_description.title_statement.title', 'label' => 'Title'),
+                    array('path' => 'table_description.description', 'label' => 'Description'),
+                );
+                break;
+            case 'image':
+                $fields = array(
+                    array('path' => 'image_description.iptc.headline', 'label' => 'Headline'),
+                    array('path' => 'image_description.iptc.caption', 'label' => 'Caption'),
+                );
+                break;
+            case 'video':
+                $fields = array(
+                    array('path' => 'video_description.title_statement.title', 'label' => 'Title'),
+                    array('path' => 'video_description.description', 'label' => 'Description'),
+                );
+                break;
+            case 'script':
+                $fields = array(
+                    array('path' => 'script_description.title_statement.title', 'label' => 'Title'),
+                    array('path' => 'script_description.description', 'label' => 'Description'),
+                );
+                break;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Get a nested value from an array using dot notation
+     */
+    private function _get_nested_value($data, $path)
+    {
+        if (!is_array($data) || empty($path)) {
+            return null;
+        }
+
+        $keys = explode('.', $path);
+        $current = $data;
+
+        foreach ($keys as $key) {
+            if (is_array($current) && array_key_exists($key, $current)) {
+                $current = $current[$key];
+            } else {
+                return null;
+            }
+        }
+
+        return $current;
+    }
+
+    /**
+     * Check if a value is meaningful (not empty, null, or just whitespace)
+     */
+    private function _has_meaningful_value($value)
+    {
+        if ($value === null || $value === '' || $value === false) {
+            return false;
+        }
+
+        if (is_string($value)) {
+            return trim($value) !== '';
+        }
+
+        if (is_array($value)) {
+            return !empty($value);
+        }
+
+        return true;
+    }
 }
