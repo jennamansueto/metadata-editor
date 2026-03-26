@@ -20,7 +20,7 @@
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.global.prod.js"></script>
 
   <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable4.umd.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
