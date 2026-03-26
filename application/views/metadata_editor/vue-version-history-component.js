@@ -51,7 +51,7 @@ Vue.component('version-history', {
             return m.isValid() ? m.format("YYYY-MM-DD HH:mm:ss") : '';
         },
         viewVersion(version_id) {
-            window.location.href = CI.base_url + '/editor/' + version_id;
+            window.location.href = CI.base_url + '/projects/edit/' + version_id;
         }
     },
     template: `
