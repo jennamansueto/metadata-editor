@@ -311,7 +311,7 @@ Vue.component('datafile-import', {
             return false;
         },
         removeFile(file_idx){
-            Vue.delete(this.files,file_idx);      
+            delete ;      
             this.files.splice(file_idx, 0);
         },        
         handleFileUpload(event)

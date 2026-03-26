@@ -32,7 +32,7 @@ const VueAdminMetadataEdit = Vue.component('admin-metadata-edit', {
             return _.get(this.metadata_model,key);
         },
         updateModelJson: function(val){
-            this.$set(this,'metadata_model',val);
+             = val;
         },
         update: function (key, value){
             if (key.indexOf(".") !== -1 && this.metadata_model[key]){

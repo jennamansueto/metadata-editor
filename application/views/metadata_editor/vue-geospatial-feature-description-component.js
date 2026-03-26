@@ -117,10 +117,10 @@ Vue.component('geospatial-feature-description', {
             
             // Ensure description.feature_catalogue exists
             if (!this.projectMetadata.description) {
-                Vue.set(this.projectMetadata, 'description', {});
+                 = {};
             }
             if (!this.projectMetadata.description.feature_catalogue) {
-                Vue.set(this.projectMetadata.description, 'feature_catalogue', {});
+                 = {};
             }
             
             // Handle nested paths (like versionDate.date, versionDate.type)

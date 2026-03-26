@@ -278,10 +278,10 @@ Vue.component('variables-validation', {
             });
         },
         updateProposedName: function(name, value) {
-            this.$set(this.proposedNewNames, name, value);
+             = value;
         },
         resetRowSuggestion: function(item) {
-            this.$set(this.proposedNewNames, item.name, this.getDefaultSuggestion(item));
+             = this.getDefaultSuggestion(item);
         },
         openApplyConfirm: function() {
             this.pendingRenamesCount = this.renamesToApply.length;
@@ -320,7 +320,7 @@ Vue.component('variables-validation', {
                         vm.$store.dispatch('loadVariables', { dataset_id: vm.projectId, fid: vm.fid });
                     }
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', (vm.$t('variables_renamed') || 'Variables renamed.'));
+                        EventBus.emit('onSuccess', (vm.$t('variables_renamed') || 'Variables renamed.'));
                     }
                 })
                 .catch(function(err) {
@@ -435,14 +435,14 @@ Vue.component('variables-validation', {
                         vm.fetchValidation();
                     });
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
+                        EventBus.emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
                     }
                 })
                 .catch(function(err) {
                     vm.actionLoading = false;
                     vm.actionError = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (vm.$t('failed') || 'Failed');
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onFail', vm.actionError);
+                        EventBus.emit('onFail', vm.actionError);
                     }
                 });
         },

@@ -43,7 +43,7 @@ Vue.component('template-validation-component', {
                 vm.projectValidationReport();
             };
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         if (this._validationDelayTimer) {
             clearTimeout(this._validationDelayTimer);
         }

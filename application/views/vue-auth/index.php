@@ -19,7 +19,10 @@
     </div>
 
     <!-- development version, includes helpful console warnings -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="<?php echo base_url(); ?>vue-app/assets/vue.compat.global.prod.js"></script>
+    <script>
+        Vue.configureCompat({ MODE: 2 });
+    </script>
     <script src="<?php echo base_url(); ?>javascript/axios.min.js"></script>
     <script>
         var CI = {

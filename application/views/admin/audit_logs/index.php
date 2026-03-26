@@ -1,7 +1,7 @@
 <!-- Include Vue.js and Vuetify -->
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 <link href="<?php echo base_url(); ?>vue-app/assets/mdi.min.css" rel="stylesheet">
-<link href="<?php echo base_url(); ?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+<link href="<?php echo base_url(); ?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
 
 <style>
     .audit-logs-component {
@@ -100,9 +100,12 @@
     }
 </style>
 
-<script src="<?php echo base_url(); ?>vue-app/assets/vue.min.js"></script>
-<script src="<?php echo base_url(); ?>vue-app/assets/vuetify.min.js"></script>
-<script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.min.js"></script>
+<script src="<?php echo base_url(); ?>vue-app/assets/vue.compat.global.prod.js"></script>
+<script>
+    Vue.configureCompat({ MODE: 2 });
+</script>
+<script src="<?php echo base_url(); ?>vue-app/assets/vuetify3.min.js"></script>
+<script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.global.prod.js"></script>
 <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
 
 <div id="app" data-app>
@@ -154,28 +157,30 @@
         }
     };
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
         locale: 'default',
         messages: translation_messages,
+        legacy: true
     });
 
     // Set up Vuetify
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
         theme: {
             themes: {
                 light: {
-                    primary: '#526bc7',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
+                    colors: {
+                        primary: '#526bc7',
+                        secondary: '#b0bec5',
+                        accent: '#8c9eff',
+                        error: '#b71c1c',
+                    },
                 },
             },
         },
     });
 
     // Initialize Vue app
-    new Vue({
-        el: "#app",
+    var audit_app = Vue.createApp({
         i18n,
         vuetify: vuetify,
         data() {
@@ -184,4 +189,7 @@
             }
         }
     });
+    audit_app.use(i18n);
+    audit_app.use(vuetify);
+    audit_app.mount('#app');
 </script>

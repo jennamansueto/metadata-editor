@@ -4,13 +4,13 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/popper.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   
-  <link href="<?php echo base_url();?>vue-app/assets/splitpanes.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/splitpanes3.css" rel="stylesheet">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="<?php echo base_url();?>vue-app/assets/leaflet.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -85,32 +85,37 @@
     <?php echo $this->load->view("metadata_editor/layout.php",null,true); ?>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>
+    // Vue 3 compat mode: default everything to Vue 2 behavior
+    Vue.configureCompat({ MODE: 2 });
+  </script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset-compat.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-i18n.global.prod.js"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous" />   
     
+  <script src="<?php echo base_url(); ?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/vue-scrollto.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vee-validate.full.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/splitpanes.umd.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vee-validate4.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/splitpanes3.umd.min.js"></script>
     
   <script src="<?php echo base_url(); ?>vue-app/assets/sortable.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable.umd.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuedraggable4.umd.min.js"></script>
 
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.js"></script>
-  <link rel="stylesheet" href="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.css">
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty2.min.js"></script>
+  <link rel="stylesheet" href="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty2.min.css">
   <!-- Leaflet JS -->
   <script src="<?php echo base_url();?>vue-app/assets/leaflet.js"></script>
   <!-- Chart.js for data visualization -->
@@ -127,11 +132,12 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default',
       messages: translation_messages,
       //show warnings in console
-      silentTranslationWarn: false
+      silentTranslationWarn: false,
+      legacy: true
     })
 
     Vue.filter('truncate', function (text, stop, clamp) {
@@ -154,20 +160,22 @@
       return (val / (1024*1024)).toFixed(2) + ' MB';
     });
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
             theme: {
-            themes: {
-                light: {
-                    primary: '#526bc7',
-                    "primary-dark": '#0c1a4d',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
-                    success: '#4caf50',
-                    info: '#2196f3',
-                    warning: '#ff9800',
+                themes: {
+                    light: {
+                        colors: {
+                            primary: '#526bc7',
+                            'primary-dark': '#0c1a4d',
+                            secondary: '#b0bec5',
+                            accent: '#8c9eff',
+                            error: '#b71c1c',
+                            success: '#4caf50',
+                            info: '#2196f3',
+                            warning: '#ff9800',
+                        },
+                    },
                 },
-            },
             },
         })
 

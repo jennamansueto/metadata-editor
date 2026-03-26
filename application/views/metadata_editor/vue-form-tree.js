@@ -11,7 +11,7 @@ Vue.component('form-tree', {
             this.$store.state.active_node.id=node_id;
             //this.$vuexSet (this.$store.state.active_node.id, node_id);
             this.$emit('tree-node-click', node_id);
-            bus.$emit('tree-node-click', node_id);
+            bus.emit('tree-node-click', node_id);
         },
         toggleChildren() {
             this.showChildren = !this.showChildren;

@@ -58,7 +58,7 @@ Vue.component('geospatial-feature-characteristics', {
         // Add beforeunload event to warn user if they try to leave page with unsaved changes
         window.addEventListener('beforeunload', this.handleBeforeUnload);
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Remove event listener when component is destroyed
         window.removeEventListener('beforeunload', this.handleBeforeUnload);
     },

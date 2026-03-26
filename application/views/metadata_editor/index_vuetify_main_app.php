@@ -2,7 +2,7 @@
         Vue.use(Vuex)
         Vue.use(VueDeepSet)     
 
-        window.bus = new Vue();//todo remove?
+        window.bus = mitt();
 
         Vue.mixin({
             methods: {
@@ -357,7 +357,8 @@
 
         ]
 
-        const router = new VueRouter({
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
             routes
         })
 
@@ -377,7 +378,7 @@
             next();
         })
 
-        var store = new Vuex.Store({
+        var store = Vuex.createStore({
             state: {
                 user_has_edit_access:user_has_edit_access,
                 active_section: "not set",
@@ -911,12 +912,12 @@
                     state.metadata_types=data;
                 },
                 variables(state,data){
-                    Vue.set(state.variables, data.fid, data.variables);
+                     = data.variables;
                 },
                 variable_add(state,data){
                     if (state.variables[data.fid]==undefined){
-                        Vue.set(state.variables,data.fid,[]);
-                        Vue.set(state.variables[data.fid],data.fid,{});
+                         = [];
+                         = {};
                     }
 
                     let new_idx=state.variables[data.fid].push(data.variable)-1;

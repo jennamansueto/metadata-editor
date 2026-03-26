@@ -5,13 +5,13 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/bootstrap.min.css" rel="stylesheet" >
 
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
 
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -680,11 +680,15 @@
     </v-app>
   </div>
 
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>
+    Vue.configureCompat({ MODE: 2 });
+  </script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/mitt.umd.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
@@ -728,9 +732,10 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
+      legacy: true
     })
 
     // 1. Define route components.        
@@ -756,20 +761,22 @@
       }
     ]
 
-    const router = new VueRouter({
-      routes, 
-      mode: 'history'
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHistory(),
+      routes
     })
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#526bc7',
-            "primary-dark": '#0c1a4d',
-            secondary: '#b0bec5',
-            accent: '#8c9eff',
-            error: '#b71c1c',
+            colors: {
+              primary: '#526bc7',
+              'primary-dark': '#0c1a4d',
+              secondary: '#b0bec5',
+              accent: '#8c9eff',
+              error: '#b71c1c',
+            },
           },
         },
       },
@@ -983,7 +990,7 @@
         toggleRevisions: function(project_id) {
           let project = this.Projects.find(x => x.id == project_id);
           if (project) {
-            Vue.set(project, 'versions_show', !project.versions_show);
+             = !project.versions_show;
           }
         },
         createProjectRevision: function(project_id) {
@@ -1246,7 +1253,7 @@
 
               for (i = 0; i < facet_types.length; i++) {
                 let facet_name = facet_types[i];
-                Vue.set(vm.search_filters, facet_name, []);
+                 = [];
               }
               
               vm.ReadFilterQS();
@@ -1261,7 +1268,7 @@
           return axios
             .get(url)
             .then(function(response) {
-              Vue.set(vm.projects.projects[projectIndex], 'size', response.data.result);
+               = response.data.result;
               
             })
             .catch(function(error) {
@@ -1505,7 +1512,7 @@
           this.loadProjects();
         },
         removeFilter: function(filter_type, value_idx) {
-         this.$delete(this.search_filters[filter_type], value_idx);
+         delete ;
         },
         getFilterChipColor: function(filter_type) {
           const colorMap = {
@@ -1519,11 +1526,11 @@
         },
         onApplyUserFilter: function(selected_users) {
             if (!this.facets.users_filter) {
-                Vue.set(this.facets, 'users_filter', []);
+                 = [];
             }
             
             if (!this.search_filters.users_filter) {
-                Vue.set(this.search_filters, 'users_filter', []);
+                 = [];
             }
             
             selected_users.forEach(user => {
@@ -1544,10 +1551,10 @@
         },
         onApplyTagFilter: function(selected_tags) {
             if (!this.facets.tags) {
-                Vue.set(this.facets, 'tags', []);
+                 = [];
             }
             if (!this.search_filters.tags) {
-                Vue.set(this.search_filters, 'tags', []);
+                 = [];
             }
             selected_tags.forEach(tag => {
                 if (!this.facets.tags.find(t => t.id === tag.id)) {

@@ -50,7 +50,7 @@ Vue.component('datafiles', {
         // Listen for page visibility changes (tab activation)
         document.addEventListener('visibilitychange', this.handleVisibilityChange);
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clean up event listener
         document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     },

@@ -133,16 +133,16 @@ Vue.component('datafile-data-explorer', {
                     }
                     vm.variable_data = [];
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onSuccess', vm.$t('csv_data_deleted') || 'CSV data deleted successfully.');
+                        EventBus.emit('onSuccess', vm.$t('csv_data_deleted') || 'CSV data deleted successfully.');
                     }
                 } else {
                     if (typeof EventBus !== 'undefined') {
-                        EventBus.$emit('onFail', (res.data && res.data.message) || 'Failed to delete CSV data.');
+                        EventBus.emit('onFail', (res.data && res.data.message) || 'Failed to delete CSV data.');
                     }
                 }
             } catch (err) {
                 const msg = (err.response && err.response.data && err.response.data.message) || err.message;
-                if (typeof EventBus !== 'undefined') EventBus.$emit('onFail', msg);
+                if (typeof EventBus !== 'undefined') EventBus.emit('onFail', msg);
             } finally {
                 vm.delete_in_progress = false;
             }

@@ -92,7 +92,7 @@ Vue.component('dialog-batch-sum-stats-options', {
         applyDefaultsForIntervalType() {
             const defaults = this._defaultOptionsForIntervalType(this.interval_type);
             Object.keys(defaults).forEach(k => {
-                this.$set(this.sum_stats_options, k, defaults[k]);
+                 = defaults[k];
             });
         },
         _varIntervalType(v) {
@@ -114,13 +114,13 @@ Vue.component('dialog-batch-sum-stats-options', {
                     const data = response.data || {};
                     const n = data.updated != null ? data.updated : 0;
                     vm.message_success = vm.$t('batch_sum_stats_applied', { count: n }) || (n + ' variable(s) updated.');
-                    EventBus.$emit('onSuccess', vm.message_success);
+                    EventBus.emit('onSuccess', vm.message_success);
                     vm.$emit('applied');
                 })
                 .catch(function (error) {
                     const msg = (error.response && error.response.data && error.response.data.message) ? error.response.data.message : (error.message || 'Request failed');
                     vm.message_error = msg;
-                    EventBus.$emit('onFail', msg);
+                    EventBus.emit('onFail', msg);
                 })
                 .then(function () {
                     vm.applying = false;

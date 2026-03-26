@@ -78,10 +78,10 @@ Vue.component('schema-object-field', {
             this.field_data[newValue]=this.field_data[key];
            
             //remove the key
-            Vue.delete(this.field_data, key);
+            delete ;
         },
         removeByKey: function (key){
-            Vue.delete(this.field_data, key);
+            delete ;
         },
         isValidKeValue(){
             if (!this.new_object.key){
