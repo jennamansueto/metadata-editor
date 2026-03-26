@@ -5,7 +5,7 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
   <link href="<?php echo base_url()?>themes/nada52/fontawesome/css/all.css" rel="stylesheet">
   <link rel="stylesheet" href="<?php echo base_url(); ?>themes/nada52/css/bootstrap.min.css">
   <link href="<?php echo base_url();?>vue-app/assets/styles.css" rel="stylesheet">
@@ -13,22 +13,24 @@
   <script src="<?php echo base_url();?>vue-app/assets/jquery.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
-
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>
+    Vue.configureCompat({ MODE: 2 });
+  </script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/session_channel.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-session-handler.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/global-login-plugin.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/lodash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset.min.js"></script>
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-deepset-compat.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/ajv.min.js"></script>
   <script src="<?php echo base_url(); ?>vue-app/assets/deepdash.min.js"></script>
-  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty.min.js"></script>
-  <link href="<?php echo base_url();?>vue-app/assets/vue-json-pretty.min.css" rel="stylesheet">
+  <script src="<?php echo base_url(); ?>vue-app/assets/vue-json-pretty2.min.js"></script>
+  <link href="<?php echo base_url();?>vue-app/assets/vue-json-pretty2.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 
@@ -414,9 +416,10 @@
       default: <?php echo json_encode($translations,JSON_HEX_APOS);?>
     }
 
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default', // set locale
       messages: translation_messages, // set locale messages
+      legacy: true
     })
 
     const Home = {
@@ -429,35 +432,30 @@
       name: 'home'
     }]
 
-    const router = new VueRouter({
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
       routes
     })
 
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
             theme: {
             themes: {
                 light: {
-                    primary: '#526bc7',
-                    "primary-dark": '#0c1a4d',
-                    secondary: '#b0bec5',
-                    accent: '#8c9eff',
-                    error: '#b71c1c',
+                    colors: {
+                        primary: '#526bc7',
+                        'primary-dark': '#0c1a4d',
+                        secondary: '#b0bec5',
+                        accent: '#8c9eff',
+                        error: '#b71c1c',
+                    },
                 },
             },
             },
         })
 
-    // Use GlobalLoginPlugin for session handling
-    if (typeof GlobalLoginPlugin !== 'undefined') {
-        Vue.use(GlobalLoginPlugin);
-    }
-
-    vue_app = new Vue({
-      i18n,
-      el: '#app',
-      vuetify: vuetify,
-      router: router,
-      data: {
+    vue_app = Vue.createApp({
+      data() {
+        return {
         site_base_url: CI.site_url,
         templates: { core: [], custom: [] },
         is_loading: false,
@@ -492,6 +490,7 @@
         schemasByUid: {},
         schemasByAlias: {},
         schemasLoading: false
+        };
       },
       created: async function() {
         //await this.$store.dispatch('initData',{dataset_idno:this.dataset_idno});
@@ -942,12 +941,19 @@
           reader.readAsText(file);
         }
       }
-    })
+    });
+    vue_app.use(i18n);
+    vue_app.use(router);
+    vue_app.use(vuetify);
+    if (typeof GlobalLoginPlugin !== 'undefined') {
+        vue_app.use(GlobalLoginPlugin);
+    }
 
     //register components
     //vue_app.component('vue-template-share', VueTemplateShareComponent);
-    Vue.component('VueJsonPretty', VueJsonPretty.default)
+    vue_app.component('VueJsonPretty', VueJsonPretty.default)
 
+    vue_app.mount('#app');
   </script>
 </body>
 

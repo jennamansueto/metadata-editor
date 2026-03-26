@@ -16,7 +16,7 @@ Vue.component('geospatial-feature-edit', {
     mounted: function() {
         this.loadFeature();
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         this.destroyMap();
     },
     watch: {

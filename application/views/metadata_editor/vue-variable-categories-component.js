@@ -45,19 +45,19 @@ Vue.component('variable-categories', {
             }
             
             // Clear categories arrays
-            Vue.set(this.variable, 'var_catgry', []);
-            Vue.set(this.variable, 'var_catgry_labels', []);
+             this.variable.var_catgry = [];
+             this.variable.var_catgry_labels = [];
             
             if (!this.variable.sum_stats_options) {
-                Vue.set(this.variable, 'sum_stats_options', {});
+                 this.variable.sum_stats_options = {};
             }
-            Vue.set(this.variable.sum_stats_options, 'freq', false);
+             this.variable.sum_stats_options.freq = false;
             
             // Emit update event
             this.$emit('update:value', this.variable);
             
             // Show success message
-            EventBus.$emit('onSuccess', this.deleteSuccessMessage);
+            EventBus.emit('onSuccess', this.deleteSuccessMessage);
         },
         refreshCategories: function(){
             if (!confirm(this.$t("confirm_reload_categories"))){
@@ -75,7 +75,7 @@ Vue.component('variable-categories', {
                 )
             }
 
-            Vue.set(this.variable, 'var_catgry_labels', labels);
+             this.variable.var_catgry_labels = labels;
         },
         GetFieldTitle: function (code, default_title='') {
             let template_field=this.FindTemplateByItemKey(this.VariableTemplate.items,code);

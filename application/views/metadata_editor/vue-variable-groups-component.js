@@ -100,7 +100,7 @@ Vue.component('variable-groups', {
 
             if (this.activeItem){
                 if (!this.activeItem.variable_groups){
-                    this.$set(this.activeItem, 'variable_groups', []);
+                    this.activeItem.variable_groups = [];
                 }
                 this.activeItem.variable_groups.push({
                     "vgid": 'VG'+(parseInt(this.getMaxVgId())+1),
@@ -196,13 +196,13 @@ Vue.component('variable-groups', {
             )
             .then(function (response) {
                 console.log("updating",response);
-                EventBus.$emit('onSuccess', 'Variable group saved!');
+                EventBus.emit('onSuccess', 'Variable group saved!');
                 //vm.$set(vm.data_files, vm.edit_item, JSON.parse(JSON.stringify(data)));
                 //vm.$store.dispatch('loadDataFiles',{dataset_id:vm.dataset_id});
             })
             .catch(function (error) {
                 console.log(error);
-                EventBus.$emit('onFail', 'Failed to save changes');
+                EventBus.emit('onFail', 'Failed to save changes');
                 let message='';
                 if (error.response.data.message){
                     message=error.response.data.message;
@@ -218,7 +218,7 @@ Vue.component('variable-groups', {
         OnVariableSelection: function(selected){
             this.showDialog=false;
             if (!this.activeItem.variables){
-                this.$set(this.activeItem, 'variables', []);
+                this.activeItem.variables = [];
             }
             this.activeItem.variables.push(...selected);
         },
@@ -250,7 +250,7 @@ Vue.component('variable-groups', {
             if (key.indexOf(".") !== -1 && this.activeItem[key]){
                 delete this.activeItem[key];
             }
-            Vue.set(this.activeItem,key,value);
+            this.activeItem[key] = value;
         },
         updateSection: function (obj)
         {

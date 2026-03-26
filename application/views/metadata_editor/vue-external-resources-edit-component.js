@@ -375,7 +375,7 @@ const VueExternalResourcesEdit= Vue.component('external-resources-edit', {
             if (obj.key.indexOf(".") !== -1 && this.Resource[obj.key]){
                 delete this.Resource[obj.key];
             }
-            Vue.set(this.Resource,obj.key,obj.value);
+             this.Resource[obj.key] = obj.value;
         },
         formatFileSize: function(bytes) {
             if (!bytes || bytes === 0) return '0 Bytes';

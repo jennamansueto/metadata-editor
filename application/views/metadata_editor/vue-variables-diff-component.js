@@ -124,14 +124,14 @@ Vue.component('variables-diff', {
                             vm.fetchColumnsDiff();
                         });
                         if (typeof EventBus !== 'undefined') {
-                            EventBus.$emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
+                            EventBus.emit('onSuccess', (vm.$t('variables_removed') || 'Variables removed from metadata.'));
                         }
                     })
                     .catch(function(err) {
                         vm.actionLoading = false;
                         vm.actionError = (err.response && err.response.data && err.response.data.message) ? err.response.data.message : (vm.$t('failed') || 'Failed');
                         if (typeof EventBus !== 'undefined') {
-                            EventBus.$emit('onFail', vm.actionError);
+                            EventBus.emit('onFail', vm.actionError);
                         }
                     });
         },

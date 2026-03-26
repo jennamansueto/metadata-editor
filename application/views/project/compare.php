@@ -5,7 +5,7 @@
   <link rel="icon" href="<?php echo base_url();?>favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="<?php echo base_url();?>vue-app/assets/mdi.min.css" rel="stylesheet">
-  <link href="<?php echo base_url();?>vue-app/assets/vuetify.min.css" rel="stylesheet">
+  <link href="<?php echo base_url();?>vue-app/assets/vuetify3.min.css" rel="stylesheet">
 
   <script src="<?php echo base_url();?>vue-app/assets/moment-with-locales.min.js"></script>
 
@@ -625,12 +625,15 @@
   </div>
 
   <!-- Vue.js and dependencies -->
-  <script src="<?php echo base_url();?>vue-app/assets/vue.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuetify.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-router.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vuex.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue.compat.global.prod.js"></script>
+  <script>
+    Vue.configureCompat({ MODE: 2 });
+  </script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuetify3.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-router.global.prod.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vuex.global.prod.js"></script>
   <script src="<?php echo base_url();?>vue-app/assets/axios.min.js"></script>
-  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.min.js"></script>
+  <script src="<?php echo base_url();?>vue-app/assets/vue-i18n.global.prod.js"></script>
   
   <!-- JSON Diff Library -->
   <script src="<?php echo base_url();?>vue-app/assets/json-diff-kit/json-diff-kit.umd.min.js"></script>
@@ -642,36 +645,37 @@
       default: <?php echo json_encode($translations, JSON_HEX_APOS); ?>
     };
     
-    const i18n = new VueI18n({
+    const i18n = VueI18n.createI18n({
       locale: 'default',
       fallbackLocale: 'default',
-      messages: translation_messages
+      messages: translation_messages,
+      legacy: true
     });
 
 
     // Vuetify setup
-    const vuetify = new Vuetify({
+    const vuetify = Vuetify.createVuetify({
       theme: {
         themes: {
           light: {
-            primary: '#1976D2',
-            secondary: '#424242',
-            accent: '#82B1FF',
-            error: '#FF5252',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FFC107'
+            colors: {
+              primary: '#1976D2',
+              secondary: '#424242',
+              accent: '#82B1FF',
+              error: '#FF5252',
+              info: '#2196F3',
+              success: '#4CAF50',
+              warning: '#FFC107'
+            }
           }
         }
       }
     });
 
     // Vue app
-    const vue_app = new Vue({
-      el: '#app',
-      i18n,
-      vuetify,
-      data: {
+    const vue_app = Vue.createApp({
+      data() {
+        return {
         // Get project IDs from URL query string
         project1_id: new URLSearchParams(window.location.search).get('project1'),
         project2_id: new URLSearchParams(window.location.search).get('project2'),
@@ -726,6 +730,7 @@
         variables_diff: null,
         variables_diff_error: null,
         variables_diff_filter: 'changed'
+        };
       },
       mounted() {
         if (this.project1_id && this.project2_id) {
@@ -1187,6 +1192,9 @@
         }
       }
     });
+    vue_app.use(i18n);
+    vue_app.use(vuetify);
+    vue_app.mount('#app');
   </script>
 
 </body>

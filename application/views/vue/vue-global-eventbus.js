@@ -1,16 +1,16 @@
-const EventBus = new Vue();
+const EventBus = mitt();
 
 //Global confirm function
 Vue.prototype.$confirm = function (message) {
     return new Promise((resolve, reject) => {
-        EventBus.$emit('confirm', { message, resolve, reject });
+        EventBus.emit('confirm', { message, resolve, reject });
     });
 };
 
 //Global alert function
 Vue.prototype.$alert = function (message, options = {}) {
     return new Promise((resolve) => {
-        EventBus.$emit('alert', { message, ...options, resolve });
+        EventBus.emit('alert', { message, ...options, resolve });
     });
 };
 

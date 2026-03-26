@@ -152,7 +152,7 @@ Vue.component('validation-rules-component', {
             return '';
         },
         remove: function (rule_name){
-            Vue.delete(this.local, rule_name);
+            delete this.local[rule_name];
         },
         addRule: function ()
         {

@@ -48,9 +48,9 @@ Vue.component('confirm-dialog', {
     },
   },
   mounted() {
-    EventBus.$on('confirm', this.showConfirmDialog);
+    EventBus.on('confirm', this.showConfirmDialog);
   },
-  beforeDestroy() {
-    EventBus.$off('confirm', this.showConfirmDialog);
+  beforeUnmount() {
+    EventBus.off('confirm', this.showConfirmDialog);
   },
 });

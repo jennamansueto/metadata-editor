@@ -117,7 +117,7 @@ Vue.component('indicator-dsd-chart', {
         document.head.appendChild(style);
         this._customStyle = style;
     },
-    beforeDestroy: function() {
+    beforeUnmount: function() {
         // Clean up resize listener and injected style
         if (this._resizeHandler) {
             window.removeEventListener('resize', this._resizeHandler);
@@ -198,7 +198,7 @@ Vue.component('indicator-dsd-chart', {
             } catch (error) {
                 console.error('Error loading chart data:', error);
                 vm.error = error.response?.data?.message || error.message || 'Failed to load chart data';
-                EventBus.$emit('onFail', vm.error);
+                EventBus.emit('onFail', vm.error);
             } finally {
                 this.loading = false;
             }
@@ -391,7 +391,7 @@ Vue.component('indicator-dsd-chart', {
         },
         applyFilters: function() {
             if (!this.filters.geography || this.filters.geography.length === 0) {
-                EventBus.$emit('onFail', this.$t('select_at_least_one_geography') || 'Select at least one geography to view the chart.');
+                EventBus.emit('onFail', this.$t('select_at_least_one_geography') || 'Select at least one geography to view the chart.');
                 return;
             }
             this.loadChartData();
