@@ -43,8 +43,8 @@ Vue.component('indicator-dsd-import', {
         window.addEventListener('hashchange', this._boundHashChange);
 
         // Register a router guard as a fallback for hash-only route updates
-        if (this.$router && Array.isArray(this.$router.beforeHooks)) {
-            this._routeGuard = (to, from, next) => {
+        if (this.$router) {
+            this._removeRouteGuard = this.$router.beforeEach((to, from, next) => {
                 if (!this.shouldWarnBeforeUnload()) {
                     return next();
                 }
@@ -57,18 +57,14 @@ Vue.component('indicator-dsd-import', {
                     return next(false);
                 }
                 return next();
-            };
-            this.$router.beforeHooks.push(this._routeGuard);
+            });
         }
     },
     beforeUnmount() {
         window.removeEventListener('beforeunload', this._boundBeforeUnload);
         window.removeEventListener('hashchange', this._boundHashChange);
-        if (this._routeGuard && this.$router && Array.isArray(this.$router.beforeHooks)) {
-            const idx = this.$router.beforeHooks.indexOf(this._routeGuard);
-            if (idx > -1) {
-                this.$router.beforeHooks.splice(idx, 1);
-            }
+        if (this._removeRouteGuard) {
+            this._removeRouteGuard();
         }
     },
     beforeRouteLeave(to, from, next) {
