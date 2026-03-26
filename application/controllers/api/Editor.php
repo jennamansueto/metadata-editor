@@ -1813,13 +1813,14 @@ class Editor extends MY_REST_Controller
 
 			$versions=$this->Editor_model->get_project_versions($sid);
 
-			// Enrich versions with user names
-			$this->load->model('Ion_auth_model');
+			// Enrich versions with user names via direct DB lookup
 			foreach($versions as &$version){
 				if (isset($version['version_created_by']) && $version['version_created_by']){
-					$user_info=$this->Ion_auth_model->user($version['version_created_by'])->row();
-					if ($user_info){
-						$version['version_created_by_name']=$user_info->first_name.' '.$user_info->last_name;
+					$this->db->select('username');
+					$this->db->where('id', $version['version_created_by']);
+					$user_row=$this->db->get('users')->row_array();
+					if ($user_row){
+						$version['version_created_by_name']=$user_row['username'];
 					}
 				}
 			}
