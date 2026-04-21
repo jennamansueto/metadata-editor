@@ -211,7 +211,11 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            if (!$this->is_valid_job_id($job_id)) {
+                throw new Exception("Invalid job_id");
+            }
+
+            $response = $this->make_api_request('GET', "/jobs/" . rawurlencode($job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -280,6 +284,8 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            $safe_endpoint = $this->sanitise_relative_endpoint($endpoint);
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
@@ -294,7 +300,7 @@ class Geospatial_api_client {
                 $options['json'] = $data;
             }
 
-            $response = $client->request($method, $endpoint, $options);
+            $response = $client->request($method, $safe_endpoint, $options);
             
             $response_body = $response->getBody()->getContents();
             $decoded_response = json_decode($response_body, true);
@@ -318,6 +324,68 @@ class Geospatial_api_client {
         } catch (Exception $e) {
             throw new Exception("API request failed: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Validate that a job_id only contains safe characters.
+     *
+     * The upstream FastAPI service issues job_ids as UUIDs or short
+     * alphanumeric tokens. Restricting to URL-safe characters prevents
+     * callers from smuggling path segments, query strings, fragments, or
+     * credentials into the URL built in get_job_status() (SonarQube
+     * php:S7044 / CWE-20 user-controlled URL path).
+     *
+     * @param mixed $job_id
+     * @return bool
+     */
+    private function is_valid_job_id($job_id)
+    {
+        if (!is_string($job_id) || $job_id === '') {
+            return false;
+        }
+        if (strlen($job_id) > 128) {
+            return false;
+        }
+        return preg_match('/^[A-Za-z0-9_\-]+$/', $job_id) === 1;
+    }
+
+    /**
+     * Ensure an endpoint string passed to the Guzzle client is a
+     * same-origin relative path.
+     *
+     * The Guzzle client is configured with a fixed `base_uri`, but if a
+     * caller (or a tainted argument from a caller) passed an absolute URL
+     * such as `http://attacker.example/` Guzzle would replace the base URI
+     * with the attacker-controlled host, allowing SSRF. This helper rejects
+     * absolute URLs, protocol-relative URLs, and backslash/CRLF smuggling,
+     * and normalises the value to a leading-slash path (SonarQube
+     * php:S7044 / S5144).
+     *
+     * @param string $endpoint
+     * @return string
+     * @throws Exception when the endpoint is not a same-origin relative path
+     */
+    private function sanitise_relative_endpoint($endpoint)
+    {
+        if (!is_string($endpoint) || $endpoint === '') {
+            throw new Exception("Invalid API endpoint");
+        }
+
+        if (strpbrk($endpoint, "\\\r\n\t") !== false) {
+            throw new Exception("Invalid API endpoint");
+        }
+
+        if (strpos($endpoint, '://') !== false) {
+            throw new Exception("Invalid API endpoint");
+        }
+
+        $normalised = '/' . ltrim($endpoint, '/');
+        if (isset($normalised[1]) && $normalised[1] === '/') {
+            // Protocol-relative URL, e.g. "//evil.example/foo"
+            throw new Exception("Invalid API endpoint");
+        }
+
+        return $normalised;
     }
 
     /**
