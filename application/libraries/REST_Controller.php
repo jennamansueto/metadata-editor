@@ -2462,6 +2462,7 @@ abstract class REST_Controller extends CI_Controller {
         {
             return FALSE;
         }
-        return in_array(strtolower($parts['host']), ['localhost', '127.0.0.1', '[::1]'], TRUE);
+        // parse_url strips the square brackets from an IPv6 host, so match the bare form.
+        return in_array(strtolower($parts['host']), ['localhost', '127.0.0.1', '::1'], TRUE);
     }
 }
