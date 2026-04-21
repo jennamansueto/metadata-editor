@@ -589,14 +589,20 @@ $config['allowed_cors_methods'] = [
 
 /*
 |--------------------------------------------------------------------------
-| CORS Allow Any Domain
+| CORS Allow Any Domain (local-development convenience only)
 |--------------------------------------------------------------------------
 |
-| Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| When TRUE, http(s) requests from loopback origins (localhost,
+| 127.0.0.1, [::1]) are permitted without having to be added to
+| $config['allowed_cors_origins']. All other origins — including
+| non-loopback hostnames such as dev.local or host.docker.internal —
+| must still be listed explicitly in allowed_cors_origins.
+|
+| A wildcard "Access-Control-Allow-Origin: *" response is never emitted
+| (SonarQube php:S5122 / CWE-942). Leave this FALSE in production.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------

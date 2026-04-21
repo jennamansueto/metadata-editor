@@ -2384,39 +2384,60 @@ abstract class REST_Controller extends CI_Controller {
     /**
      * Checks allowed domains, and adds appropriate headers for HTTP access control (CORS)
      *
+     * CORS handling is restricted to an explicit allow-list of origins
+     * (`allowed_cors_origins`). A permissive `Access-Control-Allow-Origin: *`
+     * response is never emitted, because this API serves authenticated
+     * sessions — a wildcard ACAO combined with browser-sent credentials
+     * would let any site read authenticated responses (SonarQube php:S5122,
+     * CWE-942). The legacy `allow_any_cors_domain` switch is honoured only
+     * as a convenience for local development on `localhost`/`127.0.0.1`
+     * origins; any other origin must be listed explicitly.
+     *
      * @access protected
      * @return void
      */
     protected function _check_cors()
     {
-        // Convert the config items into strings
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
-        if ($this->config->item('allow_any_cors_domain') === TRUE)
+        $origin = $this->input->server('HTTP_ORIGIN');
+        if (!is_string($origin) || $origin === '')
         {
-            header('Access-Control-Allow-Origin: *');
+            $origin = '';
+        }
+
+        $allowed_origins = $this->config->item('allowed_cors_origins');
+        if (!is_array($allowed_origins))
+        {
+            $allowed_origins = [];
+        }
+
+        $is_allowed = $origin !== '' && in_array($origin, $allowed_origins, TRUE);
+
+        // Convenience path for local development only: when
+        // allow_any_cors_domain is TRUE, permit localhost/127.0.0.1/[::1]
+        // origins without requiring them to be pre-registered. We still
+        // reflect only the exact Origin and never use `*`.
+        if (!$is_allowed
+            && $origin !== ''
+            && $this->config->item('allow_any_cors_domain') === TRUE
+            && $this->_is_local_dev_origin($origin))
+        {
+            $is_allowed = TRUE;
+        }
+
+        // Vary: Origin is emitted unconditionally because the response
+        // content (specifically whether ACAO is present) depends on the
+        // request Origin header. Without it, a shared cache may serve a
+        // no-CORS response to a later request from an allowed origin.
+        header('Vary: Origin');
+
+        if ($is_allowed)
+        {
+            header('Access-Control-Allow-Origin: '.$origin);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
-        }
-        else
-        {
-            // We're going to allow only certain domains access
-            // Store the HTTP Origin header
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin === NULL)
-            {
-                $origin = '';
-            }
-
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Access-Control-Allow-Headers: '.$allowed_headers);
-                header('Access-Control-Allow-Methods: '.$allowed_methods);
-            }
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
@@ -2424,5 +2445,24 @@ abstract class REST_Controller extends CI_Controller {
         {
             exit;
         }
+    }
+
+    /**
+     * @param string $origin
+     * @return bool TRUE if $origin is a loopback scheme://host[:port] value
+     */
+    private function _is_local_dev_origin($origin)
+    {
+        $parts = parse_url($origin);
+        if (!is_array($parts) || empty($parts['scheme']) || empty($parts['host']))
+        {
+            return FALSE;
+        }
+        if (!in_array($parts['scheme'], ['http', 'https'], TRUE))
+        {
+            return FALSE;
+        }
+        // parse_url strips the square brackets from an IPv6 host, so match the bare form.
+        return in_array(strtolower($parts['host']), ['localhost', '127.0.0.1', '::1'], TRUE);
     }
 }
