@@ -45,24 +45,60 @@ class Page extends MY_Controller {
 			$this->session->set_userdata('language',strtolower($lang));
 			
 			$destination=site_home();
-			
-			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
-
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
+			$requested_destination=$this->input->get("destination");
+			if ($requested_destination){
+				$valid_destination=$this->validate_switch_language_destination($requested_destination);
+				if ($valid_destination !== null){
+					$destination=$valid_destination;
 				}
 			}
-			
+
 			redirect($destination);
 		}
 		else{
 			show_error("Invalid Language selected!");
 		}
+	}
+
+	/**
+	 * Validate a user-supplied redirect target for switch_language().
+	 *
+	 * Only accepts relative paths whose first segment is on a fixed allow-list.
+	 * Rejects absolute URLs, protocol-relative URLs (`//host`), and backslash
+	 * tricks that would otherwise let an attacker redirect off-site
+	 * (SonarQube rule php:S5146, CWE-601).
+	 *
+	 * @param string $destination Raw value from the `destination` query string
+	 * @return string|null Sanitised relative path to pass to redirect(), or null
+	 *                    if the input is not a valid in-site target.
+	 */
+	private function validate_switch_language_destination($destination)
+	{
+		if (!is_string($destination) || $destination === '') {
+			return null;
+		}
+
+		if (strpbrk($destination, "\\\r\n\t") !== false) {
+			return null;
+		}
+
+		$normalised = ltrim($destination, '/');
+		if ($normalised === '' || $normalised[0] === '/') {
+			return null;
+		}
+
+		if (strpos($normalised, '://') !== false) {
+			return null;
+		}
+
+		$first_segment = explode('/', $normalised, 2)[0];
+		$valid_redirects = array('admin', 'editor', 'collections', 'projects', 'home', 'about', 'auth');
+		if (!in_array($first_segment, $valid_redirects, true)) {
+			return null;
+		}
+
+		return $normalised;
 	}
 }
 /* End of file page.php */
