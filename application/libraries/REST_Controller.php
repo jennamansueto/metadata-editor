@@ -2427,10 +2427,15 @@ abstract class REST_Controller extends CI_Controller {
             $is_allowed = TRUE;
         }
 
+        // Vary: Origin is emitted unconditionally because the response
+        // content (specifically whether ACAO is present) depends on the
+        // request Origin header. Without it, a shared cache may serve a
+        // no-CORS response to a later request from an allowed origin.
+        header('Vary: Origin');
+
         if ($is_allowed)
         {
             header('Access-Control-Allow-Origin: '.$origin);
-            header('Vary: Origin');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
