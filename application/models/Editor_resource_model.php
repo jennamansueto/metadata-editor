@@ -282,8 +282,24 @@ class Editor_resource_model extends ci_model {
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
+		// Defence-in-depth against path traversal (SonarQube php:S2083):
+		// collapse the filename to its base component and ensure the resolved
+		// destination stays inside the intended project sub-folder, even if an
+		// attacker manages to introduce path separators upstream of the
+		// resumable-upload sanitiser.
+		$final_filename = basename($final_filename);
+		if ($final_filename === '' || $final_filename === '.' || $final_filename === '..') {
+			throw new Exception('INVALID_FILENAME');
+		}
+
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		$destination_real = realpath(dirname($final_file_path));
+		$folder_real = realpath($survey_folder_type);
+		if ($destination_real === false || $folder_real === false || strpos($destination_real, $folder_real) !== 0) {
+			throw new Exception('INVALID_DESTINATION_PATH');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
@@ -1379,4 +1395,4 @@ class Editor_resource_model extends ci_model {
 	}
 
 
-}    
+}        
