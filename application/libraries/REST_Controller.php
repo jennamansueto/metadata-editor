@@ -2398,8 +2398,13 @@ abstract class REST_Controller extends CI_Controller {
         // Historically this emitted "Access-Control-Allow-Origin: *", which
         // SonarQube php:S5122 flags as a permissive CORS policy. We instead
         // reflect the request's Origin header when it has a well-formed
-        // value (scheme://host[:port]) so the response is accepted by any
-        // browser origin without shipping the literal wildcard.
+        // value (scheme://host[:port], per RFC 3986) so the response is
+        // accepted by any browser origin without shipping the literal
+        // wildcard. The scheme is deliberately not restricted to http(s)
+        // because browser extensions (chrome-extension://, moz-extension://),
+        // hybrid mobile webviews (capacitor://, ionic://) and desktop
+        // frameworks (tauri://) all send origins with custom schemes under
+        // the old "*" behaviour.
         //
         // IMPORTANT security note: unlike "*", a reflected origin is *not*
         // rejected by the browser when a response also sets
@@ -2418,13 +2423,20 @@ abstract class REST_Controller extends CI_Controller {
             //     sandboxed iframes, data: / file: URLs, and some privacy
             //     redirects. The Fetch spec treats this as an opaque origin
             //     and we preserve backward compatibility by reflecting it,
-            //   * an http(s) URL whose host is either a bracket-enclosed
-            //     IPv6 literal (e.g. "[::1]", "[2001:db8::1]") or a DNS
-            //     hostname / IPv4 literal (ASCII alphanumerics, hyphens,
-            //     dots and underscores — underscores are accepted because
-            //     many dev/internal hostnames use them even though DNS
+            //   * a URL whose scheme is any RFC 3986 scheme (starts with a
+            //     letter, followed by letters, digits, "+", "-" or ".")
+            //     and whose host is either a bracket-enclosed IPv6 literal
+            //     (e.g. "[::1]", "[2001:db8::1]") or a DNS hostname /
+            //     IPv4 literal (ASCII alphanumerics, hyphens, dots and
+            //     underscores — underscores are accepted because many
+            //     dev/internal hostnames use them even though DNS
             //     technically disallows them), with an optional
-            //     ":port" (1-5 decimal digits).
+            //     ":port" (1-5 decimal digits). Non-http(s) schemes are
+            //     deliberately allowed so that browser extensions
+            //     (chrome-extension://, moz-extension://), hybrid mobile
+            //     webviews (capacitor://, ionic://) and desktop
+            //     frameworks (tauri://) keep working under the
+            //     allow_any_cors_domain contract.
             // Anything else — missing, empty, over 2083 chars, or not
             // matching the pattern — is ignored and *no* CORS response
             // headers are sent so we never emit orphan Allow-Headers /
@@ -2435,7 +2447,7 @@ abstract class REST_Controller extends CI_Controller {
                 && strlen($origin) <= 2083
                 && (
                     $origin === 'null'
-                    || preg_match('#^https?://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
+                    || preg_match('#^[A-Za-z][A-Za-z0-9+\-.]*://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
                 );
 
             // Emit Vary: Origin unconditionally on every response that
