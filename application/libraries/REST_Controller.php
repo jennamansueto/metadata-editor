@@ -2412,25 +2412,39 @@ abstract class REST_Controller extends CI_Controller {
         // prevents arbitrary header values from ever being reflected back.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            $origin = $this->input->server('HTTP_ORIGIN');
-            // Host part accepts either:
-            //   * a bracket-enclosed IPv6 literal (e.g. "[::1]", "[2001:db8::1]"), or
-            //   * a DNS hostname / IPv4 literal (ASCII alphanumerics, hyphens,
+            // Accepted values for the Origin header, all equivalent in spirit
+            // to the historical "*" response under allow_any_cors_domain:
+            //   * the literal string "null" — what browsers send from
+            //     sandboxed iframes, data: / file: URLs, and some privacy
+            //     redirects. The Fetch spec treats this as an opaque origin
+            //     and we preserve backward compatibility by reflecting it,
+            //   * an http(s) URL whose host is either a bracket-enclosed
+            //     IPv6 literal (e.g. "[::1]", "[2001:db8::1]") or a DNS
+            //     hostname / IPv4 literal (ASCII alphanumerics, hyphens,
             //     dots and underscores — underscores are accepted because
-            //     they appear in many dev/internal hostnames even though DNS
-            //     technically disallows them).
-            // An optional ":port" (1-5 decimal digits) is permitted.
-            if (is_string($origin)
+            //     many dev/internal hostnames use them even though DNS
+            //     technically disallows them), with an optional
+            //     ":port" (1-5 decimal digits).
+            // Anything else — missing, empty, over 2083 chars, or not
+            // matching the pattern — is ignored and *no* CORS response
+            // headers are sent so we never emit orphan Allow-Headers /
+            // Allow-Methods without a matching Allow-Origin.
+            $origin = $this->input->server('HTTP_ORIGIN');
+            $origin_is_valid = is_string($origin)
                 && $origin !== ''
                 && strlen($origin) <= 2083
-                && preg_match('#^https?://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
-            )
+                && (
+                    $origin === 'null'
+                    || preg_match('#^https?://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
+                );
+
+            if ($origin_is_valid)
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
+                header('Access-Control-Allow-Headers: '.$allowed_headers);
+                header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
-            header('Access-Control-Allow-Headers: '.$allowed_headers);
-            header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
         else
         {
