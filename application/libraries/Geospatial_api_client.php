@@ -280,6 +280,24 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Restrict the endpoint path to a small allow-list of known API
+            // routes. Dynamic segments (e.g. the job id in /jobs/{id}) are
+            // validated against a strict pattern to ensure nothing
+            // user-controlled can alter the URL path, query string or host.
+            $allowed_static_endpoints = array(
+                '/geospatial/layers-queue',
+                '/geospatial/metadata-queue',
+                '/geospatial/info-queue',
+                '/geospatial/data-queue',
+            );
+
+            $is_allowed = in_array($endpoint, $allowed_static_endpoints, true)
+                || (bool) preg_match('#^/jobs/[A-Za-z0-9_-]{1,128}$#', (string) $endpoint);
+
+            if (!$is_allowed) {
+                throw new Exception('INVALID_ENDPOINT');
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
