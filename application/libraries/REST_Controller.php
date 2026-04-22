@@ -2458,7 +2458,13 @@ abstract class REST_Controller extends CI_Controller {
             // request with no Origin (no CORS headers emitted) could be
             // served to a later request with a valid Origin and be rejected
             // by the browser for missing Access-Control-Allow-Origin.
-            header('Vary: Origin');
+            //
+            // Pass replace=false so the header is appended to, rather
+            // than replacing, any existing Vary value set elsewhere in
+            // the stack (e.g. "Vary: Accept-Encoding" from
+            // zlib.output_compression). HTTP semantics require Vary
+            // field values to be accumulated.
+            header('Vary: Origin', false);
 
             if ($origin_is_valid)
             {
