@@ -231,10 +231,20 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Restrict file_type to a small allow-list to prevent any path segment
+		// other than the expected sub-folders from being used when constructing
+		// the destination path.
+		$allowed_file_types = array('data', 'documentation');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE: ' . $file_type);
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
-		// Get completed upload information
+		// Get completed upload information. The uploader validates the upload_id
+		// format (UUID v4) before performing any filesystem access, so the
+		// returned paths are guaranteed to be constrained to the upload sandbox.
 		$upload_info = $this->uploader->get_completed_upload($upload_id);
 		
 		if (!$upload_info) {
@@ -1379,4 +1389,4 @@ class Editor_resource_model extends ci_model {
 	}
 
 
-}    
+}        
