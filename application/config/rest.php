@@ -593,10 +593,16 @@ $config['allowed_cors_methods'] = [
 |--------------------------------------------------------------------------
 |
 | Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| source domain (i.e. send "Access-Control-Allow-Origin: *").
+|
+| This is a permissive setting and is disabled by default. Leave it FALSE
+| and configure $config['allowed_cors_origins'] below with an explicit
+| allow-list of trusted origins. Only enable this if the API is expected
+| to be consumed from untrusted browser origins AND does not rely on
+| cookies or other credentials for authentication.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
