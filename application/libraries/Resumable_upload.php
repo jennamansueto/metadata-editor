@@ -492,7 +492,14 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Only process directories whose names match the upload id format we
+			// produce. Skips stray/unrelated entries and avoids tripping the
+			// validate_upload_id() guard in get_upload_metadata().
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -557,6 +564,7 @@ class Resumable_upload {
 		}
 		
 		// Read entries one at a time using stream-based approach
+		try {
 		while (($dir = readdir($handle)) !== false) {
 			// Stop if we've deleted enough
 			if ($stats['deleted'] >= $max_deletions) {
@@ -566,7 +574,15 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Ignore directories whose names are not valid upload ids. This
+			// keeps the cleanup scan from tripping the validate_upload_id()
+			// guard on unrelated entries and never deletes anything outside
+			// the expected UUID-named sandbox.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -608,8 +624,9 @@ class Resumable_upload {
 				}
 			}
 		}
-		
-		closedir($handle);
+		} finally {
+			closedir($handle);
+		}
 		return $stats;
 	}
 	
@@ -641,7 +658,14 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Ignore directories whose names are not valid upload ids so the
+			// cleanup scan cannot trip validate_upload_id() on unrelated
+			// entries.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -768,9 +792,23 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception('INVALID_UPLOAD_ID');
 		}
+	}
+
+	/**
+	 * Predicate form of {@see validate_upload_id()}. Returns false for any
+	 * value that is not a well-formed UUID v4 instead of throwing, so scanning
+	 * loops can silently skip unrelated filesystem entries.
+	 *
+	 * @param mixed $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return is_string($upload_id)
+			&& (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id);
 	}
 
 	/**
