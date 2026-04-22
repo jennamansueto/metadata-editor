@@ -2406,8 +2406,13 @@ abstract class REST_Controller extends CI_Controller {
         // allow-list instead.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
+            // Intentionally do NOT send "Access-Control-Allow-Credentials".
+            // Per the Fetch spec that header's only valid value is "true", and
+            // browsers reject any response that combines "Allow-Origin: *"
+            // with "Allow-Credentials: true" — so omitting the header here is
+            // both spec-conformant and keeps the wildcard branch safe for
+            // non-credentialed requests only.
             header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Credentials: false');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
