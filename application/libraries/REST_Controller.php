@@ -2413,10 +2413,17 @@ abstract class REST_Controller extends CI_Controller {
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
             $origin = $this->input->server('HTTP_ORIGIN');
+            // Host part accepts either:
+            //   * a bracket-enclosed IPv6 literal (e.g. "[::1]", "[2001:db8::1]"), or
+            //   * a DNS hostname / IPv4 literal (ASCII alphanumerics, hyphens,
+            //     dots and underscores — underscores are accepted because
+            //     they appear in many dev/internal hostnames even though DNS
+            //     technically disallows them).
+            // An optional ":port" (1-5 decimal digits) is permitted.
             if (is_string($origin)
                 && $origin !== ''
-                && strlen($origin) <= 253
-                && preg_match('#^https?://[A-Za-z0-9\-\.]{1,253}(?::\d{1,5})?$#', $origin)
+                && strlen($origin) <= 2083
+                && preg_match('#^https?://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
             )
             {
                 header('Access-Control-Allow-Origin: '.$origin);
