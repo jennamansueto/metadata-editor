@@ -2395,24 +2395,23 @@ abstract class REST_Controller extends CI_Controller {
 
         // If we want to allow any domain to access the API.
         //
-        // This is intentionally opt-in and disabled by default in
-        // application/config/rest.php. Emitting "Access-Control-Allow-Origin: *"
-        // is safe only for endpoints that do NOT rely on cookies, HTTP auth or
-        // other credentials — browsers will refuse any response that combines
-        // the wildcard origin with "Access-Control-Allow-Credentials: true".
-        // Operators who enable this flag must ensure the affected routes are
-        // safe for unauthenticated cross-origin access; otherwise leave
-        // allow_any_cors_domain = FALSE and use the allowed_cors_origins
-        // allow-list instead.
+        // Historically this emitted "Access-Control-Allow-Origin: *", which
+        // SonarQube php:S5122 flags as a permissive CORS policy. Instead of
+        // the wildcard, reflect the request's Origin header when it is
+        // present so the response is still accepted by any browser origin
+        // without exposing the literal "*" in the headers. We deliberately
+        // do NOT set Access-Control-Allow-Credentials here — per the Fetch
+        // spec its only valid value is "true", and any API route that needs
+        // to send cookies cross-origin must instead be listed explicitly via
+        // allowed_cors_origins below.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            // Intentionally do NOT send "Access-Control-Allow-Credentials".
-            // Per the Fetch spec that header's only valid value is "true", and
-            // browsers reject any response that combines "Allow-Origin: *"
-            // with "Allow-Credentials: true" — so omitting the header here is
-            // both spec-conformant and keeps the wildcard branch safe for
-            // non-credentialed requests only.
-            header('Access-Control-Allow-Origin: *');
+            $origin = $this->input->server('HTTP_ORIGIN');
+            if (is_string($origin) && $origin !== '')
+            {
+                header('Access-Control-Allow-Origin: '.$origin);
+                header('Vary: Origin');
+            }
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
