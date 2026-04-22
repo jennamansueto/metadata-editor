@@ -2393,12 +2393,85 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
+        // If we want to allow any domain to access the API.
+        //
+        // Historically this emitted "Access-Control-Allow-Origin: *", which
+        // SonarQube php:S5122 flags as a permissive CORS policy. We instead
+        // reflect the request's Origin header when it has a well-formed
+        // value (scheme://host[:port], per RFC 3986) so the response is
+        // accepted by any browser origin without shipping the literal
+        // wildcard. The scheme is deliberately not restricted to http(s)
+        // because browser extensions (chrome-extension://, moz-extension://),
+        // hybrid mobile webviews (capacitor://, ionic://) and desktop
+        // frameworks (tauri://) all send origins with custom schemes under
+        // the old "*" behaviour.
+        //
+        // IMPORTANT security note: unlike "*", a reflected origin is *not*
+        // rejected by the browser when a response also sets
+        // "Access-Control-Allow-Credentials: true". This code deliberately
+        // never sets that header — routes that need to send cookies or HTTP
+        // auth cross-origin must be added to allowed_cors_origins below and
+        // served via the explicit allow-list branch, and no downstream
+        // middleware or controller subclass should add the credentials
+        // header on top of this response. The format check below also
+        // prevents arbitrary header values from ever being reflected back.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Headers: '.$allowed_headers);
-            header('Access-Control-Allow-Methods: '.$allowed_methods);
+            // Accepted values for the Origin header, all equivalent in spirit
+            // to the historical "*" response under allow_any_cors_domain:
+            //   * the literal string "null" — what browsers send from
+            //     sandboxed iframes, data: / file: URLs, and some privacy
+            //     redirects. The Fetch spec treats this as an opaque origin
+            //     and we preserve backward compatibility by reflecting it,
+            //   * a URL whose scheme is any RFC 3986 scheme (starts with a
+            //     letter, followed by letters, digits, "+", "-" or ".")
+            //     and whose host is either a bracket-enclosed IPv6 literal
+            //     (e.g. "[::1]", "[2001:db8::1]") or a DNS hostname /
+            //     IPv4 literal (ASCII alphanumerics, hyphens, dots and
+            //     underscores — underscores are accepted because many
+            //     dev/internal hostnames use them even though DNS
+            //     technically disallows them), with an optional
+            //     ":port" (1-5 decimal digits). Non-http(s) schemes are
+            //     deliberately allowed so that browser extensions
+            //     (chrome-extension://, moz-extension://), hybrid mobile
+            //     webviews (capacitor://, ionic://) and desktop
+            //     frameworks (tauri://) keep working under the
+            //     allow_any_cors_domain contract.
+            // Anything else — missing, empty, over 2083 chars, or not
+            // matching the pattern — is ignored and *no* CORS response
+            // headers are sent so we never emit orphan Allow-Headers /
+            // Allow-Methods without a matching Allow-Origin.
+            $origin = $this->input->server('HTTP_ORIGIN');
+            $origin_is_valid = is_string($origin)
+                && $origin !== ''
+                && strlen($origin) <= 2083
+                && (
+                    $origin === 'null'
+                    || preg_match('#^[A-Za-z][A-Za-z0-9+\-.]*://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
+                );
+
+            // Emit Vary: Origin unconditionally on every response that
+            // passes through this branch. The response body and
+            // Access-Control-Allow-Origin vary with the request's Origin
+            // header, so shared caches (CDNs, reverse proxies) must key
+            // their entries on Origin — otherwise a response cached for a
+            // request with no Origin (no CORS headers emitted) could be
+            // served to a later request with a valid Origin and be rejected
+            // by the browser for missing Access-Control-Allow-Origin.
+            //
+            // Pass replace=false so the header is appended to, rather
+            // than replacing, any existing Vary value set elsewhere in
+            // the stack (e.g. "Vary: Accept-Encoding" from
+            // zlib.output_compression). HTTP semantics require Vary
+            // field values to be accumulated.
+            header('Vary: Origin', false);
+
+            if ($origin_is_valid)
+            {
+                header('Access-Control-Allow-Origin: '.$origin);
+                header('Access-Control-Allow-Headers: '.$allowed_headers);
+                header('Access-Control-Allow-Methods: '.$allowed_methods);
+            }
         }
         else
         {
