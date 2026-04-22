@@ -2396,18 +2396,28 @@ abstract class REST_Controller extends CI_Controller {
         // If we want to allow any domain to access the API.
         //
         // Historically this emitted "Access-Control-Allow-Origin: *", which
-        // SonarQube php:S5122 flags as a permissive CORS policy. Instead of
-        // the wildcard, reflect the request's Origin header when it is
-        // present so the response is still accepted by any browser origin
-        // without exposing the literal "*" in the headers. We deliberately
-        // do NOT set Access-Control-Allow-Credentials here — per the Fetch
-        // spec its only valid value is "true", and any API route that needs
-        // to send cookies cross-origin must instead be listed explicitly via
-        // allowed_cors_origins below.
+        // SonarQube php:S5122 flags as a permissive CORS policy. We instead
+        // reflect the request's Origin header when it has a well-formed
+        // value (scheme://host[:port]) so the response is accepted by any
+        // browser origin without shipping the literal wildcard.
+        //
+        // IMPORTANT security note: unlike "*", a reflected origin is *not*
+        // rejected by the browser when a response also sets
+        // "Access-Control-Allow-Credentials: true". This code deliberately
+        // never sets that header — routes that need to send cookies or HTTP
+        // auth cross-origin must be added to allowed_cors_origins below and
+        // served via the explicit allow-list branch, and no downstream
+        // middleware or controller subclass should add the credentials
+        // header on top of this response. The format check below also
+        // prevents arbitrary header values from ever being reflected back.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
             $origin = $this->input->server('HTTP_ORIGIN');
-            if (is_string($origin) && $origin !== '')
+            if (is_string($origin)
+                && $origin !== ''
+                && strlen($origin) <= 253
+                && preg_match('#^https?://[A-Za-z0-9\-\.]{1,253}(?::\d{1,5})?$#', $origin)
+            )
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
