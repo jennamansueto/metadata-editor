@@ -2438,10 +2438,19 @@ abstract class REST_Controller extends CI_Controller {
                     || preg_match('#^https?://(?:\[[A-Fa-f0-9:]{2,45}\]|[A-Za-z0-9\-\._]{1,253})(?::\d{1,5})?$#', $origin)
                 );
 
+            // Emit Vary: Origin unconditionally on every response that
+            // passes through this branch. The response body and
+            // Access-Control-Allow-Origin vary with the request's Origin
+            // header, so shared caches (CDNs, reverse proxies) must key
+            // their entries on Origin — otherwise a response cached for a
+            // request with no Origin (no CORS headers emitted) could be
+            // served to a later request with a valid Origin and be rejected
+            // by the browser for missing Access-Control-Allow-Origin.
+            header('Vary: Origin');
+
             if ($origin_is_valid)
             {
                 header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
