@@ -281,8 +281,21 @@ class Editor_resource_model extends ci_model {
 		
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
+		
+		// Strip any directory traversal sequences from the filename
+		$final_filename = basename($final_filename);
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
+		
+		// Verify the resolved destination stays within the target directory
+		$real_survey_folder_type = realpath($survey_folder_type);
+		if ($real_survey_folder_type === false) {
+			throw new Exception('INVALID_DESTINATION_FOLDER: ' . $survey_folder_type);
+		}
+		$real_final_dir = realpath(dirname($final_file_path));
+		if ($real_final_dir === false || strpos($real_final_dir, $real_survey_folder_type) !== 0) {
+			throw new Exception('PATH_TRAVERSAL_BLOCKED: Destination path escapes the target directory');
+		}
 		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
@@ -1379,4 +1392,4 @@ class Editor_resource_model extends ci_model {
 	}
 
 
-}    
+}        
