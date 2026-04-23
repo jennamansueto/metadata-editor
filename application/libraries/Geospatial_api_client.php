@@ -211,6 +211,10 @@ class Geospatial_api_client {
         );
 
         try {
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+                throw new Exception("Invalid job ID format");
+            }
+
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -280,6 +284,11 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Reject path traversal sequences in the endpoint
+            if (preg_match('#(\.\.[\\/]|[\\/]\.\.)|[\x00-\x1f]#', $endpoint)) {
+                throw new Exception("Invalid API endpoint: path traversal detected");
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
@@ -330,6 +339,16 @@ class Geospatial_api_client {
      */
     public function wait_for_job_completion($job_id, $poll_interval = 5, $max_wait_time = 300)
     {
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+            return array(
+                'success' => false,
+                'status' => 'error',
+                'layers' => array(),
+                'errors' => array('Invalid job ID format'),
+                'message' => 'Invalid job ID format'
+            );
+        }
+
         $start_time = time();
         $result = array(
             'success' => false,
