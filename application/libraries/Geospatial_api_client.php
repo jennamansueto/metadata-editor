@@ -211,7 +211,7 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', '/jobs/' . urlencode($job_id));
+            $response = $this->make_api_request('GET', '/jobs/' . rawurlencode($job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
