@@ -179,6 +179,10 @@ class Resumable_upload {
 	 */
 	public function save_upload_metadata($upload_id, $metadata)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+		
 		$metadata_path = $this->get_metadata_path($upload_id);
 		$upload_path = dirname($metadata_path);
 		
@@ -370,6 +374,10 @@ class Resumable_upload {
 	 */
 	public function is_upload_complete($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return false;
+		}
+		
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
 			return false;
@@ -388,6 +396,10 @@ class Resumable_upload {
 	 */
 	public function combine_chunks($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+		
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
 			throw new Exception("UPLOAD_NOT_FOUND");
