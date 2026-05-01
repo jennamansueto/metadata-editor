@@ -290,7 +290,7 @@ class Editor_resource_model extends ci_model {
 			throw new Exception('EDITOR_SUB_FOLDER_NOT_FOUND: ' . $survey_folder_type);
 		}
 		$real_final_path = realpath(dirname($final_file_path));
-		if ($real_final_path === false || strpos($real_final_path, $real_target_dir) !== 0) {
+		if ($real_final_path === false || ($real_final_path !== $real_target_dir && strpos($real_final_path, $real_target_dir . DIRECTORY_SEPARATOR) !== 0)) {
 			throw new Exception('INVALID_FILE_PATH: filename resolves outside target directory');
 		}
 
