@@ -711,6 +711,12 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
+
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp) !== 0) {
+			return false;
+		}
 		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
@@ -743,6 +749,23 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate upload ID to prevent path traversal
+	 *
+	 * Upload IDs are generated as UUID v4 (hex characters and hyphens only).
+	 * Reject any ID containing path separators or traversal sequences.
+	 *
+	 * @param string $upload_id
+	 * @return void
+	 * @throws Exception if upload_id contains unsafe characters
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[a-fA-F0-9\-]+$/', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -750,6 +773,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
