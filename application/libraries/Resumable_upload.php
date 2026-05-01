@@ -147,6 +147,10 @@ class Resumable_upload {
 	 */
 	public function get_upload_metadata($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return false;
+		}
+		
 		$metadata_path = $this->get_metadata_path($upload_id);
 		
 		if (!file_exists($metadata_path)) {
@@ -212,6 +216,10 @@ class Resumable_upload {
 	 */
 	public function upload_chunk($upload_id, $chunk_number, $chunk_data, $client_chunk_size = null)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+		
 		// Load metadata
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
@@ -326,6 +334,10 @@ class Resumable_upload {
 	 */
 	public function get_uploaded_chunks($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return array();
+		}
+		
 		$upload_path = $this->get_upload_path($upload_id);
 		$chunks_dir = unix_path($upload_path . '/chunks');
 		
@@ -453,6 +465,10 @@ class Resumable_upload {
 	 */
 	public function delete_upload($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return false;
+		}
+		
 		$upload_path = $this->get_upload_path($upload_id);
 		
 		if (!file_exists($upload_path)) {
@@ -766,6 +782,17 @@ class Resumable_upload {
 	}
 
 	/**
+	 * Check if upload ID is valid (non-throwing)
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return !empty($upload_id) && preg_match('/^[a-fA-F0-9\-]+$/', $upload_id);
+	}
+
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -773,7 +800,6 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
-		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -812,6 +838,10 @@ class Resumable_upload {
 	 */
 	public function get_final_file_path($upload_id, $filename = null)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return false;
+		}
+		
 		$upload_path = $this->get_upload_path($upload_id);
 		
 		if ($filename === null) {
