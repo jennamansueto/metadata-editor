@@ -211,7 +211,8 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $safe_job_id = preg_replace('/[^a-zA-Z0-9_\-]/', '', $job_id);
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -279,6 +280,11 @@ class Geospatial_api_client {
      */
     private function make_api_request($method, $endpoint, $data = null)
     {
+        // Reject path traversal sequences in the endpoint
+        if (preg_match('#(\.\./|\.\.\\\\)#', $endpoint)) {
+            throw new Exception("Invalid API endpoint: path traversal detected");
+        }
+
         try {
             $client = new Client([
                 'base_uri' => $this->api_base_url,
