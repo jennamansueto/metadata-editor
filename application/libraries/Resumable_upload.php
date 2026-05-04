@@ -382,7 +382,9 @@ class Resumable_upload {
 		}
 		
 		$upload_path = $this->get_upload_path($upload_id);
-		$final_file = unix_path($upload_path . '/' . $metadata['filename']);
+		// basename() guards against tampered metadata.json values escaping
+		// the upload directory.
+		$final_file = unix_path($upload_path . '/' . basename((string)$metadata['filename']));
 		$temp_file = $final_file . '.tmp';
 		
 		// Open output file
@@ -485,12 +487,19 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
 			}
-			
+
+			// Skip directories that are not valid upload IDs.
+			try {
+				$this->validate_upload_id($dir);
+			} catch (Exception $e) {
+				continue;
+			}
+
 			$metadata = $this->get_upload_metadata($dir);
 			if ($metadata) {
 				$uploaded_chunks = $this->get_uploaded_chunks($dir);
@@ -561,13 +570,20 @@ class Resumable_upload {
 			}
 			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
-			
+
 			if (!is_dir($upload_path)) {
 				continue;
 			}
-			
+
+			// Skip directories that are not valid upload IDs.
+			try {
+				$this->validate_upload_id($dir);
+			} catch (Exception $e) {
+				continue;
+			}
+
 			$stats['checked']++;
-			
+
 			// Check metadata
 			$metadata_path = unix_path($upload_path . '/metadata.json');
 			if (!file_exists($metadata_path)) {
@@ -581,18 +597,18 @@ class Resumable_upload {
 				}
 				continue;
 			}
-			
+
 			$metadata = $this->get_upload_metadata($dir);
 			if (!$metadata) {
 				continue;
 			}
-			
+
 			// Delete expired uploads (complete or incomplete)
 			// For completed uploads, use completed_at if available, otherwise updated_at
 			$check_time = ($metadata['status'] == 'completed' && isset($metadata['completed_at'])) 
 				? $metadata['completed_at'] 
 				: $metadata['updated_at'];
-			
+
 			if ($check_time < $expiry_time) {
 				if ($this->delete_upload($dir)) {
 					$stats['deleted']++;
@@ -601,7 +617,7 @@ class Resumable_upload {
 				}
 			}
 		}
-		
+
 		closedir($handle);
 		return $stats;
 	}
@@ -634,15 +650,22 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
-			
+
 			if (!is_dir($upload_path)) {
 				continue;
 			}
-			
+
+			// Skip directories that are not valid upload IDs.
+			try {
+				$this->validate_upload_id($dir);
+			} catch (Exception $e) {
+				continue;
+			}
+
 			$stats['checked']++;
-			
+
 			// Check metadata
 			$metadata_path = unix_path($upload_path . '/metadata.json');
 			if (!file_exists($metadata_path)) {
@@ -711,23 +734,31 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
-		
+
+		// Defensive check: confine deletions to descendants of the temp
+		// uploads directory. delete_directory operates on paths derived from
+		// user-supplied upload_id values; this realpath comparison guards
+		// against any future caller that might bypass get_upload_path.
+		if (!$this->is_path_within_temp($dir)) {
+			return false;
+		}
+
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
-		
+
 		$files = @scandir($dir);
 		if ($files === false) {
 			return false;
 		}
-		
+
 		foreach ($files as $file) {
 			if ($file == '.' || $file == '..') {
 				continue;
 			}
-			
+
 			$file_path = unix_path($dir . '/' . $file);
-			
+
 			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
 					return false;
@@ -738,10 +769,65 @@ class Resumable_upload {
 				}
 			}
 		}
-		
+
 		return @rmdir($dir);
 	}
+
+	/**
+	 * Verify a path resolves to a strict descendant of $this->temp_path.
+	 *
+	 * @param string $path
+	 * @return bool
+	 */
+	private function is_path_within_temp($path)
+	{
+		$real_temp = realpath($this->temp_path);
+		$real_path = realpath($path);
+		if ($real_temp === false || $real_path === false) {
+			return false;
+		}
+		if ($real_path === $real_temp) {
+			return false;
+		}
+		$prefix = rtrim($real_temp, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		return strpos($real_path, $prefix) === 0;
+	}
 	
+	/**
+	 * Validate upload_id is a UUID v4 string
+	 *
+	 * Defends against path traversal: upload_id is user-controlled and is
+	 * concatenated into filesystem paths (metadata, chunk and final-file
+	 * locations). A strict UUID v4 format prevents characters such as
+	 * '/', '\\' or '..' from reaching path construction.
+	 *
+	 * @param string $upload_id
+	 * @return string The validated upload_id
+	 * @throws Exception when upload_id is not a valid UUID v4
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+		return $upload_id;
+	}
+
+	/**
+	 * Validate chunk number is a non-negative integer
+	 *
+	 * @param mixed $chunk_number
+	 * @return int The validated chunk number
+	 * @throws Exception when chunk_number is invalid
+	 */
+	private function validate_chunk_number($chunk_number)
+	{
+		if (!is_int($chunk_number) && (!is_string($chunk_number) || !ctype_digit($chunk_number))) {
+			throw new Exception("INVALID_CHUNK_NUMBER");
+		}
+		return (int)$chunk_number;
+	}
+
 	/**
 	 * Get upload directory path
 	 * 
@@ -750,6 +836,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$upload_id = $this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -775,6 +862,7 @@ class Resumable_upload {
 	private function get_chunk_path($upload_id, $chunk_number)
 	{
 		$upload_path = $this->get_upload_path($upload_id);
+		$chunk_number = $this->validate_chunk_number($chunk_number);
 		$chunks_dir = unix_path($upload_path . '/chunks');
 		return unix_path($chunks_dir . '/chunk_' . $chunk_number . '.part');
 	}
@@ -789,7 +877,7 @@ class Resumable_upload {
 	public function get_final_file_path($upload_id, $filename = null)
 	{
 		$upload_path = $this->get_upload_path($upload_id);
-		
+
 		if ($filename === null) {
 			$metadata = $this->get_upload_metadata($upload_id);
 			if (!$metadata) {
@@ -797,7 +885,13 @@ class Resumable_upload {
 			}
 			$filename = $metadata['filename'];
 		}
-		
+
+		// Strip any path components from the filename. Filenames are
+		// sanitized at init_upload() time, but the metadata file is
+		// loaded from disk and basename() ensures we never assemble a
+		// final path that escapes the upload directory.
+		$filename = basename((string)$filename);
+
 		return unix_path($upload_path . '/' . $filename);
 	}
 	

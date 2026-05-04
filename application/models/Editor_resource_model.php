@@ -231,6 +231,18 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Validate inputs that flow into filesystem path construction.
+		// $file_type and $sid are caller-controlled and reach a copy() call,
+		// so reject anything outside a known-safe shape.
+		$allowed_file_types = array('data', 'documentation');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE');
+		}
+		if (!is_numeric($sid) || (int)$sid <= 0) {
+			throw new Exception('INVALID_PROJECT_ID');
+		}
+		$sid = (int)$sid;
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
@@ -242,7 +254,7 @@ class Editor_resource_model extends ci_model {
 		}
 		
 		$temp_file_path = $upload_info['file_path'];
-		$sanitized_filename = $upload_info['filename'];  // Use sanitized filename from upload library
+		$sanitized_filename = basename((string)$upload_info['filename']);  // Use sanitized filename from upload library
 		$original_filename = $upload_info['original_filename'];
 		
 		// Ensure project folder exists
@@ -281,9 +293,22 @@ class Editor_resource_model extends ci_model {
 		
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
+		// basename() guards against any path separators sneaking in via the
+		// upload metadata file that would let copy() escape the project folder.
+		$final_filename = basename($final_filename);
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		// Defensive check: ensure the destination resolves inside the project
+		// subfolder, so a tampered upload metadata file cannot redirect the
+		// copy() target outside the survey folder.
+		$real_survey_folder_type = realpath($survey_folder_type);
+		$real_dest_dir = realpath(dirname($final_file_path));
+		if ($real_survey_folder_type === false || $real_dest_dir === false ||
+			$real_dest_dir !== $real_survey_folder_type) {
+			throw new Exception('INVALID_DESTINATION_PATH');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
