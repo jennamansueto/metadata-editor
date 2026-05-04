@@ -2406,6 +2406,11 @@ abstract class REST_Controller extends CI_Controller {
             $allowed_origins = [];
         }
 
+        // Always advertise that the response varies by Origin so caches
+        // (CDNs, proxies) do not mix the per-origin CORS response with
+        // the no-CORS response served to disallowed origins.
+        header('Vary: Origin');
+
         // Only emit CORS headers for origins on the operator-defined
         // allowlist. We deliberately do NOT honour
         // $config['allow_any_cors_domain'] with an
@@ -2417,7 +2422,6 @@ abstract class REST_Controller extends CI_Controller {
         if ($origin !== '' && in_array($origin, $allowed_origins, true))
         {
             header('Access-Control-Allow-Origin: '.$origin);
-            header('Vary: Origin');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
