@@ -38,31 +38,65 @@ class Page extends MY_Controller {
 		}
 		
 		$valid_languages=$this->config->item("supported_languages");
-		
+
 		if (in_array($lang,$valid_languages))
 		{
 			//set language in the user session cooke
 			$this->session->set_userdata('language',strtolower($lang));
-			
-			$destination=site_home();
-			
-			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
+			$destination = $this->_safe_destination($this->input->get("destination"));
 
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
-				}
-			}
-			
 			redirect($destination);
 		}
 		else{
 			show_error("Invalid Language selected!");
 		}
+	}
+
+	/**
+	 * Resolve the post-language-switch redirect target.
+	 *
+	 * Treats the caller-supplied destination as untrusted and returns
+	 * site_home() unless it is a relative path whose first segment is
+	 * one of the known internal sections. This prevents the open-redirect
+	 * class of attack flagged by phpsecurity:S5146.
+	 *
+	 * @param string|null $destination Raw value from the query string.
+	 * @return string A safe URL to redirect to.
+	 */
+	private function _safe_destination($destination)
+	{
+		$home = site_home();
+
+		if (!is_string($destination) || $destination === '') {
+			return $home;
+		}
+
+		// Reject anything that could push the browser to another origin:
+		// absolute URLs ("https://evil"), scheme-relative URLs ("//evil"),
+		// backslash tricks, control characters, or whitespace.
+		if (preg_match('#^[a-z][a-z0-9+.\-]*:#i', $destination)) {
+			return $home;
+		}
+		if (strpos($destination, '//') === 0 || strpos($destination, '\\\\') === 0) {
+			return $home;
+		}
+		if (strpbrk($destination, "\\\r\n\t") !== false) {
+			return $home;
+		}
+
+		$valid_redirects = array('admin', 'editor', 'collections', 'projects', 'home', 'about', 'auth');
+
+		// Strip a single leading slash so allowlist matching works for both
+		// "admin/..." and "/admin/..." inputs.
+		$path = ltrim($destination, '/');
+		$first_segment = strtok($path, '/?#');
+
+		if ($first_segment === false || !in_array($first_segment, $valid_redirects, true)) {
+			return $home;
+		}
+
+		return $path;
 	}
 }
 /* End of file page.php */
