@@ -592,21 +592,28 @@ $config['allowed_cors_methods'] = [
 | CORS Allow Any Domain
 |--------------------------------------------------------------------------
 |
-| Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| Historically this emitted an 'Access-Control-Allow-Origin: *' wildcard
+| header. That is unsafe (SonarQube php:S5122 / CWE-942) because any
+| malicious site can then read responses from this API on behalf of an
+| authenticated user. The setting is retained for backwards compatibility
+| but is no longer honoured: only origins listed in
+| $config['allowed_cors_origins'] receive Access-Control-Allow-Origin
+| headers.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
 | CORS Allowable Domains
 |--------------------------------------------------------------------------
 |
-| Used if $config['check_cors'] is set to TRUE and $config['allow_any_cors_domain']
-| is set to FALSE. Set all the allowable domains within the array
+| Set the trusted front-end origins that may read responses from this
+| API. Each entry must be a fully-qualified origin
+| (e.g. 'https://www.example.com'). Requests whose Origin header is not
+| in this list will not receive CORS headers.
 |
-| e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
+| e.g. $config['allowed_cors_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
 $config['allowed_cors_origins'] = [];
