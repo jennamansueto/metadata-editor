@@ -214,9 +214,14 @@ class Geospatial_api_client {
             // job_id is interpolated into the request path; reject anything
             // that is not a token-shaped identifier (letters/digits/hyphen/
             // underscore/dot) so an attacker cannot traverse to a different
-            // API endpoint by smuggling slashes or '..' segments. Also
+            // API endpoint by smuggling slashes or '..' segments. The regex
+            // requires every dot to be sandwiched between non-dot
+            // characters so single-dot ('.') or double-dot ('..') job ids
+            // are rejected — otherwise RFC 3986 dot-segment removal in the
+            // HTTP client would collapse '/jobs/..' to '/'. Also
             // url-encode for defense in depth (phpsecurity:S7044).
-            if (!is_string($job_id) || !preg_match('/^[A-Za-z0-9_.\-]{1,128}$/', $job_id)) {
+            if (!is_string($job_id) || strlen($job_id) > 128 ||
+                !preg_match('/^[A-Za-z0-9_\-]+(\.[A-Za-z0-9_\-]+)*$/', $job_id)) {
                 throw new Exception("INVALID_JOB_ID");
             }
             $safe_job_id = rawurlencode($job_id);
