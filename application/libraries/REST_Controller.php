@@ -2384,6 +2384,13 @@ abstract class REST_Controller extends CI_Controller {
     /**
      * Checks allowed domains, and adds appropriate headers for HTTP access control (CORS)
      *
+     * Always enforces an allow-list of trusted origins. The legacy
+     * `allow_any_cors_domain = TRUE` configuration value used to emit
+     * `Access-Control-Allow-Origin: *`, which is rejected by php:S5122 and
+     * exposes authenticated APIs to any third-party site. The wildcard
+     * branch has been removed; configure `allowed_cors_origins` (or the
+     * new `allowed_cors_origin_patterns` regex list) instead.
+     *
      * @access protected
      * @return void
      */
@@ -2393,30 +2400,22 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
-        if ($this->config->item('allow_any_cors_domain') === TRUE)
+        // Always advertise that the response varies on Origin so that
+        // shared caches (CDNs, reverse proxies) don't serve a response
+        // generated for one origin to a different origin.
+        header('Vary: Origin');
+
+        $origin = $this->input->server('HTTP_ORIGIN');
+        if ($origin === NULL)
         {
-            header('Access-Control-Allow-Origin: *');
+            $origin = '';
+        }
+
+        if ($origin !== '' && $this->_is_origin_allowed($origin))
+        {
+            header('Access-Control-Allow-Origin: '.$origin);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
-        }
-        else
-        {
-            // We're going to allow only certain domains access
-            // Store the HTTP Origin header
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin === NULL)
-            {
-                $origin = '';
-            }
-
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Access-Control-Allow-Headers: '.$allowed_headers);
-                header('Access-Control-Allow-Methods: '.$allowed_methods);
-            }
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
@@ -2424,5 +2423,45 @@ abstract class REST_Controller extends CI_Controller {
         {
             exit;
         }
+    }
+
+    /**
+     * Decide whether a request `Origin` header value should be echoed back
+     * in `Access-Control-Allow-Origin`.
+     *
+     * The origin must appear verbatim in the `allowed_cors_origins`
+     * configuration list, or match one of the regular expressions in
+     * `allowed_cors_origin_patterns` (optional). No wildcard fallback is
+     * provided — see php:S5122.
+     *
+     * @param string $origin
+     * @return bool
+     */
+    protected function _is_origin_allowed($origin)
+    {
+        if (!is_string($origin) || $origin === '')
+        {
+            return FALSE;
+        }
+
+        $allowed_origins = $this->config->item('allowed_cors_origins');
+        if (is_array($allowed_origins) && in_array($origin, $allowed_origins, TRUE))
+        {
+            return TRUE;
+        }
+
+        $allowed_patterns = $this->config->item('allowed_cors_origin_patterns');
+        if (is_array($allowed_patterns))
+        {
+            foreach ($allowed_patterns as $pattern)
+            {
+                if (is_string($pattern) && $pattern !== '' && @preg_match($pattern, $origin) === 1)
+                {
+                    return TRUE;
+                }
+            }
+        }
+
+        return FALSE;
     }
 }
