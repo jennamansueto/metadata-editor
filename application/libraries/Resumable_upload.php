@@ -932,8 +932,13 @@ class Resumable_upload {
 		}
 		
 		// Force basename to defeat any traversal attempt embedded in the
-		// stored filename and verify the resulting path stays inside temp.
+		// stored filename and reject empty / "." / ".." results so the
+		// returned path always points at a file inside the upload dir
+		// rather than the directory itself (phpsecurity:S2083).
 		$safe_filename = basename((string)$filename);
+		if ($safe_filename === '' || $safe_filename === '.' || $safe_filename === '..') {
+			return false;
+		}
 		$candidate = unix_path($upload_path . '/' . $safe_filename);
 		
 		return $candidate;
