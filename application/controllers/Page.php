@@ -47,14 +47,9 @@ class Page extends MY_Controller {
 			$destination=site_home();
 			
 			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
-
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
-
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
+				$candidate = $this->_safe_internal_redirect_target($this->input->get("destination"));
+				if ($candidate !== null) {
+					$destination = $candidate;
 				}
 			}
 			
@@ -63,6 +58,57 @@ class Page extends MY_Controller {
 		else{
 			show_error("Invalid Language selected!");
 		}
+	}
+
+	/**
+	 * Validate a user-supplied redirect target so it can only resolve to an
+	 * internal first-party route. Returns the safe relative path on success
+	 * or NULL when the value must be rejected (phpsecurity:S5146).
+	 *
+	 * Rules:
+	 *   - Must be a non-empty string.
+	 *   - May not contain a scheme, an authority (// or backslash) or any
+	 *     control characters / CR-LF that could split the redirect header.
+	 *   - First path segment must match the allow-list of internal sections.
+	 */
+	private function _safe_internal_redirect_target($destination)
+	{
+		if (!is_string($destination) || $destination === '') {
+			return null;
+		}
+
+		// Reject CR/LF and other control characters (defeats header splitting).
+		if (preg_match('/[\x00-\x1F\x7F]/', $destination) === 1) {
+			return null;
+		}
+
+		// Reject protocol-relative (`//evil.com`), backslash variants,
+		// and absolute URLs with a scheme (`http://`, `javascript:`, ...).
+		if (strpos($destination, '//') !== false) {
+			return null;
+		}
+		if (strpos($destination, '\\') !== false) {
+			return null;
+		}
+		if (preg_match('#^[a-zA-Z][a-zA-Z0-9+.\-]*:#', $destination) === 1) {
+			return null;
+		}
+
+		// Strip a single leading slash for first-segment matching, but keep
+		// the original (relative) form for the redirect target.
+		$normalised = ltrim($destination, '/');
+		if ($normalised === '') {
+			return null;
+		}
+
+		$first_segment = explode('/', $normalised, 2)[0];
+
+		$valid_redirects = array('admin', 'editor', 'collections', 'projects', 'home', 'about', 'auth');
+		if (!in_array($first_segment, $valid_redirects, true)) {
+			return null;
+		}
+
+		return $normalised;
 	}
 }
 /* End of file page.php */
