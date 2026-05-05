@@ -231,6 +231,13 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Validate file_type against a fixed allow-list before it is used to
+		// construct any filesystem path (phpsecurity:S2083).
+		$allowed_subfolder_types = array('data', 'documentation', 'thumbnail');
+		if (!is_string($file_type) || !in_array($file_type, $allowed_subfolder_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE');
+		}
+		
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
@@ -282,7 +289,22 @@ class Editor_resource_model extends ci_model {
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
+		// Force basename() to defeat any traversal attempt smuggled through the
+		// stored filename and verify the resulting destination resolves inside
+		// the project sub-folder before any filesystem write (phpsecurity:S2083).
+		$final_filename = basename((string)$final_filename);
+		if ($final_filename === '' || $final_filename === '.' || $final_filename === '..') {
+			throw new Exception('INVALID_FILENAME');
+		}
+		
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
+		
+		$canonical_subfolder = @realpath($survey_folder_type);
+		$canonical_parent = @realpath(dirname($final_file_path));
+		if ($canonical_subfolder === false || $canonical_parent === false
+			|| rtrim($canonical_parent, '/\\') !== rtrim($canonical_subfolder, '/\\')) {
+			throw new Exception('INVALID_FINAL_PATH');
+		}
 		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
