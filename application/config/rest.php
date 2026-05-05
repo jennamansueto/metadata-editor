@@ -589,24 +589,44 @@ $config['allowed_cors_methods'] = [
 
 /*
 |--------------------------------------------------------------------------
-| CORS Allow Any Domain
+| CORS Allow Any Domain (DEPRECATED / no-op)
 |--------------------------------------------------------------------------
 |
-| Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| Historically, setting this to TRUE caused REST_Controller to emit
+| `Access-Control-Allow-Origin: *`, which is rejected by php:S5122 and
+| exposes authenticated APIs to any third-party site. The library now
+| always enforces the `allowed_cors_origins` allow-list below, regardless
+| of this value. Kept as FALSE for clarity.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
 | CORS Allowable Domains
 |--------------------------------------------------------------------------
 |
-| Used if $config['check_cors'] is set to TRUE and $config['allow_any_cors_domain']
-| is set to FALSE. Set all the allowable domains within the array
+| Used when $config['check_cors'] is set to TRUE. Set the exact list of
+| origin URLs (scheme + host + optional port) that are allowed to make
+| cross-origin requests. The request `Origin` header must appear verbatim
+| in this list for the CORS response headers to be emitted.
 |
-| e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
+| e.g. $config['allowed_cors_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
 $config['allowed_cors_origins'] = [];
+
+/*
+|--------------------------------------------------------------------------
+| CORS Allowable Domain Patterns
+|--------------------------------------------------------------------------
+|
+| Optional list of PCRE patterns. If a request's `Origin` header matches
+| any of these regexes, it is treated as allowed. Use sparingly and write
+| anchored patterns (^...$) to avoid accidentally matching attacker-
+| controlled hosts.
+|
+| e.g. $config['allowed_cors_origin_patterns'] = ['#^https://[a-z0-9-]+\.example\.com$#i'];
+|
+*/
+$config['allowed_cors_origin_patterns'] = [];
