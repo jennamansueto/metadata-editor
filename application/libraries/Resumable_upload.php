@@ -478,7 +478,14 @@ class Resumable_upload {
 		}
 		
 		$upload_path = $this->get_upload_path($upload_id);
-		$final_file = unix_path($upload_path . '/' . $metadata['filename']);
+		// Force basename() on the stored filename so a tampered metadata.json
+		// cannot escape the upload directory on the WRITE path either
+		// (mirrors the read-side guard in get_final_file_path; phpsecurity:S2083).
+		$safe_filename = basename((string)$metadata['filename']);
+		if ($safe_filename === '' || $safe_filename === '.' || $safe_filename === '..') {
+			throw new Exception("INVALID_UPLOAD_FILENAME");
+		}
+		$final_file = unix_path($upload_path . '/' . $safe_filename);
 		$temp_file = $final_file . '.tmp';
 		
 		// Open output file
