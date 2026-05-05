@@ -14,6 +14,16 @@ class Geospatial_api_client {
     private $timeout;
     private $max_retries;
 
+    /**
+     * Allow-list pattern for job identifiers received from clients.
+     *
+     * Job IDs are produced by the upstream geospatial API and are typically
+     * UUIDs or short alphanumeric tokens. Restrict to a conservative
+     * character set so a tampered value cannot rewrite the request URL
+     * (phpsecurity:S7044).
+     */
+    const JOB_ID_REGEX = '/^[A-Za-z0-9_\-]{1,128}$/';
+
     function __construct()
     {
         // Load configuration
@@ -210,8 +220,17 @@ class Geospatial_api_client {
             'message' => ''
         );
 
+        if (!$this->is_safe_job_id($job_id)) {
+            $result['errors'][] = 'Invalid job_id';
+            $result['message'] = 'Invalid job_id';
+            return $result;
+        }
+
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            // Build the path from the validated identifier and rawurlencode
+            // to neutralise any reserved characters that slipped through.
+            $endpoint = '/jobs/' . rawurlencode($job_id);
+            $response = $this->make_api_request('GET', $endpoint);
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -339,6 +358,13 @@ class Geospatial_api_client {
             'message' => 'Job monitoring timed out'
         );
 
+        if (!$this->is_safe_job_id($job_id)) {
+            $result['status'] = 'failed';
+            $result['errors'][] = 'Invalid job_id';
+            $result['message'] = 'Invalid job_id';
+            return $result;
+        }
+
         while ((time() - $start_time) < $max_wait_time) {
             $status = $this->get_processing_status($job_id);
             
@@ -433,6 +459,18 @@ class Geospatial_api_client {
      * 
      * @return array Connection test result
      */
+    /**
+     * Whether a value is a safe job identifier suitable for embedding in
+     * the request URL path (phpsecurity:S7044).
+     *
+     * @param mixed $job_id
+     * @return bool
+     */
+    private function is_safe_job_id($job_id)
+    {
+        return is_string($job_id) && preg_match(self::JOB_ID_REGEX, $job_id) === 1;
+    }
+
     public function test_connection()
     {
         $result = array(
