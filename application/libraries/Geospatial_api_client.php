@@ -210,8 +210,17 @@ class Geospatial_api_client {
             'message' => ''
         );
 
+        // Reject any job_id that is not a string of safe path characters so a
+        // caller cannot use this method to traverse to other API endpoints by
+        // injecting "../" or query-string fragments into the URL path.
+        if (!is_string($job_id) || !preg_match('/^[A-Za-z0-9_\-]+$/', $job_id)) {
+            $result['errors'][] = 'INVALID_JOB_ID';
+            $result['message']  = 'Invalid job_id supplied to get_job_status';
+            return $result;
+        }
+
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $response = $this->make_api_request('GET', '/jobs/' . rawurlencode($job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
