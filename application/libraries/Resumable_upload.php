@@ -485,7 +485,13 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Skip directory entries whose names are not valid upload IDs so a
+			// foreign/orphaned directory does not break listing for the rest.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -559,7 +565,13 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Skip foreign/non-UUID directories so cleanup never operates on
+			// entries that were not produced by this library.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -634,7 +646,13 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Skip foreign/non-UUID directories so cleanup never operates on
+			// entries that were not produced by this library.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -701,6 +719,20 @@ class Resumable_upload {
 	}
 
 	/**
+	 * Returns true if $upload_id matches the UUID v4 format produced by
+	 * generate_upload_id(). Useful for filtering directory listings without
+	 * triggering an exception.
+	 *
+	 * @param mixed $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return is_string($upload_id)
+			&& preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $upload_id) === 1;
+	}
+
+	/**
 	 * Validate upload_id strictly matches the UUID v4 format produced by
 	 * generate_upload_id(). Rejects path traversal sequences and any
 	 * non-hexadecimal characters before the value is used to construct a
@@ -712,7 +744,7 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception('INVALID_UPLOAD_ID');
 		}
 		return $upload_id;
