@@ -699,10 +699,67 @@ class Resumable_upload {
 			bin2hex(substr($data, 10, 6))
 		);
 	}
+
+	/**
+	 * Validate upload_id strictly matches the UUID v4 format produced by
+	 * generate_upload_id(). Rejects path traversal sequences and any
+	 * non-hexadecimal characters before the value is used to construct a
+	 * filesystem path.
+	 *
+	 * @param string $upload_id
+	 * @return string The validated upload_id
+	 * @throws Exception When the value does not match the expected format
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $upload_id)) {
+			throw new Exception('INVALID_UPLOAD_ID');
+		}
+		return $upload_id;
+	}
+
+	/**
+	 * Ensure a constructed path resolves to a location inside the configured
+	 * temp directory. The path does not have to exist yet (e.g. when it is
+	 * about to be created); in that case the parent directory is checked
+	 * instead.
+	 *
+	 * @param string $path
+	 * @return string The canonical path
+	 * @throws Exception When the path escapes the temp directory
+	 */
+	private function assert_path_within_temp($path)
+	{
+		$temp_real = realpath($this->temp_path);
+		if ($temp_real === false) {
+			throw new Exception('TEMP_PATH_NOT_FOUND');
+		}
+		$temp_real = rtrim($temp_real, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+		$candidate = realpath($path);
+		if ($candidate === false) {
+			$parent = realpath(dirname($path));
+			if ($parent === false) {
+				throw new Exception('INVALID_PATH');
+			}
+			$candidate = rtrim($parent, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . basename($path);
+		}
+
+		$candidate_normalized = rtrim($candidate, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		if (strpos($candidate_normalized, $temp_real) !== 0) {
+			throw new Exception('PATH_OUTSIDE_TEMP_DIRECTORY');
+		}
+		return $candidate;
+	}
 	
 	/**
 	 * Recursively delete directory
-	 * 
+	 *
+	 * The caller is responsible for passing a path that has already been
+	 * validated as being inside the temp directory; this method performs an
+	 * additional canonical-path check on every recursive call to defend against
+	 * symlink-based traversal attacks.
+	 *
 	 * @param string $dir
 	 * @return bool
 	 */
@@ -711,24 +768,36 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
-		
+
+		try {
+			$dir = $this->assert_path_within_temp($dir);
+		} catch (Exception $e) {
+			return false;
+		}
+
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
-		
+
 		$files = @scandir($dir);
 		if ($files === false) {
 			return false;
 		}
-		
+
 		foreach ($files as $file) {
 			if ($file == '.' || $file == '..') {
 				continue;
 			}
-			
+
 			$file_path = unix_path($dir . '/' . $file);
-			
-			if (is_dir($file_path)) {
+
+			try {
+				$file_path = $this->assert_path_within_temp($file_path);
+			} catch (Exception $e) {
+				return false;
+			}
+
+			if (is_dir($file_path) && !is_link($file_path)) {
 				if (!$this->delete_directory($file_path)) {
 					return false;
 				}
@@ -738,18 +807,23 @@ class Resumable_upload {
 				}
 			}
 		}
-		
+
 		return @rmdir($dir);
 	}
 	
 	/**
 	 * Get upload directory path
-	 * 
+	 *
+	 * The upload_id is strictly validated against the UUID v4 format produced
+	 * by generate_upload_id() to prevent path injection via traversal
+	 * sequences (e.g. "../") in user-supplied identifiers.
+	 *
 	 * @param string $upload_id
 	 * @return string
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	

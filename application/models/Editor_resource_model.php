@@ -231,6 +231,13 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Restrict file_type to the known allow-list before it is used to build
+		// any filesystem path, to prevent path injection via traversal sequences.
+		$allowed_file_types = array('data', 'documentation');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE');
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
@@ -282,8 +289,21 @@ class Editor_resource_model extends ci_model {
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
+		// Constrain the final filename to a single path component so it cannot
+		// reintroduce traversal segments through the sanitized filename.
+		$final_filename = basename($final_filename);
+
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		// Verify the resolved destination path stays inside the survey folder.
+		$survey_folder_real = realpath($survey_folder);
+		$destination_dir_real = realpath($survey_folder_type);
+		if ($survey_folder_real === false || $destination_dir_real === false
+			|| strpos(rtrim($destination_dir_real, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR,
+				rtrim($survey_folder_real, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) !== 0) {
+			throw new Exception('INVALID_DESTINATION_PATH');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
