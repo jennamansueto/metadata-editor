@@ -43,26 +43,47 @@ class Page extends MY_Controller {
 		{
 			//set language in the user session cooke
 			$this->session->set_userdata('language',strtolower($lang));
-			
-			$destination=site_home();
-			
-			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
+			$destination = $this->_safe_destination($this->input->get("destination"));
 
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
-				}
-			}
-			
 			redirect($destination);
 		}
 		else{
 			show_error("Invalid Language selected!");
 		}
+	}
+
+	/**
+	 * Resolve a user-supplied destination to a safe internal URL.
+	 *
+	 * Rejects absolute and protocol-relative URLs (e.g. "https://evil",
+	 * "//evil") so that an attacker cannot use this controller as an open
+	 * redirect, then verifies the first path component is in a static
+	 * allow-list of known internal sections before passing it through
+	 * site_url().
+	 *
+	 * @param string|null $destination
+	 * @return string Absolute URL safe to redirect to.
+	 */
+	private function _safe_destination($destination)
+	{
+		if (!is_string($destination) || $destination === '') {
+			return site_home();
+		}
+
+		// Block absolute URLs ("scheme://...") and protocol-relative URLs ("//host/...").
+		if (preg_match('#^([a-z][a-z0-9+\-.]*:)?//#i', $destination)) {
+			return site_home();
+		}
+
+		$valid_redirects = array('admin','editor','collections','projects','home','about','auth');
+		$first_segment   = strtok(ltrim($destination, '/'), '/');
+
+		if ($first_segment === false || !in_array($first_segment, $valid_redirects, true)) {
+			return site_home();
+		}
+
+		return site_url(ltrim($destination, '/'));
 	}
 }
 /* End of file page.php */
