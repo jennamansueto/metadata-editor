@@ -2397,12 +2397,14 @@ abstract class REST_Controller extends CI_Controller {
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
             // Reflect the request's Origin header back instead of using a "*"
-            // wildcard. We validate the origin parses as a syntactically-valid
-            // URL before echoing it so we do not blindly mirror arbitrary
-            // strings. A Vary: Origin header is added so caches do not serve
-            // a response with another origin's CORS headers.
+            // wildcard. We sanity-check the value to avoid header injection
+            // (no CR/LF or other control characters) but still accept the
+            // legitimate Origin: null header that browsers send for sandboxed
+            // iframes, file:// origins and cross-origin redirects. A Vary:
+            // Origin header is added so caches do not serve a response with
+            // another origin's CORS headers.
             $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin !== NULL && filter_var($origin, FILTER_VALIDATE_URL))
+            if (is_string($origin) && $origin !== '' && preg_match('/^[\x20-\x7E]+$/', $origin))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
