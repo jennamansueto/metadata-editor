@@ -797,8 +797,16 @@ class Resumable_upload {
 	 */
 	private function delete_directory($dir)
 	{
-		if (!file_exists($dir)) {
+		if (!file_exists($dir) && !is_link($dir)) {
 			return true;
+		}
+
+		// If the top-level path itself is a symlink, just unlink the link
+		// without following its target. assert_path_within_temp() uses
+		// realpath() which would resolve the symlink first, so we have to
+		// detect links before that check.
+		if (is_link($dir)) {
+			return @unlink($dir);
 		}
 
 		try {
@@ -823,13 +831,24 @@ class Resumable_upload {
 
 			$file_path = unix_path($dir . '/' . $file);
 
+			// Check is_link() BEFORE realpath() resolution so a symlink
+			// pointing inside (or outside) the temp directory is removed as
+			// a link rather than recursed into. realpath() would otherwise
+			// resolve the symlink and we would delete the wrong target.
+			if (is_link($file_path)) {
+				if (!@unlink($file_path)) {
+					return false;
+				}
+				continue;
+			}
+
 			try {
 				$file_path = $this->assert_path_within_temp($file_path);
 			} catch (Exception $e) {
 				return false;
 			}
 
-			if (is_dir($file_path) && !is_link($file_path)) {
+			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
 					return false;
 				}
