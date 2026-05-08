@@ -43,26 +43,59 @@ class Page extends MY_Controller {
 		{
 			//set language in the user session cooke
 			$this->session->set_userdata('language',strtolower($lang));
-			
-			$destination=site_home();
-			
-			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
+			$destination = $this->_safe_destination($this->input->get("destination"));
 
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
-				}
-			}
-			
 			redirect($destination);
 		}
 		else{
 			show_error("Invalid Language selected!");
 		}
+	}
+
+	/**
+	 * Resolve a redirect destination safely.
+	 *
+	 * Only same-origin relative paths whose first path segment is on an
+	 * explicit allow-list are accepted. Anything else (absolute URLs,
+	 * protocol-relative URLs starting with "//", backslash variants, or
+	 * paths whose first segment is not allow-listed) falls back to the
+	 * site home so the redirect can never be coerced to an external host.
+	 *
+	 * @param mixed $raw_destination
+	 * @return string
+	 */
+	private function _safe_destination($raw_destination)
+	{
+		$home = site_home();
+
+		if (!is_string($raw_destination) || $raw_destination === '') {
+			return $home;
+		}
+
+		// Reject absolute or protocol-relative URLs outright. After
+		// normalising backslashes we also catch "\\evil.com/x" style
+		// payloads that some browsers treat as protocol-relative.
+		$normalised = str_replace('\\', '/', $raw_destination);
+		if (strpos($normalised, '://') !== false || strpos($normalised, '//') === 0) {
+			return $home;
+		}
+
+		// Strip any leading slashes so the allow-list check operates on
+		// the first real path segment.
+		$relative = ltrim($normalised, '/');
+		if ($relative === '') {
+			return $home;
+		}
+
+		$valid_redirects = array('admin', 'editor', 'collections', 'projects', 'home', 'about', 'auth');
+		$destination_parts = explode('/', $relative);
+
+		if (!in_array($destination_parts[0], $valid_redirects, true)) {
+			return $home;
+		}
+
+		return $relative;
 	}
 }
 /* End of file page.php */
