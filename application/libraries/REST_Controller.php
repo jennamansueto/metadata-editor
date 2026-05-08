@@ -2429,10 +2429,17 @@ abstract class REST_Controller extends CI_Controller {
             }
         }
 
+        // Always advertise that the response varies by Origin, even when
+        // we don't emit Access-Control-Allow-Origin. Otherwise an
+        // intermediate cache could serve a no-CORS-headers response
+        // (recorded for a request without an Origin header) to a
+        // subsequent cross-origin request and break the browser's CORS
+        // check.
+        header('Vary: Origin', FALSE);
+
         if ($send_cors_headers)
         {
             header('Access-Control-Allow-Origin: '.$origin);
-            header('Vary: Origin', FALSE);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
