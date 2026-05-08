@@ -2477,8 +2477,12 @@ abstract class REST_Controller extends CI_Controller {
             return FALSE;
         }
 
+        // Use \A and \z (instead of ^ / $) so the anchors only match at
+        // the absolute start/end of the string. PHP's PCRE $ otherwise
+        // also matches before a trailing "\n", which would let a value
+        // like "https://evil.com\n" pass this defence-in-depth check.
         return (bool) preg_match(
-            '#^https?://(\[[A-Fa-f0-9:]+\]|[A-Za-z0-9.\-]+)(:\d{1,5})?$#',
+            '#\Ahttps?://(?:\[[A-Fa-f0-9:]+\]|[A-Za-z0-9.\-]+)(?::\d{1,5})?\z#',
             $origin
         );
     }
