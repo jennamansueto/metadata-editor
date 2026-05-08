@@ -196,6 +196,32 @@ class Geospatial_api_client {
     }
 
     /**
+     * Validate that a job ID is safe to embed in an API URL path.
+     *
+     * The remote FastAPI service mints job IDs as UUIDs / opaque short
+     * tokens, so we restrict accepted values to a strict allow-list of
+     * URL-safe characters. This prevents user-controlled callers from
+     * smuggling additional path segments (e.g. "../admin", "?x=y") or
+     * other characters that would alter the request target.
+     *
+     * @param mixed $job_id
+     * @return string Validated job_id (raw, not URL-encoded)
+     * @throws Exception when job_id does not match the allow-list
+     */
+    private function _validate_job_id($job_id)
+    {
+        if (!is_string($job_id) || $job_id === '' || strlen($job_id) > 128) {
+            throw new Exception('INVALID_JOB_ID');
+        }
+
+        if (!preg_match('/^[A-Za-z0-9._-]+$/', $job_id)) {
+            throw new Exception('INVALID_JOB_ID');
+        }
+
+        return $job_id;
+    }
+
+    /**
      * Get job status for a job
      * 
      * @param string $job_id Job ID from analyze_files response
@@ -211,7 +237,10 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $safe_job_id = $this->_validate_job_id($job_id);
+            // rawurlencode for defense in depth even though _validate_job_id
+            // already restricts the input to URL-safe characters.
+            $response = $this->make_api_request('GET', '/jobs/' . rawurlencode($safe_job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
