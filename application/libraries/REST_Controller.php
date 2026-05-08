@@ -2384,6 +2384,16 @@ abstract class REST_Controller extends CI_Controller {
     /**
      * Checks allowed domains, and adds appropriate headers for HTTP access control (CORS)
      *
+     * Even when the deployment opts in to "allow any domain" CORS via the
+     * allow_any_cors_domain config flag, we never emit a literal
+     * "Access-Control-Allow-Origin: *" header. Instead the request's
+     * Origin header is reflected back after being validated to be a
+     * well-formed http(s) URL. Combined with "Vary: Origin" this keeps
+     * the permissive semantics for browser clients while preventing the
+     * wildcard from being cached, matched against credentialed
+     * requests, or used to authorise unexpected schemes (file://,
+     * data://, etc.).
+     *
      * @access protected
      * @return void
      */
@@ -2393,30 +2403,45 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
+        $origin = $this->input->server('HTTP_ORIGIN');
+        if (!is_string($origin)) {
+            $origin = '';
+        }
+
+        $send_cors_headers = FALSE;
+
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Headers: '.$allowed_headers);
-            header('Access-Control-Allow-Methods: '.$allowed_methods);
+            // Permissive mode: accept any well-formed http(s) origin and
+            // reflect it back instead of emitting a literal wildcard.
+            if ($origin !== '' && $this->_is_safe_cors_origin($origin))
+            {
+                $send_cors_headers = TRUE;
+            }
         }
         else
         {
-            // We're going to allow only certain domains access
-            // Store the HTTP Origin header
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin === NULL)
+            // Restrictive mode: only reflect origins on the allow-list.
+            $allowed_origins = $this->config->item('allowed_cors_origins');
+            if (is_array($allowed_origins) && in_array($origin, $allowed_origins, TRUE))
             {
-                $origin = '';
+                $send_cors_headers = TRUE;
             }
+        }
 
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Access-Control-Allow-Headers: '.$allowed_headers);
-                header('Access-Control-Allow-Methods: '.$allowed_methods);
-            }
+        // Always advertise that the response varies by Origin, even when
+        // we don't emit Access-Control-Allow-Origin. Otherwise an
+        // intermediate cache could serve a no-CORS-headers response
+        // (recorded for a request without an Origin header) to a
+        // subsequent cross-origin request and break the browser's CORS
+        // check.
+        header('Vary: Origin', FALSE);
+
+        if ($send_cors_headers)
+        {
+            header('Access-Control-Allow-Origin: '.$origin);
+            header('Access-Control-Allow-Headers: '.$allowed_headers);
+            header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
@@ -2424,5 +2449,41 @@ abstract class REST_Controller extends CI_Controller {
         {
             exit;
         }
+    }
+
+    /**
+     * Decide whether an Origin header value is safe to reflect back in
+     * an Access-Control-Allow-Origin response header.
+     *
+     * Accepts only well-formed http:// or https:// URLs that consist of
+     * a scheme, host, and optional port (no path, query, fragment, user
+     * info, whitespace, or control characters). The host may be either a
+     * DNS name / IPv4 literal made of [A-Za-z0-9.\-] or a bracketed IPv6
+     * literal such as "[::1]" or "[2001:db8::1]". This prevents response-
+     * splitting / header-injection via crafted Origin values and avoids
+     * authorising non-web schemes such as file://, data://, or null.
+     *
+     * @access protected
+     * @param string $origin
+     * @return bool
+     */
+    protected function _is_safe_cors_origin($origin)
+    {
+        // 253 chars covers the maximum DNS name; allow ~64 more chars
+        // for scheme/port and for IPv6-bracketed hosts (max 39 chars
+        // plus the two brackets).
+        if (!is_string($origin) || strlen($origin) > 320)
+        {
+            return FALSE;
+        }
+
+        // Use \A and \z (instead of ^ / $) so the anchors only match at
+        // the absolute start/end of the string. PHP's PCRE $ otherwise
+        // also matches before a trailing "\n", which would let a value
+        // like "https://evil.com\n" pass this defence-in-depth check.
+        return (bool) preg_match(
+            '#\Ahttps?://(?:\[[A-Fa-f0-9:]+\]|[A-Za-z0-9.\-]+)(?::\d{1,5})?\z#',
+            $origin
+        );
     }
 }
