@@ -494,7 +494,15 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Iteration code may encounter directories that don't match the
+			// UUID v4 format (stray files, partial cleanups, etc.). Skip
+			// them rather than letting validate_upload_id() throw inside
+			// get_upload_metadata().
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -568,7 +576,14 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Skip entries that don't look like upload IDs so they cannot
+			// reach validate_upload_id() through get_upload_metadata() or
+			// delete_upload() and trigger an INVALID_UPLOAD_ID exception.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -643,7 +658,14 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Skip non-upload directories so they cannot reach
+			// validate_upload_id() through get_upload_metadata() or
+			// delete_upload() and trigger an INVALID_UPLOAD_ID exception.
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -690,6 +712,19 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Check whether the given value is a strict UUID v4 string and is
+	 * therefore safe to embed in upload-related filesystem paths.
+	 *
+	 * @param mixed $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return is_string($upload_id)
+			&& preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id) === 1;
+	}
+
+	/**
 	 * Validate that an upload ID is a strict UUID v4 string.
 	 *
 	 * Upload IDs are minted server-side via generate_upload_id() and are the
@@ -704,7 +739,7 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception("INVALID_UPLOAD_ID");
 		}
 	}
