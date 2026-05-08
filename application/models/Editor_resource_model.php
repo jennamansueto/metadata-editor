@@ -231,6 +231,14 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Validate that upload_id is a strict UUID v4 before constructing
+		// any filesystem paths from it. The library performs the same check,
+		// but enforcing it at the entry point makes the intent explicit and
+		// keeps the user-controlled value out of any path operation here.
+		if (!is_string($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $upload_id)) {
+			throw new Exception('INVALID_UPLOAD_ID');
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
@@ -1379,4 +1387,4 @@ class Editor_resource_model extends ci_model {
 	}
 
 
-}    
+}        
