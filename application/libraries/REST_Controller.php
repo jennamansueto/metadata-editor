@@ -2450,7 +2450,9 @@ abstract class REST_Controller extends CI_Controller {
      *
      * Accepts only well-formed http:// or https:// URLs that consist of
      * a scheme, host, and optional port (no path, query, fragment, user
-     * info, whitespace, or control characters). This prevents response-
+     * info, whitespace, or control characters). The host may be either a
+     * DNS name / IPv4 literal made of [A-Za-z0-9.\-] or a bracketed IPv6
+     * literal such as "[::1]" or "[2001:db8::1]". This prevents response-
      * splitting / header-injection via crafted Origin values and avoids
      * authorising non-web schemes such as file://, data://, or null.
      *
@@ -2460,13 +2462,16 @@ abstract class REST_Controller extends CI_Controller {
      */
     protected function _is_safe_cors_origin($origin)
     {
-        if (!is_string($origin) || strlen($origin) > 253 + 16)
+        // 253 chars covers the maximum DNS name; allow ~64 more chars
+        // for scheme/port and for IPv6-bracketed hosts (max 39 chars
+        // plus the two brackets).
+        if (!is_string($origin) || strlen($origin) > 320)
         {
             return FALSE;
         }
 
         return (bool) preg_match(
-            '#^https?://[A-Za-z0-9.\-]+(:\d{1,5})?$#',
+            '#^https?://(\[[A-Fa-f0-9:]+\]|[A-Za-z0-9.\-]+)(:\d{1,5})?$#',
             $origin
         );
     }
