@@ -231,6 +231,13 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Whitelist file_type to prevent path traversal via the upload destination
+		// (S2083): $file_type becomes a subdirectory name under the project folder.
+		$allowed_file_types = array('data', 'documentation', 'thumbnail');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE');
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
@@ -256,17 +263,29 @@ class Editor_resource_model extends ci_model {
 		if (!file_exists($survey_folder)) {
 			throw new Exception('EDITOR_FOLDER_NOT_FOUND: ' . $survey_folder);
 		}
-		
-		$survey_folder_type = $survey_folder . '/' . $file_type;
+
+		$canonical_survey_folder = realpath($survey_folder);
+		if ($canonical_survey_folder === false) {
+			throw new Exception('EDITOR_FOLDER_NOT_FOUND: ' . $survey_folder);
+		}
+
+		$survey_folder_type = $canonical_survey_folder . DIRECTORY_SEPARATOR . $file_type;
 		@mkdir($survey_folder_type, 0777, $recursive=true);
 		
 		if (!file_exists($survey_folder_type)) {
 			throw new Exception('EDITOR_SUB_FOLDER_NOT_FOUND: ' . $survey_folder_type);
 		}
-		
+
+		$canonical_survey_folder_type = realpath($survey_folder_type);
+		if ($canonical_survey_folder_type === false
+			|| strpos($canonical_survey_folder_type . DIRECTORY_SEPARATOR,
+				rtrim($canonical_survey_folder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) !== 0) {
+			throw new Exception('EDITOR_SUB_FOLDER_INVALID');
+		}
+
 		// Check if folder is writable
-		if (!is_writable($survey_folder_type)) {
-			throw new Exception('EDITOR_FOLDER_NOT_WRITABLE: ' . $survey_folder_type);
+		if (!is_writable($canonical_survey_folder_type)) {
+			throw new Exception('EDITOR_FOLDER_NOT_WRITABLE: ' . $canonical_survey_folder_type);
 		}
 		
 		// Validate file type using original filename (for user feedback)
@@ -282,9 +301,18 @@ class Editor_resource_model extends ci_model {
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
-		$final_file_path = $survey_folder_type . '/' . $final_filename;
+		// basename() strips any path components the sanitized filename may still
+		// contain, ensuring we cannot escape $canonical_survey_folder_type (S2083).
+		$final_filename = basename($final_filename);
+		if ($final_filename === '' || $final_filename === '.' || $final_filename === '..') {
+			throw new Exception('INVALID_FILENAME');
+		}
+
+		$final_file_path = $canonical_survey_folder_type . DIRECTORY_SEPARATOR . $final_filename;
 		
-		// Move file from temp location to final location
+		// Move file from temp location to final location.
+		// $final_file_path is composed of canonical directory + safe basename,
+		// breaking any user-tainted data flow into the @copy sink.
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
 		}
