@@ -47,14 +47,26 @@ class Page extends MY_Controller {
 			$destination=site_home();
 			
 			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
+				$candidate=$this->input->get("destination");
 
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
+				// Validate destination against an allowlist of internal paths to
+				// prevent open-redirect forging (phpsecurity:S5146). The first
+				// path component must match a known internal area, and the
+				// candidate must be a strictly relative path: no scheme, no
+				// authority, no scheme-relative `//` prefix, no backslash
+				// alternatives that some browsers normalize to `/`.
+				if (is_string($candidate)
+					&& strpos($candidate, '://') === false
+					&& strpos($candidate, '\\') === false
+					&& strpos($candidate, '//') !== 0
+					&& strpos($candidate, '/\\') !== 0) {
+					$normalized=ltrim($candidate, '/');
+					$destination_parts=explode('/', $normalized);
+					if (in_array($destination_parts[0], $valid_redirects, true)) {
+						$destination=$normalized;
+					}
 				}
 			}
 			
