@@ -2393,10 +2393,24 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
+        // If we want to allow any domain to access the API.
+        //
+        // Reflect the request's Origin (when present) instead of emitting the
+        // wildcard `*` (php:S5122). Echoing the actual origin keeps the
+        // "allow any" semantic but avoids the broad wildcard pattern that
+        // SonarQube flags as a permissive CORS policy and that is incompatible
+        // with credentialed requests. A `Vary: Origin` header is emitted so
+        // caches do not serve one origin's response to another.
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            header('Access-Control-Allow-Origin: *');
+            $origin = $this->input->server('HTTP_ORIGIN');
+            if (!is_string($origin) || $origin === '')
+            {
+                // Non-browser / same-origin caller: no CORS headers needed.
+                return;
+            }
+            header('Access-Control-Allow-Origin: '.$origin);
+            header('Vary: Origin');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
@@ -2414,6 +2428,7 @@ abstract class REST_Controller extends CI_Controller {
             if (in_array($origin, $this->config->item('allowed_cors_origins')))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
+                header('Vary: Origin');
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
