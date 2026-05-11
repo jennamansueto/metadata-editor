@@ -210,8 +210,14 @@ class Geospatial_api_client {
             'message' => ''
         );
 
+        // URL-encode the user-controlled job_id segment so it cannot inject
+        // additional path components into the upstream request (phpsecurity:S7044).
+        // rawurlencode encodes '/', '..' and other path-meaningful characters,
+        // confining the value to a single path segment.
+        $safe_job_id = rawurlencode((string) $job_id);
+
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
