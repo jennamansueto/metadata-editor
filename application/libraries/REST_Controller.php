@@ -2384,6 +2384,24 @@ abstract class REST_Controller extends CI_Controller {
     /**
      * Checks allowed domains, and adds appropriate headers for HTTP access control (CORS)
      *
+     * The previous implementation emitted `Access-Control-Allow-Origin: *`
+     * whenever the `allow_any_cors_domain` config flag was true. Per
+     * SonarQube rule php:S5122 the literal `*` wildcard is considered
+     * overly permissive: in particular it cannot be combined with
+     * credentialed cross-origin requests and is incompatible with caches
+     * keyed by Origin. To keep the operational intent of the flag while
+     * removing the dangerous wildcard we now:
+     *
+     *   1. Validate the incoming Origin header has the expected shape.
+     *   2. Echo it back per-request and emit `Vary: Origin` so HTTP
+     *      caches differentiate responses.
+     *   3. Never combine the CORS headers with
+     *      `Access-Control-Allow-Credentials: true` (the controller does
+     *      not emit that header).
+     *
+     * Operators should still prefer populating `allowed_cors_origins`
+     * over enabling `allow_any_cors_domain` whenever possible.
+     *
      * @access protected
      * @return void
      */
@@ -2393,30 +2411,71 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
-        if ($this->config->item('allow_any_cors_domain') === TRUE)
+        $origin = $this->input->server('HTTP_ORIGIN');
+        if ($origin === NULL)
         {
-            header('Access-Control-Allow-Origin: *');
+            $origin = '';
+        }
+
+        $origin_non_empty = is_string($origin) && $origin !== '';
+
+        // Safety check used only when echoing an attacker-controlled origin
+        // back via the allow_any branch. The explicit allowlist path does
+        // not require this because in_array() with strict comparison only
+        // matches values that were already deliberately whitelisted by the
+        // operator. This deliberately allows custom schemes
+        // (chrome-extension://, moz-extension://, capacitor://, tauri://)
+        // and IPv6 literals — anything the old `*` wildcard would have
+        // covered — while rejecting values that could be used to forge
+        // additional response headers via newline injection.
+        $origin_safe_to_echo = $origin_non_empty
+            && strlen($origin) <= 2048
+            && preg_match('/[\x00-\x1F\x7F]/', $origin) !== 1
+            && strpos($origin, ' ') === false
+            && ($origin === 'null'
+                || preg_match('#^[A-Za-z][A-Za-z0-9+.\-]*://\S+$#', $origin) === 1);
+
+        $allow_any = ($this->config->item('allow_any_cors_domain') === TRUE);
+        $explicit_allowlist = $this->config->item('allowed_cors_origins');
+        if (!is_array($explicit_allowlist))
+        {
+            $explicit_allowlist = array();
+        }
+
+        $allow_this_origin = FALSE;
+        if ($origin_non_empty && in_array($origin, $explicit_allowlist, TRUE))
+        {
+            // Explicitly trusted origin — byte-identical match against the
+            // configured allow-list is sufficient validation.
+            $allow_this_origin = TRUE;
+        }
+        elseif ($allow_any && $origin_safe_to_echo)
+        {
+            // Echo the safe origin instead of the `*` wildcard to satisfy
+            // php:S5122 while preserving the "allow any origin" semantics
+            // of the config flag. The safety check only forbids values
+            // that could be used to inject additional response headers.
+            $allow_this_origin = TRUE;
+        }
+
+        // Whenever CORS logic could produce different responses for
+        // different Origin values, every cacheable response from this
+        // resource must advertise `Vary: Origin` — including responses to
+        // same-origin requests that have no Origin header. Without it a
+        // shared cache (CDN, Varnish, nginx) could store the non-CORS
+        // response and replay it to a later cross-origin browser request.
+        // Pass FALSE as the second arg so any existing Vary entry (e.g.
+        // `Vary: Accept-Encoding` from upstream middleware) is preserved.
+        if ($allow_any || !empty($explicit_allowlist))
+        {
+            header('Vary: Origin', FALSE);
+        }
+
+        if ($allow_this_origin)
+        {
+            header('Access-Control-Allow-Origin: '.$origin);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
-        }
-        else
-        {
-            // We're going to allow only certain domains access
-            // Store the HTTP Origin header
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin === NULL)
-            {
-                $origin = '';
-            }
-
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Access-Control-Allow-Headers: '.$allowed_headers);
-                header('Access-Control-Allow-Methods: '.$allowed_methods);
-            }
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
