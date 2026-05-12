@@ -2417,8 +2417,14 @@ abstract class REST_Controller extends CI_Controller {
             $origin = '';
         }
 
-        $origin_is_valid = is_string($origin)
-            && $origin !== ''
+        $origin_non_empty = is_string($origin) && $origin !== '';
+
+        // Shape check used only when echoing an attacker-controlled origin
+        // back via the allow_any branch. The explicit allowlist path does
+        // not require this because in_array() with strict comparison only
+        // matches values that were already deliberately whitelisted by the
+        // operator (e.g. IPv6 literals, chrome-extension://..., etc.).
+        $origin_matches_uri_shape = $origin_non_empty
             && preg_match('#^https?://[A-Za-z0-9._\-]+(:\d{1,5})?$#', $origin) === 1;
 
         $allow_any = ($this->config->item('allow_any_cors_domain') === TRUE);
@@ -2429,19 +2435,19 @@ abstract class REST_Controller extends CI_Controller {
         }
 
         $allow_this_origin = FALSE;
-        if ($origin_is_valid)
+        if ($origin_non_empty && in_array($origin, $explicit_allowlist, TRUE))
         {
-            if (in_array($origin, $explicit_allowlist, TRUE))
-            {
-                $allow_this_origin = TRUE;
-            }
-            elseif ($allow_any)
-            {
-                // Echo the validated origin instead of the `*` wildcard
-                // to satisfy php:S5122 while preserving the
-                // "allow any origin" semantics of the config flag.
-                $allow_this_origin = TRUE;
-            }
+            // Explicitly trusted origin — byte-identical match against the
+            // configured allow-list is sufficient validation.
+            $allow_this_origin = TRUE;
+        }
+        elseif ($allow_any && $origin_matches_uri_shape)
+        {
+            // Echo the validated origin instead of the `*` wildcard to
+            // satisfy php:S5122 while preserving the "allow any origin"
+            // semantics of the config flag. The shape check defends
+            // against header-injection via attacker-controlled values.
+            $allow_this_origin = TRUE;
         }
 
         if ($allow_this_origin)
