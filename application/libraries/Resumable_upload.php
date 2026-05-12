@@ -8,8 +8,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Uses file-based metadata storage
  */
 class Resumable_upload {
-	
+
+	// UUID v4 format used for upload identifiers. Restricting accepted
+	// upload_id values to this pattern prevents path injection attacks
+	// when the identifier is concatenated into filesystem paths.
+	const UPLOAD_ID_REGEX = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
+
 	private $temp_path;
+	private $temp_path_real;
 	private $max_size;
 	private $chunk_size;
 	private $expiry_hours;
@@ -47,6 +53,63 @@ class Resumable_upload {
 				throw new Exception("FAILED_TO_CREATE_TEMP_DIRECTORY: " . $this->temp_path);
 			}
 		}
+
+		// Cache the canonical temp path for containment checks. Trailing
+		// slash is required so prefix comparisons cannot match a sibling
+		// directory like "/tmp/uploadsmalicious" against "/tmp/uploads".
+		$real = @realpath($this->temp_path);
+		if ($real === false) {
+			throw new Exception("FAILED_TO_RESOLVE_TEMP_DIRECTORY: " . $this->temp_path);
+		}
+		$this->temp_path_real = rtrim(unix_path($real), '/') . '/';
+	}
+
+	/**
+	 * Validate that an upload_id is a well-formed UUID v4.
+	 *
+	 * @param string $upload_id
+	 * @return string sanitized upload_id
+	 * @throws Exception on invalid format
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (!is_string($upload_id) || !preg_match(self::UPLOAD_ID_REGEX, $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+		return $upload_id;
+	}
+
+	/**
+	 * Ensure a constructed path resolves inside the resumable upload
+	 * temp directory. Defends against path traversal even if validation
+	 * upstream is bypassed.
+	 *
+	 * @param string $path
+	 * @return string canonical path inside temp directory
+	 * @throws Exception if the path escapes the temp directory
+	 */
+	private function assert_path_within_temp($path)
+	{
+		$real = @realpath($path);
+		if ($real === false) {
+			// realpath() fails for non-existing files; fall back to checking
+			// the parent directory and reconstructing the canonical path.
+			$parent_real = @realpath(dirname($path));
+			if ($parent_real === false) {
+				throw new Exception("PATH_TRAVERSAL_DETECTED");
+			}
+			$real = unix_path($parent_real . '/' . basename($path));
+		} else {
+			$real = unix_path($real);
+		}
+
+		$candidate = rtrim($real, '/') . (is_dir($real) ? '/' : '');
+		if (strpos($candidate, $this->temp_path_real) !== 0
+			&& ($candidate . '/') !== $this->temp_path_real) {
+			throw new Exception("PATH_TRAVERSAL_DETECTED");
+		}
+
+		return $real;
 	}
 	
 	/**
@@ -147,12 +210,15 @@ class Resumable_upload {
 	 */
 	public function get_upload_metadata($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata_path = $this->get_metadata_path($upload_id);
-		
+
 		if (!file_exists($metadata_path)) {
 			return false;
 		}
-		
+
+		$this->assert_path_within_temp($metadata_path);
+
 		$metadata_json = @file_get_contents($metadata_path);
 		if ($metadata_json === false) {
 			return false;
@@ -485,12 +551,17 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Only consider directories that look like upload IDs.
+			if (!preg_match(self::UPLOAD_ID_REGEX, $dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
 			}
-			
+
 			$metadata = $this->get_upload_metadata($dir);
 			if ($metadata) {
 				$uploaded_chunks = $this->get_uploaded_chunks($dir);
@@ -559,7 +630,12 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Only consider directories that look like upload IDs.
+			if (!preg_match(self::UPLOAD_ID_REGEX, $dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -634,7 +710,12 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			// Only consider directories that look like upload IDs.
+			if (!preg_match(self::UPLOAD_ID_REGEX, $dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -711,24 +792,39 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
-		
+
+		// Refuse to operate on anything outside the resumable temp tree.
+		try {
+			$this->assert_path_within_temp($dir);
+		} catch (Exception $e) {
+			return false;
+		}
+
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
-		
+
 		$files = @scandir($dir);
 		if ($files === false) {
 			return false;
 		}
-		
+
 		foreach ($files as $file) {
 			if ($file == '.' || $file == '..') {
 				continue;
 			}
-			
+
 			$file_path = unix_path($dir . '/' . $file);
-			
-			if (is_dir($file_path)) {
+
+			// Each entry must also stay inside the temp tree (defence in
+			// depth against symlinks that point outside).
+			try {
+				$this->assert_path_within_temp($file_path);
+			} catch (Exception $e) {
+				return false;
+			}
+
+			if (is_dir($file_path) && !is_link($file_path)) {
 				if (!$this->delete_directory($file_path)) {
 					return false;
 				}
@@ -738,7 +834,7 @@ class Resumable_upload {
 				}
 			}
 		}
-		
+
 		return @rmdir($dir);
 	}
 	
@@ -750,6 +846,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -813,25 +910,29 @@ class Resumable_upload {
 	 */
 	public function get_completed_upload($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata = $this->get_upload_metadata($upload_id);
-		
+
 		if (!$metadata) {
 			return false;
 		}
-		
+
 		if ($metadata['status'] != 'completed') {
 			return false;
 		}
-		
+
 		$final_file = $this->get_final_file_path($upload_id);
-		
+
 		// Verify file actually exists
 		if (!file_exists($final_file)) {
 			return false;
 		}
-		
+
+		// Ensure the resolved final file lives inside the temp tree.
+		$this->assert_path_within_temp($final_file);
+
 		$file_extension = strtolower(pathinfo($metadata['filename'], PATHINFO_EXTENSION));
-		
+
 		$file_info = array(
 			'upload_id' => $upload_id,
 			'file_path' => $final_file,

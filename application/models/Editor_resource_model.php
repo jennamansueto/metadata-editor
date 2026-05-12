@@ -231,44 +231,60 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Restrict file_type to a fixed allowlist. file_type flows in from
+		// the request URI segment, so any value outside this set must be
+		// rejected before being concatenated into a filesystem path.
+		$allowed_file_types = array('data', 'documentation');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE: ' . $file_type);
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
-		
-		// Get completed upload information
+
+		// Resumable_upload::get_completed_upload() validates upload_id format
+		// and enforces canonical-path containment for the returned file_path.
 		$upload_info = $this->uploader->get_completed_upload($upload_id);
-		
+
 		if (!$upload_info) {
 			throw new Exception('UPLOAD_NOT_FOUND_OR_NOT_COMPLETED: Upload ID ' . $upload_id . ' not found or not completed');
 		}
-		
+
 		$temp_file_path = $upload_info['file_path'];
 		$sanitized_filename = $upload_info['filename'];  // Use sanitized filename from upload library
 		$original_filename = $upload_info['original_filename'];
-		
+
 		// Ensure project folder exists
 		$survey_folder = $this->Editor_model->get_project_folder($sid);
-		
+
 		if (!$survey_folder) {
 			$this->Editor_model->create_project_folder($sid);
-			$survey_folder = $this->Editor_model->get_project_folder($sid); 
+			$survey_folder = $this->Editor_model->get_project_folder($sid);
 		}
-		
+
 		if (!file_exists($survey_folder)) {
 			throw new Exception('EDITOR_FOLDER_NOT_FOUND: ' . $survey_folder);
 		}
-		
+
+		// Resolve the canonical survey folder once for containment checks.
+		$survey_folder_real = @realpath($survey_folder);
+		if ($survey_folder_real === false) {
+			throw new Exception('EDITOR_FOLDER_NOT_FOUND: ' . $survey_folder);
+		}
+		$survey_folder_real = rtrim(unix_path($survey_folder_real), '/') . '/';
+
 		$survey_folder_type = $survey_folder . '/' . $file_type;
 		@mkdir($survey_folder_type, 0777, $recursive=true);
-		
+
 		if (!file_exists($survey_folder_type)) {
 			throw new Exception('EDITOR_SUB_FOLDER_NOT_FOUND: ' . $survey_folder_type);
 		}
-		
+
 		// Check if folder is writable
 		if (!is_writable($survey_folder_type)) {
 			throw new Exception('EDITOR_FOLDER_NOT_WRITABLE: ' . $survey_folder_type);
 		}
-		
+
 		// Validate file type using original filename (for user feedback)
 		$allowed_types = $this->config->item("allowed_resource_types");
 		if (!empty($allowed_types)) {
@@ -278,12 +294,30 @@ class Editor_resource_model extends ci_model {
 				throw new Exception('FILE_TYPE_NOT_ALLOWED: File type ' . $extension . ' is not allowed');
 			}
 		}
-		
+
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
+		// Sanitized filename should never contain path separators, but
+		// enforce it explicitly before joining with the survey folder.
+		if ($final_filename === '' || basename($final_filename) !== $final_filename) {
+			throw new Exception('INVALID_FILE_NAME');
+		}
+
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		// Canonical-path containment check: the resolved destination must
+		// live inside the project's survey folder. Use the resolved parent
+		// directory because the destination file does not yet exist.
+		$final_parent_real = @realpath(dirname($final_file_path));
+		if ($final_parent_real === false) {
+			throw new Exception('EDITOR_SUB_FOLDER_NOT_FOUND: ' . $survey_folder_type);
+		}
+		$final_real_candidate = rtrim(unix_path($final_parent_real), '/') . '/' . basename($final_file_path);
+		if (strpos($final_real_candidate, $survey_folder_real) !== 0) {
+			throw new Exception('PATH_TRAVERSAL_DETECTED');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
