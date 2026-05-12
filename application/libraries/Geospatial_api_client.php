@@ -211,7 +211,16 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            // job_id flows in from API consumers and is appended to the
+            // upstream URL path, so it must be restricted to a safe shape
+            // before being inlined (phpsecurity:S7044).
+            if (!is_string($job_id) || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $job_id)) {
+                throw new Exception('INVALID_JOB_ID');
+            }
+            // Additionally URL-encode to defang any characters that may
+            // become reserved if the regex is ever relaxed.
+            $safe_job_id = rawurlencode($job_id);
+            $response = $this->make_api_request('GET', '/jobs/' . $safe_job_id);
             
             if ($response['success']) {
                 $result['success'] = true;
