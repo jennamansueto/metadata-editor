@@ -2419,13 +2419,21 @@ abstract class REST_Controller extends CI_Controller {
 
         $origin_non_empty = is_string($origin) && $origin !== '';
 
-        // Shape check used only when echoing an attacker-controlled origin
+        // Safety check used only when echoing an attacker-controlled origin
         // back via the allow_any branch. The explicit allowlist path does
         // not require this because in_array() with strict comparison only
         // matches values that were already deliberately whitelisted by the
-        // operator (e.g. IPv6 literals, chrome-extension://..., etc.).
-        $origin_matches_uri_shape = $origin_non_empty
-            && preg_match('#^https?://[A-Za-z0-9._\-]+(:\d{1,5})?$#', $origin) === 1;
+        // operator. This deliberately allows custom schemes
+        // (chrome-extension://, moz-extension://, capacitor://, tauri://)
+        // and IPv6 literals — anything the old `*` wildcard would have
+        // covered — while rejecting values that could be used to forge
+        // additional response headers via newline injection.
+        $origin_safe_to_echo = $origin_non_empty
+            && strlen($origin) <= 2048
+            && preg_match('/[\x00-\x1F\x7F]/', $origin) !== 1
+            && strpos($origin, ' ') === false
+            && ($origin === 'null'
+                || preg_match('#^[A-Za-z][A-Za-z0-9+.\-]*://\S+$#', $origin) === 1);
 
         $allow_any = ($this->config->item('allow_any_cors_domain') === TRUE);
         $explicit_allowlist = $this->config->item('allowed_cors_origins');
@@ -2441,12 +2449,12 @@ abstract class REST_Controller extends CI_Controller {
             // configured allow-list is sufficient validation.
             $allow_this_origin = TRUE;
         }
-        elseif ($allow_any && $origin_matches_uri_shape)
+        elseif ($allow_any && $origin_safe_to_echo)
         {
-            // Echo the validated origin instead of the `*` wildcard to
-            // satisfy php:S5122 while preserving the "allow any origin"
-            // semantics of the config flag. The shape check defends
-            // against header-injection via attacker-controlled values.
+            // Echo the safe origin instead of the `*` wildcard to satisfy
+            // php:S5122 while preserving the "allow any origin" semantics
+            // of the config flag. The safety check only forbids values
+            // that could be used to inject additional response headers.
             $allow_this_origin = TRUE;
         }
 
