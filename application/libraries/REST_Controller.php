@@ -2458,10 +2458,22 @@ abstract class REST_Controller extends CI_Controller {
             $allow_this_origin = TRUE;
         }
 
+        // Whenever CORS logic could produce different responses for
+        // different Origin values, every cacheable response from this
+        // resource must advertise `Vary: Origin` — including responses to
+        // same-origin requests that have no Origin header. Without it a
+        // shared cache (CDN, Varnish, nginx) could store the non-CORS
+        // response and replay it to a later cross-origin browser request.
+        // Pass FALSE as the second arg so any existing Vary entry (e.g.
+        // `Vary: Accept-Encoding` from upstream middleware) is preserved.
+        if ($allow_any || !empty($explicit_allowlist))
+        {
+            header('Vary: Origin', FALSE);
+        }
+
         if ($allow_this_origin)
         {
             header('Access-Control-Allow-Origin: '.$origin);
-            header('Vary: Origin');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
