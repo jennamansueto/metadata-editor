@@ -50,8 +50,9 @@ class Page extends MY_Controller {
 			if ($requested){
 				// Only allow same-origin, relative redirects. Reject anything
 				// that could be interpreted as an absolute URL or
-				// protocol-relative URL (//evil.com), and require that the
-				// leading path segment belong to a known section of the app.
+				// protocol-relative URL (//evil.com), reject path traversal
+				// segments, and require that the leading path segment belong
+				// to a known section of the app.
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
 				$is_safe=is_string($requested)
@@ -59,13 +60,23 @@ class Page extends MY_Controller {
 					&& strpos($requested, "\n") === false
 					&& strpos($requested, "\r") === false
 					&& strpos($requested, '\\') === false
-					&& strpos($requested, '://') === false
 					&& strpos($requested, '//') !== 0;
 
 				if ($is_safe) {
+					// Examine only the path portion of the destination so
+					// that legitimate same-origin paths whose query string
+					// happens to include a URL (e.g. ?ref=http://x) still
+					// pass. Reject any ':' in the path itself, which would
+					// indicate either an absolute URL ("http:") or a
+					// dangerous scheme ("javascript:", "data:").
 					$normalized=ltrim($requested, '/');
-					$destination_parts=explode('/', $normalized);
-					if (in_array($destination_parts[0], $valid_redirects, true)) {
+					$path_only=preg_split('/[?#]/', $normalized, 2)[0];
+					$path_segments=explode('/', $path_only);
+					$has_colon=strpos($path_only, ':') !== false;
+					$has_traversal=in_array('..', $path_segments, true)
+						|| in_array('.', $path_segments, true);
+
+					if (!$has_colon && !$has_traversal && in_array($path_segments[0], $valid_redirects, true)) {
 						$destination='/' . $normalized;
 					}
 				}
