@@ -231,19 +231,27 @@ class Editor_resource_model extends ci_model {
 	 */
 	function move_resumable_upload($sid, $file_type='documentation', $upload_id)
 	{
+		// Restrict file_type to a known set so it cannot be used to traverse
+		// outside the project folder when concatenated below.
+		$allowed_file_types = array('data', 'documentation');
+		if (!in_array($file_type, $allowed_file_types, true)) {
+			throw new Exception('INVALID_FILE_TYPE: ' . $file_type);
+		}
+
 		// Load resumable upload library
 		$this->load->library('Resumable_upload', null, 'uploader');
 		
-		// Get completed upload information
+		// Get completed upload information (uploader validates the upload_id
+		// shape and rejects anything that is not a strict UUID v4)
 		$upload_info = $this->uploader->get_completed_upload($upload_id);
 		
 		if (!$upload_info) {
-			throw new Exception('UPLOAD_NOT_FOUND_OR_NOT_COMPLETED: Upload ID ' . $upload_id . ' not found or not completed');
+			throw new Exception('UPLOAD_NOT_FOUND_OR_NOT_COMPLETED: Upload ID not found or not completed');
 		}
 		
 		$temp_file_path = $upload_info['file_path'];
-		$sanitized_filename = $upload_info['filename'];  // Use sanitized filename from upload library
-		$original_filename = $upload_info['original_filename'];
+		$sanitized_filename = basename($upload_info['filename']);  // Strip any path components defensively
+		$original_filename = basename($upload_info['original_filename']);
 		
 		// Ensure project folder exists
 		$survey_folder = $this->Editor_model->get_project_folder($sid);
@@ -281,8 +289,13 @@ class Editor_resource_model extends ci_model {
 		
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
+		$final_filename = basename($final_filename);
 
-		$final_file_path = $survey_folder_type . '/' . $final_filename;
+		$resolved_destination = realpath($survey_folder_type);
+		if ($resolved_destination === false) {
+			throw new Exception('EDITOR_SUB_FOLDER_NOT_FOUND: ' . $survey_folder_type);
+		}
+		$final_file_path = $resolved_destination . DIRECTORY_SEPARATOR . $final_filename;
 		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
