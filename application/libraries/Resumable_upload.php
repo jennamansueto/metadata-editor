@@ -572,7 +572,13 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			try {
+				$dir = $this->validate_upload_id($dir);
+			} catch (Exception $e) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -647,7 +653,13 @@ class Resumable_upload {
 			if ($dir == '.' || $dir == '..') {
 				continue;
 			}
-			
+
+			try {
+				$dir = $this->validate_upload_id($dir);
+			} catch (Exception $e) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
