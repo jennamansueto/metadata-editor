@@ -210,6 +210,15 @@ class Geospatial_api_client {
             'message' => ''
         );
 
+        // Restrict job_id to a safe identifier alphabet before placing it
+        // into the URL path. This prevents user-controlled data from
+        // changing the request target (SSRF-style URL path tampering).
+        if (!is_string($job_id) || !preg_match('/^[A-Za-z0-9._-]{1,128}$/', $job_id)) {
+            $result['errors'][] = 'INVALID_JOB_ID';
+            $result['message'] = 'Invalid job_id';
+            return $result;
+        }
+
         try {
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
