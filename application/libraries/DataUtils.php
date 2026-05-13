@@ -223,6 +223,16 @@ class DataUtils
 	 */
 	public function get_job_status($job_id)
 	{
+		// Restrict job_id to a safe identifier alphabet before placing it
+		// into the URL path. This prevents user-controlled data from
+		// changing the request target (SSRF-style URL path tampering).
+		if (!is_string($job_id) || !preg_match('/^[A-Za-z0-9._-]{1,128}$/', $job_id)) {
+			return [
+				'response' => ['detail' => 'INVALID_JOB_ID'],
+				'status_code' => 400
+			];
+		}
+
 		$client = new Client([
 			'base_uri' => $this->DataApiUrl.'jobs/'.$job_id
 		]);
