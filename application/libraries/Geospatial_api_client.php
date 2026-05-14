@@ -211,7 +211,11 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            // Validate job_id to prevent URL path injection
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+                throw new Exception("Invalid job ID format");
+            }
+            $response = $this->make_api_request('GET', "/jobs/" . rawurlencode($job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
