@@ -211,7 +211,8 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $safe_job_id = $this->sanitize_path_segment($job_id);
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -277,9 +278,30 @@ class Geospatial_api_client {
      * @param array $data Request data
      * @return array API response
      */
+    /**
+     * Sanitize a value for safe use in a URL path segment
+     * 
+     * @param string $value
+     * @return string
+     */
+    private function sanitize_path_segment($value)
+    {
+        return rawurlencode($value);
+    }
+
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate endpoint is a relative path starting with /
+            if (empty($endpoint) || $endpoint[0] !== '/') {
+                throw new Exception("Invalid API endpoint: must start with /");
+            }
+
+            // Reject path traversal sequences in the endpoint
+            if (preg_match('/\.\.\/|\.\.\\\\/', $endpoint)) {
+                throw new Exception("Invalid API endpoint: path traversal detected");
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
