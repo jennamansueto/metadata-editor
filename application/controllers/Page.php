@@ -53,7 +53,11 @@ class Page extends MY_Controller {
 
 				$destination_parts=explode("/",$destination);
 
-				if (!in_array($destination_parts[0],$valid_redirects)){
+				if (!in_array($destination_parts[0],$valid_redirects)
+					|| preg_match('#^[a-z]+://#i', $destination)
+					|| strpos($destination, '//') !== false
+					|| strpos($destination, '..') !== false
+					|| strpos($destination, "\0") !== false) {
 					$destination=site_home();
 				}
 			}
