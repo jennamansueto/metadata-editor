@@ -153,6 +153,10 @@ class Resumable_upload {
 			return false;
 		}
 		
+		if (!$this->validate_path_within_base($metadata_path)) {
+			return false;
+		}
+		
 		$metadata_json = @file_get_contents($metadata_path);
 		if ($metadata_json === false) {
 			return false;
@@ -681,6 +685,38 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate upload ID format (UUID v4: hex characters and dashes only)
+	 * 
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !is_string($upload_id)) {
+			return false;
+		}
+		return (bool) preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i', $upload_id);
+	}
+	
+	/**
+	 * Validate that a resolved path is within the upload temp directory
+	 * 
+	 * @param string $path Path to validate
+	 * @return bool
+	 */
+	private function validate_path_within_base($path)
+	{
+		$real_path = realpath($path);
+		$real_base = realpath($this->temp_path);
+		
+		if ($real_path === false || $real_base === false) {
+			return false;
+		}
+		
+		return strpos($real_path, $real_base . '/') === 0;
+	}
+	
+	/**
 	 * Generate UUID v4
 	 * 
 	 * @return string
@@ -712,6 +748,10 @@ class Resumable_upload {
 			return true;
 		}
 		
+		if (!$this->validate_path_within_base($dir)) {
+			return false;
+		}
+		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
@@ -727,6 +767,10 @@ class Resumable_upload {
 			}
 			
 			$file_path = unix_path($dir . '/' . $file);
+			
+			if (!$this->validate_path_within_base($file_path)) {
+				return false;
+			}
 			
 			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
@@ -750,6 +794,9 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		if (!$this->validate_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID: Upload ID contains invalid characters");
+		}
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -827,6 +874,10 @@ class Resumable_upload {
 		
 		// Verify file actually exists
 		if (!file_exists($final_file)) {
+			return false;
+		}
+		
+		if (!$this->validate_path_within_base($final_file)) {
 			return false;
 		}
 		

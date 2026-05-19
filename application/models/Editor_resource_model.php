@@ -284,6 +284,17 @@ class Editor_resource_model extends ci_model {
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
+		// Validate destination path stays within the expected directory (prevent path traversal)
+		$real_dest_dir = realpath($survey_folder_type);
+		if ($real_dest_dir === false) {
+			throw new Exception('INVALID_DESTINATION_PATH: Destination directory does not resolve');
+		}
+		$real_dest_dir = rtrim($real_dest_dir, '/') . '/';
+		$canonical_dest = realpath(dirname($final_file_path));
+		if ($canonical_dest === false || strpos($canonical_dest . '/', $real_dest_dir) !== 0) {
+			throw new Exception('PATH_TRAVERSAL_DETECTED: Destination path is outside allowed directory');
+		}
+		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
