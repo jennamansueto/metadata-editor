@@ -589,24 +589,25 @@ $config['allowed_cors_methods'] = [
 
 /*
 |--------------------------------------------------------------------------
-| CORS Allow Any Domain
+| CORS Allow Any Domain (DEPRECATED)
 |--------------------------------------------------------------------------
 |
-| Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| This setting is no longer used. CORS is now always restricted to the
+| origins listed in $config['allowed_cors_origins'] below.
+| To allow cross-origin requests, add your trusted domains to that list.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
 | CORS Allowable Domains
 |--------------------------------------------------------------------------
 |
-| Used if $config['check_cors'] is set to TRUE and $config['allow_any_cors_domain']
-| is set to FALSE. Set all the allowable domains within the array
+| Set all the allowable origin domains within the array. Only origins
+| listed here will receive Access-Control-Allow-Origin headers.
 |
-| e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
+| e.g. $config['allowed_cors_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
 $config['allowed_cors_origins'] = [];
