@@ -490,6 +490,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->validate_upload_id($dir)) {
+				continue;
+			}
+			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -561,6 +565,10 @@ class Resumable_upload {
 			}
 			
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			if (!$this->validate_upload_id($dir)) {
 				continue;
 			}
 			
@@ -636,6 +644,10 @@ class Resumable_upload {
 		
 		foreach ($dirs as $dir) {
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			if (!$this->validate_upload_id($dir)) {
 				continue;
 			}
 			
