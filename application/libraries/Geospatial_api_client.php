@@ -211,7 +211,10 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            if (!preg_match('/^[a-zA-Z0-9_-]+$/', $job_id)) {
+                throw new Exception("Invalid job ID format");
+            }
+            $response = $this->make_api_request('GET', "/jobs/" . urlencode($job_id));
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -280,6 +283,18 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            $allowed_prefixes = array('/geospatial/', '/jobs/');
+            $is_allowed = false;
+            foreach ($allowed_prefixes as $prefix) {
+                if (strpos($endpoint, $prefix) === 0) {
+                    $is_allowed = true;
+                    break;
+                }
+            }
+            if (!$is_allowed) {
+                throw new Exception("Endpoint not in allowlist: " . $endpoint);
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
