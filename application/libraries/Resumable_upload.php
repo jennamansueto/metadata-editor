@@ -778,7 +778,11 @@ class Resumable_upload {
 			return true;
 		}
 		
-		$this->validate_path_containment($dir);
+		try {
+			$this->validate_path_containment($dir);
+		} catch (Exception $e) {
+			return false;
+		}
 		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
