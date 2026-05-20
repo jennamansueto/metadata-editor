@@ -288,7 +288,7 @@ class Editor_resource_model extends ci_model {
 		$real_survey_folder = realpath($survey_folder_type);
 		if ($real_survey_folder !== false) {
 			$resolved_final = realpath(dirname($final_file_path));
-			if ($resolved_final === false || (strpos($resolved_final, $real_survey_folder . '/') !== 0 && $resolved_final !== $real_survey_folder)) {
+			if ($resolved_final === false || (strpos($resolved_final, $real_survey_folder . DIRECTORY_SEPARATOR) !== 0 && $resolved_final !== $real_survey_folder)) {
 				throw new Exception('PATH_TRAVERSAL_DETECTED: Final file path escapes the project folder');
 			}
 		}

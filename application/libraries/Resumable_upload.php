@@ -759,7 +759,7 @@ class Resumable_upload {
 			throw new Exception("PATH_RESOLUTION_FAILED");
 		}
 		
-		if (strpos($real_path, $real_temp . '/') !== 0 && $real_path !== $real_temp) {
+		if (strpos($real_path, $real_temp . DIRECTORY_SEPARATOR) !== 0 && $real_path !== $real_temp) {
 			throw new Exception("PATH_TRAVERSAL_DETECTED");
 		}
 		
