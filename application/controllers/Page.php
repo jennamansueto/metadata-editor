@@ -49,6 +49,14 @@ class Page extends MY_Controller {
 			if ($this->input->get("destination")){
 				$destination=$this->input->get("destination");
 
+				// Strip leading slashes and backslashes to prevent protocol-relative URLs
+				$destination=ltrim($destination, '/\\');
+
+				// Reject URLs with protocol schemes (e.g. http://, javascript:)
+				if (preg_match('#^[a-z][a-z0-9+.\-]*:#i', $destination)){
+					$destination=site_home();
+				}
+
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
 				$destination_parts=explode("/",$destination);
