@@ -756,7 +756,7 @@ class Resumable_upload {
 		
 		$real_path = realpath($path);
 		if ($real_path === false) {
-			return $path;
+			throw new Exception("PATH_RESOLUTION_FAILED");
 		}
 		
 		if (strpos($real_path, $real_temp . '/') !== 0 && $real_path !== $real_temp) {
