@@ -486,6 +486,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -557,6 +561,10 @@ class Resumable_upload {
 			}
 			
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -635,6 +643,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			
 			if (!is_dir($upload_path)) {
@@ -701,7 +713,21 @@ class Resumable_upload {
 	}
 	
 	/**
-	 * Validate upload ID format (UUID v4)
+	 * Check if upload ID is a valid UUID v4 format
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		if (empty($upload_id)) {
+			return false;
+		}
+		return (bool)preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id);
+	}
+	
+	/**
+	 * Validate upload ID format (UUID v4), throwing on invalid input
 	 *
 	 * @param string $upload_id
 	 * @return void
@@ -709,7 +735,7 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (empty($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception("INVALID_UPLOAD_ID");
 		}
 	}
