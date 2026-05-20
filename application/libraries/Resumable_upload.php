@@ -701,6 +701,46 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate upload ID format (UUID v4)
+	 *
+	 * @param string $upload_id
+	 * @return void
+	 * @throws Exception if upload_id is invalid
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+	
+	/**
+	 * Verify that a resolved path is contained within the temp directory
+	 *
+	 * @param string $path
+	 * @return string The resolved real path
+	 * @throws Exception if path escapes the temp directory
+	 */
+	private function validate_path_containment($path)
+	{
+		$real_temp = realpath($this->temp_path);
+		if ($real_temp === false) {
+			throw new Exception("TEMP_DIRECTORY_NOT_FOUND");
+		}
+		
+		$real_path = realpath($path);
+		if ($real_path === false) {
+			return $path;
+		}
+		
+		if (strpos($real_path, $real_temp . '/') !== 0 && $real_path !== $real_temp) {
+			throw new Exception("PATH_TRAVERSAL_DETECTED");
+		}
+		
+		return $real_path;
+	}
+	
+	/**
 	 * Recursively delete directory
 	 * 
 	 * @param string $dir
@@ -711,6 +751,8 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
+		
+		$this->validate_path_containment($dir);
 		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
@@ -750,6 +792,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
