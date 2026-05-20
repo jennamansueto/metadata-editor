@@ -593,10 +593,14 @@ $config['allowed_cors_methods'] = [
 |--------------------------------------------------------------------------
 |
 | Set to TRUE to enable Cross-Origin Resource Sharing (CORS) from any
-| source domain
+| source domain.
+|
+| WARNING: Setting this to TRUE sends Access-Control-Allow-Origin: *
+| which allows any domain to make cross-origin requests. For production,
+| set this to FALSE and populate 'allowed_cors_origins' below instead.
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -609,4 +613,7 @@ $config['allow_any_cors_domain'] = TRUE;
 | e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
+// IMPORTANT: When 'allow_any_cors_domain' is FALSE, you must add your
+// trusted origins here or all cross-origin requests will be blocked.
+// e.g. $config['allowed_cors_origins'] = ['https://your-frontend.example.com'];
 $config['allowed_cors_origins'] = [];
