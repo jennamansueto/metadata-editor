@@ -153,6 +153,7 @@ class Resumable_upload {
 			return false;
 		}
 		
+		$this->validate_path_within($metadata_path, $this->temp_path);
 		$metadata_json = @file_get_contents($metadata_path);
 		if ($metadata_json === false) {
 			return false;
@@ -712,6 +713,8 @@ class Resumable_upload {
 			return true;
 		}
 		
+		$this->validate_path_within($dir, $this->temp_path);
+		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
@@ -727,6 +730,7 @@ class Resumable_upload {
 			}
 			
 			$file_path = unix_path($dir . '/' . $file);
+			$this->validate_path_within($file_path, $this->temp_path);
 			
 			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
@@ -743,6 +747,48 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate that an upload ID contains only safe characters
+	 *
+	 * @param string $upload_id
+	 * @return string Validated upload ID
+	 * @throws Exception If upload ID contains unsafe characters
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[a-zA-Z0-9\-_]+$/', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID: Upload ID contains invalid characters");
+		}
+		return $upload_id;
+	}
+
+	/**
+	 * Validate that a resolved path stays within the expected base directory
+	 *
+	 * @param string $path Path to validate
+	 * @param string $base_dir Expected base directory
+	 * @return string Validated real path
+	 * @throws Exception If path escapes the base directory
+	 */
+	private function validate_path_within($path, $base_dir)
+	{
+		$real_base = realpath($base_dir);
+		if ($real_base === false) {
+			throw new Exception("INVALID_BASE_DIRECTORY: Base directory does not exist");
+		}
+		$real_base = rtrim($real_base, '/') . '/';
+
+		$real_path = realpath($path);
+		if ($real_path === false) {
+			return $path;
+		}
+
+		if (strpos($real_path, $real_base) !== 0 && $real_path !== rtrim($real_base, '/')) {
+			throw new Exception("PATH_TRAVERSAL_DETECTED: Path escapes allowed directory");
+		}
+		return $real_path;
+	}
+
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -750,6 +796,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -831,6 +878,8 @@ class Resumable_upload {
 		}
 		
 		$file_extension = strtolower(pathinfo($metadata['filename'], PATHINFO_EXTENSION));
+		
+		$this->validate_path_within($final_file, $this->temp_path);
 		
 		$file_info = array(
 			'upload_id' => $upload_id,
