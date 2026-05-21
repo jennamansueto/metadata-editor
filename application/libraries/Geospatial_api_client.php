@@ -280,6 +280,13 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Sanitize endpoint: URL-encode each path segment to prevent path traversal
+            $segments = explode('/', $endpoint);
+            $sanitized_segments = array_map(function($segment) {
+                return $segment === '' ? '' : rawurlencode(rawurldecode($segment));
+            }, $segments);
+            $endpoint = implode('/', $sanitized_segments);
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
