@@ -203,11 +203,6 @@ class Geospatial_api_client {
      */
     public function get_job_status($job_id)
     {
-        // Validate job_id format to prevent path traversal
-        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $job_id)) {
-            throw new Exception("INVALID_JOB_ID: Job ID contains invalid characters");
-        }
-
         $result = array(
             'success' => false,
             'data' => null,
@@ -216,6 +211,11 @@ class Geospatial_api_client {
         );
 
         try {
+            // Validate job_id format to prevent path traversal
+            if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $job_id)) {
+                throw new Exception("INVALID_JOB_ID: Job ID contains invalid characters");
+            }
+
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
