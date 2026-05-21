@@ -203,6 +203,11 @@ class Geospatial_api_client {
      */
     public function get_job_status($job_id)
     {
+        // Validate job_id format to prevent path traversal
+        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $job_id)) {
+            throw new Exception("INVALID_JOB_ID: Job ID contains invalid characters");
+        }
+
         $result = array(
             'success' => false,
             'data' => null,
@@ -280,11 +285,16 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
-            // Sanitize endpoint: URL-encode each path segment to prevent path traversal
+            // Reject path segments that resolve to dot-segments to prevent path traversal
             $segments = explode('/', $endpoint);
-            $sanitized_segments = array_map(function($segment) {
-                return $segment === '' ? '' : rawurlencode(rawurldecode($segment));
-            }, $segments);
+            $sanitized_segments = array();
+            foreach ($segments as $segment) {
+                $decoded = rawurldecode($segment);
+                if ($decoded === '..' || $decoded === '.') {
+                    throw new Exception("PATH_TRAVERSAL_DETECTED: Endpoint contains invalid path segment");
+                }
+                $sanitized_segments[] = $segment;
+            }
             $endpoint = implode('/', $sanitized_segments);
 
             $client = new Client([
