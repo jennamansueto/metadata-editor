@@ -2393,19 +2393,29 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // Validate the requesting origin against the configured allowlist
-        $origin = $this->input->server('HTTP_ORIGIN');
-        if ($origin === NULL)
+        // If configured to allow any domain, emit the wildcard header (not recommended)
+        if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            $origin = '';
-        }
-
-        $allowed_origins = $this->config->item('allowed_cors_origins');
-        if (is_array($allowed_origins) && in_array($origin, $allowed_origins, TRUE))
-        {
-            header('Access-Control-Allow-Origin: '.$origin);
+            header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
+        }
+        else
+        {
+            // Validate the requesting origin against the configured allowlist
+            $origin = $this->input->server('HTTP_ORIGIN');
+            if ($origin === NULL)
+            {
+                $origin = '';
+            }
+
+            $allowed_origins = $this->config->item('allowed_cors_origins');
+            if (is_array($allowed_origins) && in_array($origin, $allowed_origins, TRUE))
+            {
+                header('Access-Control-Allow-Origin: '.$origin);
+                header('Access-Control-Allow-Headers: '.$allowed_headers);
+                header('Access-Control-Allow-Methods: '.$allowed_methods);
+            }
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
