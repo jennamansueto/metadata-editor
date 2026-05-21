@@ -56,6 +56,14 @@ class Page extends MY_Controller {
 				if (!in_array($destination_parts[0],$valid_redirects)){
 					$destination=site_home();
 				}
+
+				// Reject paths containing traversal sequences, protocol schemes, or double-slashes
+				if (preg_match('#(\\.\\.\/|:\/\/|^\/\/)#', $destination)) {
+					$destination=site_home();
+				}
+
+				// Strip leading slashes to prevent protocol-relative URLs
+				$destination = ltrim($destination, '/');
 			}
 			
 			redirect($destination);
