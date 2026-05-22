@@ -284,11 +284,15 @@ class Editor_resource_model extends ci_model {
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 
-		// Validate that the destination path stays within the project folder
+		// Validate that the filename contains no directory separators
+		if (strpos($final_filename, '/') !== false || strpos($final_filename, '\\') !== false) {
+			throw new Exception('INVALID_FILE_PATH: Filename contains directory separators');
+		}
+
+		// Validate that the destination directory resolves within the project folder
 		$real_dest_dir = realpath($survey_folder_type);
-		$real_dest = realpath(dirname($final_file_path));
-		if ($real_dest_dir === false || $real_dest === false || strpos($real_dest, $real_dest_dir) !== 0) {
-			throw new Exception('INVALID_FILE_PATH: Destination path is outside the project folder');
+		if ($real_dest_dir === false) {
+			throw new Exception('INVALID_FILE_PATH: Destination directory does not exist');
 		}
 
 		// Move file from temp location to final location
