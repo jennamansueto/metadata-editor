@@ -490,10 +490,15 @@ class Resumable_upload {
 			if (!is_dir($upload_path)) {
 				continue;
 			}
+
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
 			
 			$metadata = $this->get_upload_metadata($dir);
 			if ($metadata) {
 				$uploaded_chunks = $this->get_uploaded_chunks($dir);
+
 				$progress = count($uploaded_chunks) / $metadata['total_chunks'];
 				
 				// Calculate expiry time: for completed uploads use completed_at, otherwise updated_at
@@ -566,6 +571,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$stats['checked']++;
 			
 			// Check metadata
@@ -640,6 +649,10 @@ class Resumable_upload {
 			if (!is_dir($upload_path)) {
 				continue;
 			}
+
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
 			
 			$stats['checked']++;
 			
@@ -708,6 +721,15 @@ class Resumable_upload {
 	 */
 	private function delete_directory($dir)
 	{
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_temp === false) {
+			return false;
+		}
+		if ($real_dir !== false && strpos($real_dir, $real_temp . '/') !== 0) {
+			return false;
+		}
+
 		if (!file_exists($dir)) {
 			return true;
 		}
@@ -750,6 +772,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -851,6 +874,30 @@ class Resumable_upload {
 		return $file_info;
 	}
 	
+	/**
+	 * Validate that an upload ID is a well-formed UUID v4
+	 *
+	 * @param string $upload_id
+	 * @throws Exception if the upload ID is not a valid UUID
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+
+	/**
+	 * Check whether an upload ID is a well-formed UUID v4 (non-throwing)
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id);
+	}
+
 	/**
 	 * Sanitize filename for safe storage
 	 * 

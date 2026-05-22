@@ -283,7 +283,22 @@ class Editor_resource_model extends ci_model {
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		// Validate that the filename contains no directory separators
+		if (strpos($final_filename, '/') !== false || strpos($final_filename, '\\') !== false) {
+			throw new Exception('INVALID_FILE_PATH: Filename contains directory separators');
+		}
+
+		// Validate that the destination directory resolves within the project folder
+		$real_dest_dir = realpath($survey_folder_type);
+		$real_project_dir = realpath($survey_folder);
+		if ($real_dest_dir === false || $real_project_dir === false) {
+			throw new Exception('INVALID_FILE_PATH: Destination directory does not exist');
+		}
+		if ($real_dest_dir !== $real_project_dir && strpos($real_dest_dir, $real_project_dir . '/') !== 0) {
+			throw new Exception('INVALID_FILE_PATH: Destination path is outside the project folder');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
