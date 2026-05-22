@@ -490,10 +490,15 @@ class Resumable_upload {
 			if (!is_dir($upload_path)) {
 				continue;
 			}
+
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
 			
 			$metadata = $this->get_upload_metadata($dir);
 			if ($metadata) {
 				$uploaded_chunks = $this->get_uploaded_chunks($dir);
+
 				$progress = count($uploaded_chunks) / $metadata['total_chunks'];
 				
 				// Calculate expiry time: for completed uploads use completed_at, otherwise updated_at
@@ -566,6 +571,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$stats['checked']++;
 			
 			// Check metadata
@@ -640,6 +649,10 @@ class Resumable_upload {
 			if (!is_dir($upload_path)) {
 				continue;
 			}
+
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
 			
 			$stats['checked']++;
 			
@@ -710,7 +723,7 @@ class Resumable_upload {
 	{
 		$real_dir = realpath($dir);
 		$real_temp = realpath($this->temp_path);
-		if ($real_dir !== false && $real_temp !== false && strpos($real_dir, $real_temp) !== 0) {
+		if ($real_dir !== false && $real_temp !== false && $real_dir !== $real_temp && strpos($real_dir, $real_temp . '/') !== 0) {
 			return false;
 		}
 
@@ -866,9 +879,20 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception("INVALID_UPLOAD_ID");
 		}
+	}
+
+	/**
+	 * Check whether an upload ID is a well-formed UUID v4 (non-throwing)
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $upload_id);
 	}
 
 	/**
