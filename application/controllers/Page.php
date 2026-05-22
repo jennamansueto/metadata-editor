@@ -47,14 +47,16 @@ class Page extends MY_Controller {
 			$destination=site_home();
 			
 			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
+				$raw_destination=$this->input->get("destination");
 
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
-				$destination_parts=explode("/",$destination);
+				// Strip leading slashes and spaces to prevent protocol-relative URL bypasses
+				$sanitized=ltrim($raw_destination, '/ ');
+				$destination_parts=explode("/",$sanitized);
 
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
+				if (in_array($destination_parts[0],$valid_redirects)){
+					$destination=site_url($sanitized);
 				}
 			}
 			
