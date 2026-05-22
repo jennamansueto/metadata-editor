@@ -291,8 +291,12 @@ class Editor_resource_model extends ci_model {
 
 		// Validate that the destination directory resolves within the project folder
 		$real_dest_dir = realpath($survey_folder_type);
-		if ($real_dest_dir === false) {
+		$real_project_dir = realpath($survey_folder);
+		if ($real_dest_dir === false || $real_project_dir === false) {
 			throw new Exception('INVALID_FILE_PATH: Destination directory does not exist');
+		}
+		if ($real_dest_dir !== $real_project_dir && strpos($real_dest_dir, $real_project_dir . '/') !== 0) {
+			throw new Exception('INVALID_FILE_PATH: Destination path is outside the project folder');
 		}
 
 		// Move file from temp location to final location
