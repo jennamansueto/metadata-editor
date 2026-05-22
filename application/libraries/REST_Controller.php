@@ -2402,24 +2402,12 @@ abstract class REST_Controller extends CI_Controller {
 
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            $allowed_origins = $this->config->item('allowed_cors_origins');
-
-            if (!empty($allowed_origins) && is_array($allowed_origins))
-            {
-                // Validate against configured allowlist
-                if (in_array($origin, $allowed_origins))
-                {
-                    header('Access-Control-Allow-Origin: '.$origin);
-                    header('Vary: Origin');
-                }
-            }
-            else if ($origin !== '' && filter_var($origin, FILTER_VALIDATE_URL) !== false)
-            {
-                // No allowlist configured: reflect only well-formed origins
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
-            }
-
+            // Wildcard is intentionally used here: it is the safest "allow any"
+            // option because browsers refuse to send credentials (cookies, auth
+            // headers) when Access-Control-Allow-Origin is '*'. To restrict CORS
+            // to specific domains, set allow_any_cors_domain to FALSE and
+            // populate allowed_cors_origins in config/rest.php.
+            header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
@@ -2429,6 +2417,7 @@ abstract class REST_Controller extends CI_Controller {
             if (in_array($origin, $this->config->item('allowed_cors_origins')))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
+                header('Vary: Origin');
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
