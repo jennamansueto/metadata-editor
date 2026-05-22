@@ -283,7 +283,14 @@ class Editor_resource_model extends ci_model {
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
-		
+
+		// Validate that the destination path stays within the project folder
+		$real_dest_dir = realpath($survey_folder_type);
+		$real_dest = realpath(dirname($final_file_path));
+		if ($real_dest_dir === false || $real_dest === false || strpos($real_dest, $real_dest_dir) !== 0) {
+			throw new Exception('INVALID_FILE_PATH: Destination path is outside the project folder');
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
