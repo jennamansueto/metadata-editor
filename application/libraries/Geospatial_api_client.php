@@ -211,6 +211,10 @@ class Geospatial_api_client {
         );
 
         try {
+            // Validate job_id format to prevent path injection
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+                throw new Exception('INVALID_JOB_ID: Job ID contains invalid characters');
+            }
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -270,6 +274,33 @@ class Geospatial_api_client {
     }
 
     /**
+     * Validate that an endpoint path is safe and does not contain path traversal or scheme injection
+     *
+     * @param string $endpoint
+     * @return string Validated endpoint
+     * @throws Exception if endpoint is invalid
+     */
+    private function validate_endpoint($endpoint)
+    {
+        // Reject endpoints containing scheme separators or protocol-relative paths
+        if (preg_match('#(://|^//)#', $endpoint)) {
+            throw new Exception('INVALID_ENDPOINT: Endpoint must be a relative path');
+        }
+
+        // Reject path traversal sequences
+        if (preg_match('#(^|/)\.\.(/|$)#', $endpoint)) {
+            throw new Exception('INVALID_ENDPOINT: Endpoint contains path traversal');
+        }
+
+        // Reject control characters
+        if (preg_match('/[\x00-\x1f]/', $endpoint)) {
+            throw new Exception('INVALID_ENDPOINT: Endpoint contains control characters');
+        }
+
+        return $endpoint;
+    }
+
+    /**
      * Make HTTP request to external API using Guzzle
      * 
      * @param string $method HTTP method (GET, POST, etc.)
@@ -280,13 +311,16 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            $endpoint = $this->validate_endpoint($endpoint);
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'Metadata-Editor/1.0'
-                ]
+                ],
+                'allow_redirects' => false
             ]);
 
             $options = [];
