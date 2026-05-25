@@ -2404,9 +2404,9 @@ abstract class REST_Controller extends CI_Controller {
             {
                 header('Access-Control-Allow-Origin: '.$origin);
             }
-            else if (empty($allowed_origins) || !is_array($allowed_origins))
+            else
             {
-                // Fallback: no explicit origin list configured yet — use wildcard
+                // No explicit origin list or origin not in list — use wildcard
                 header('Access-Control-Allow-Origin: *');
             }
             header('Access-Control-Allow-Headers: '.$allowed_headers);
