@@ -14,6 +14,11 @@ class Geospatial_api_client {
     private $timeout;
     private $max_retries;
 
+    private static $allowed_endpoint_prefixes = array(
+        '/geospatial/',
+        '/jobs/'
+    );
+
     function __construct()
     {
         // Load configuration
@@ -211,6 +216,9 @@ class Geospatial_api_client {
         );
 
         try {
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+                throw new Exception('INVALID_JOB_ID: Job ID contains invalid characters');
+            }
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -277,9 +285,31 @@ class Geospatial_api_client {
      * @param array $data Request data
      * @return array API response
      */
+    private function validate_endpoint($endpoint)
+    {
+        if (preg_match('#(\.\.[\/\\\\]|[\r\n])#', $endpoint)) {
+            throw new Exception('INVALID_API_ENDPOINT: Endpoint contains illegal characters');
+        }
+
+        $matched = false;
+        foreach (self::$allowed_endpoint_prefixes as $prefix) {
+            if (strpos($endpoint, $prefix) === 0) {
+                $matched = true;
+                break;
+            }
+        }
+        if (!$matched) {
+            throw new Exception('INVALID_API_ENDPOINT: Endpoint does not match allowed paths');
+        }
+
+        return $endpoint;
+    }
+
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            $endpoint = $this->validate_endpoint($endpoint);
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
