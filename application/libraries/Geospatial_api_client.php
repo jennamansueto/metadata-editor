@@ -287,7 +287,7 @@ class Geospatial_api_client {
      */
     private function validate_endpoint($endpoint)
     {
-        if (preg_match('#(\.\.[\/\\]|[\r\n])#', $endpoint)) {
+        if (preg_match('#(\.\.[\/\\\\]|[\r\n])#', $endpoint)) {
             throw new Exception('INVALID_API_ENDPOINT: Endpoint contains illegal characters');
         }
 
