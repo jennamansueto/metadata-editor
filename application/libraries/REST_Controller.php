@@ -2400,11 +2400,25 @@ abstract class REST_Controller extends CI_Controller {
             $origin = '';
         }
 
+        $allowed_origins = $this->config->item('allowed_cors_origins');
+        if ( ! is_array($allowed_origins))
+        {
+            $allowed_origins = array();
+        }
+
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            // Reflect the request Origin instead of using a wildcard '*'
-            if ($origin !== '')
+            if ($origin !== '' && ! empty($allowed_origins) && in_array($origin, $allowed_origins))
             {
+                // Origin is on the explicit whitelist — safe to reflect
+                header('Access-Control-Allow-Origin: '.$origin);
+                header('Vary: Origin');
+            }
+            elseif ($origin !== '')
+            {
+                // No whitelist configured; reflect origin for non-credentialed requests.
+                // SECURITY: Do NOT set Access-Control-Allow-Credentials alongside a
+                // reflected origin — that would let any site make authenticated requests.
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
             }
@@ -2413,8 +2427,8 @@ abstract class REST_Controller extends CI_Controller {
         }
         else
         {
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if ($origin !== '' && in_array($origin, $this->config->item('allowed_cors_origins')))
+            // Only allow specific whitelisted origins
+            if ($origin !== '' && in_array($origin, $allowed_origins))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
