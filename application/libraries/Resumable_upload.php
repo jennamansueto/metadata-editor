@@ -486,6 +486,10 @@ class Resumable_upload {
 				continue;
 			}
 			
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -557,6 +561,10 @@ class Resumable_upload {
 			}
 			
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -632,6 +640,10 @@ class Resumable_upload {
 		
 		foreach ($dirs as $dir) {
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -757,9 +769,14 @@ class Resumable_upload {
 	 * @return string Validated upload ID
 	 * @throws Exception if the ID contains invalid characters
 	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return is_string($upload_id) && preg_match('/^[a-fA-F0-9\-]+$/', $upload_id);
+	}
+
 	private function validate_upload_id($upload_id)
 	{
-		if (!is_string($upload_id) || !preg_match('/^[a-fA-F0-9\-]+$/', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception("INVALID_UPLOAD_ID");
 		}
 		return $upload_id;
