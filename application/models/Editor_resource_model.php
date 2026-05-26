@@ -281,12 +281,27 @@ class Editor_resource_model extends ci_model {
 		
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
+		$final_filename = basename($final_filename);
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
+		// Validate source path exists and resolve to real path to prevent traversal
+		$real_temp_path = realpath($temp_file_path);
+		if ($real_temp_path === false) {
+			throw new Exception('INVALID_SOURCE_PATH: Source file does not exist');
+		}
+
+		// Validate destination directory resolves to real path
+		$real_dest_dir = realpath($survey_folder_type);
+		if ($real_dest_dir === false) {
+			throw new Exception('INVALID_DESTINATION_PATH: Destination directory does not exist');
+		}
+
+		$safe_final_path = $real_dest_dir . '/' . $final_filename;
+
 		// Move file from temp location to final location
-		if (!@copy($temp_file_path, $final_file_path)) {
-			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
+		if (!@copy($real_temp_path, $safe_final_path)) {
+			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $real_temp_path . ' to ' . $safe_final_path);
 		}
 		
 		// Delete the temp upload (cleanup)
@@ -295,9 +310,9 @@ class Editor_resource_model extends ci_model {
 		// Return file information matching upload_file format
 		return array(
 			'file_name' => $final_filename,
-			'full_path' => $final_file_path,
-			'file_path' => $survey_folder_type,
-			'file_size' => filesize($final_file_path),
+			'full_path' => $safe_final_path,
+			'file_path' => $real_dest_dir,
+			'file_size' => filesize($safe_final_path),
 			'file_ext' => pathinfo($final_filename, PATHINFO_EXTENSION),
 			'orig_name' => $original_filename
 		);
