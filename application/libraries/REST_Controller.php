@@ -2410,17 +2410,18 @@ abstract class REST_Controller extends CI_Controller {
         {
             if ($origin !== '' && ! empty($allowed_origins) && in_array($origin, $allowed_origins))
             {
-                // Origin is on the explicit whitelist — safe to reflect
+                // Origin is on the explicit whitelist — safe for credentialed requests
                 header('Access-Control-Allow-Origin: '.$origin);
+                header('Access-Control-Allow-Credentials: true');
                 header('Vary: Origin');
             }
             elseif ($origin !== '')
             {
-                // No whitelist configured; reflect origin for non-credentialed requests.
-                // SECURITY: Do NOT set Access-Control-Allow-Credentials alongside a
-                // reflected origin — that would let any site make authenticated requests.
+                // Unvalidated origin: reflect for simple CORS but block credentials
+                // to prevent any-origin authenticated requests
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
+                header_remove('Access-Control-Allow-Credentials');
             }
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
@@ -2431,6 +2432,7 @@ abstract class REST_Controller extends CI_Controller {
             if ($origin !== '' && in_array($origin, $allowed_origins))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
+                header('Access-Control-Allow-Credentials: true');
                 header('Vary: Origin');
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
