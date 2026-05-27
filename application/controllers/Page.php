@@ -49,12 +49,19 @@ class Page extends MY_Controller {
 			if ($this->input->get("destination")){
 				$destination=$this->input->get("destination");
 
+				$destination = str_replace(array("\r", "\n", "\0"), '', $destination);
+				$destination = ltrim($destination, " \t/\\");
+
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
 				$destination_parts=explode("/",$destination);
 
-				if (!in_array($destination_parts[0],$valid_redirects)){
+				if (empty($destination_parts[0]) || !in_array($destination_parts[0],$valid_redirects)){
 					$destination=site_home();
+				} elseif (preg_match('#^[a-z][a-z0-9+.\-]*://#i', $destination)) {
+					$destination=site_home();
+				} else {
+					$destination = implode('/', array_map('urlencode', $destination_parts));
 				}
 			}
 			
