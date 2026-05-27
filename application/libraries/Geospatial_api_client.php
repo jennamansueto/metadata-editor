@@ -286,13 +286,14 @@ class Geospatial_api_client {
             $endpoint = '/' . ltrim($endpoint, '/');
             $segments = explode('/', $endpoint);
             foreach ($segments as &$segment) {
-                if ($segment === '' || $segment === '.') {
+                if ($segment === '') {
                     continue;
                 }
-                if ($segment === '..' || strpos($segment, "\0") !== false) {
+                $decoded = rawurldecode($segment);
+                if ($decoded === '.' || $decoded === '..' || strpos($decoded, "\0") !== false) {
                     throw new Exception("Invalid endpoint path segment");
                 }
-                $segment = rawurlencode(rawurldecode($segment));
+                $segment = rawurlencode($decoded);
             }
             $endpoint = implode('/', $segments);
 
