@@ -726,10 +726,11 @@ class Resumable_upload {
 		
 		$real_temp = realpath($this->temp_path);
 		$real_dir = realpath($dir);
-		if ($real_temp !== false && $real_dir !== false) {
-			if (strpos($real_dir . '/', $real_temp . '/') !== 0) {
-				return false;
-			}
+		if ($real_temp === false || $real_dir === false) {
+			return false;
+		}
+		if (strpos($real_dir . '/', $real_temp . '/') !== 0) {
+			return false;
 		}
 		
 		if (!is_dir($dir)) {
