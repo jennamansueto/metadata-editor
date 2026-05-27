@@ -382,7 +382,7 @@ class Resumable_upload {
 		}
 		
 		$upload_path = $this->get_upload_path($upload_id);
-		$final_file = unix_path($upload_path . '/' . $metadata['filename']);
+		$final_file = unix_path($upload_path . '/' . basename($metadata['filename']));
 		$temp_file = $final_file . '.tmp';
 		
 		// Open output file
