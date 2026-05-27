@@ -211,6 +211,9 @@ class Geospatial_api_client {
         );
 
         try {
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+                throw new Exception("Invalid job ID format");
+            }
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -280,6 +283,20 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            $endpoint = '/' . ltrim($endpoint, '/');
+            $segments = explode('/', $endpoint);
+            foreach ($segments as &$segment) {
+                if ($segment === '') {
+                    continue;
+                }
+                $decoded = rawurldecode($segment);
+                if ($decoded === '.' || $decoded === '..' || strpos($decoded, "\0") !== false) {
+                    throw new Exception("Invalid endpoint path segment");
+                }
+                $segment = rawurlencode($decoded);
+            }
+            $endpoint = implode('/', $segments);
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
