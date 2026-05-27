@@ -282,12 +282,29 @@ class Editor_resource_model extends ci_model {
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
 
+		$final_filename = basename($final_filename);
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
-		// Move file from temp location to final location
-		if (!@copy($temp_file_path, $final_file_path)) {
-			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
+		// Validate source path exists and resolve to canonical path
+		$real_temp_file = realpath($temp_file_path);
+		if ($real_temp_file === false) {
+			throw new Exception('SOURCE_FILE_NOT_FOUND: ' . $temp_file_path);
 		}
+		
+		// Validate destination directory with canonical path check
+		$real_dest_dir = realpath($survey_folder_type);
+		if ($real_dest_dir === false) {
+			throw new Exception('DESTINATION_DIR_NOT_FOUND: ' . $survey_folder_type);
+		}
+		
+		$canonical_final_path = $real_dest_dir . '/' . $final_filename;
+		
+		// Move file from temp location to final location
+		if (!@copy($real_temp_file, $canonical_final_path)) {
+			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $real_temp_file . ' to ' . $canonical_final_path);
+		}
+		
+		$final_file_path = $canonical_final_path;
 		
 		// Delete the temp upload (cleanup)
 		$this->uploader->delete_upload($upload_id);
