@@ -2400,12 +2400,8 @@ abstract class REST_Controller extends CI_Controller {
             if ($origin !== NULL && $origin !== '' && filter_var($origin, FILTER_VALIDATE_URL) !== false)
             {
                 header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
             }
-            else
-            {
-                header('Access-Control-Allow-Origin: null');
-            }
+            header('Vary: Origin');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
