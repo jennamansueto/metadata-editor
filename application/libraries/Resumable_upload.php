@@ -712,6 +712,14 @@ class Resumable_upload {
 			return true;
 		}
 		
+		$real_temp = realpath($this->temp_path);
+		$real_dir = realpath($dir);
+		if ($real_temp !== false && $real_dir !== false) {
+			if (strpos($real_dir . '/', $real_temp . '/') !== 0) {
+				return false;
+			}
+		}
+		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
@@ -743,6 +751,25 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate upload ID format to prevent path traversal
+	 * 
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !is_string($upload_id)) {
+			return false;
+		}
+		
+		if (!preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $upload_id)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -750,7 +777,21 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
-		return unix_path($this->temp_path . '/' . $upload_id);
+		if (!$this->validate_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID: Upload ID contains invalid characters");
+		}
+		
+		$path = unix_path($this->temp_path . '/' . $upload_id);
+		
+		$real_temp = realpath($this->temp_path);
+		if ($real_temp !== false) {
+			$real_path = realpath(dirname($path));
+			if ($real_path !== false && strpos($real_path . '/', $real_temp . '/') !== 0) {
+				throw new Exception("INVALID_UPLOAD_PATH: Path escapes temp directory");
+			}
+		}
+		
+		return $path;
 	}
 	
 	/**
@@ -797,6 +838,8 @@ class Resumable_upload {
 			}
 			$filename = $metadata['filename'];
 		}
+		
+		$filename = basename($filename);
 		
 		return unix_path($upload_path . '/' . $filename);
 	}
