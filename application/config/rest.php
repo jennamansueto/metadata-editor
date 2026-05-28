@@ -596,7 +596,7 @@ $config['allowed_cors_methods'] = [
 | source domain
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -606,7 +606,11 @@ $config['allow_any_cors_domain'] = TRUE;
 | Used if $config['check_cors'] is set to TRUE and $config['allow_any_cors_domain']
 | is set to FALSE. Set all the allowable domains within the array
 |
-| e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
+| e.g. $config['allowed_cors_origins'] = ['http://www.example.com', 'https://spa.example.com']
+|
+| IMPORTANT: Add your application's frontend origin(s) here. For local
+| development, add 'http://localhost:8080' (or whichever port your dev
+| server uses). For production, add your actual domain.
 |
 */
 $config['allowed_cors_origins'] = [];
