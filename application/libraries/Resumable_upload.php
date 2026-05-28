@@ -743,6 +743,21 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate that an upload ID is a well-formed UUID (hex + hyphens only).
+	 * Rejects path traversal sequences and other unexpected characters.
+	 *
+	 * @param string $upload_id
+	 * @return void
+	 * @throws Exception if the ID is invalid
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -750,6 +765,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
