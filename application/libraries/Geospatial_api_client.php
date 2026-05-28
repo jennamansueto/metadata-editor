@@ -211,7 +211,8 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            $safe_job_id = $this->sanitize_path_segment($job_id);
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -270,13 +271,21 @@ class Geospatial_api_client {
     }
 
     /**
-     * Make HTTP request to external API using Guzzle
-     * 
-     * @param string $method HTTP method (GET, POST, etc.)
-     * @param string $endpoint API endpoint
-     * @param array $data Request data
-     * @return array API response
+     * Sanitize a single URL path segment to prevent path injection.
+     *
+     * @param string $segment
+     * @return string URL-encoded segment safe for path interpolation
+     * @throws Exception if the segment is empty or contains directory traversal
      */
+    private function sanitize_path_segment($segment)
+    {
+        $segment = trim((string) $segment);
+        if ($segment === '' || preg_match('#(^|/)\.\.(/|$)#', $segment) || strpos($segment, '/') !== false) {
+            throw new Exception("Invalid path segment: contains illegal characters");
+        }
+        return rawurlencode($segment);
+    }
+
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
