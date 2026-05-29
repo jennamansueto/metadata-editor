@@ -681,10 +681,18 @@ class Resumable_upload {
 	}
 	
 	/**
-	 * Generate UUID v4
+	 * Validate upload ID to prevent path traversal
 	 * 
-	 * @return string
+	 * @param string $upload_id
+	 * @throws Exception if upload ID contains unsafe characters
 	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[a-fA-F0-9\-]+$/', $upload_id)) {
+			throw new Exception('INVALID_UPLOAD_ID: Upload ID contains invalid characters');
+		}
+	}
+
 	private function generate_upload_id()
 	{
 		$data = random_bytes(16);
@@ -708,15 +716,17 @@ class Resumable_upload {
 	 */
 	private function delete_directory($dir)
 	{
-		if (!file_exists($dir)) {
-			return true;
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp) !== 0) {
+			return false;
+		}
+
+		if (!is_dir($real_dir)) {
+			return @unlink($real_dir);
 		}
 		
-		if (!is_dir($dir)) {
-			return @unlink($dir);
-		}
-		
-		$files = @scandir($dir);
+		$files = @scandir($real_dir);
 		if ($files === false) {
 			return false;
 		}
@@ -726,7 +736,7 @@ class Resumable_upload {
 				continue;
 			}
 			
-			$file_path = unix_path($dir . '/' . $file);
+			$file_path = unix_path($real_dir . '/' . $file);
 			
 			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
@@ -739,7 +749,7 @@ class Resumable_upload {
 			}
 		}
 		
-		return @rmdir($dir);
+		return @rmdir($real_dir);
 	}
 	
 	/**
@@ -750,6 +760,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -825,8 +836,14 @@ class Resumable_upload {
 		
 		$final_file = $this->get_final_file_path($upload_id);
 		
-		// Verify file actually exists
-		if (!file_exists($final_file)) {
+		// Verify file actually exists and is within the temp directory
+		if (!$final_file || !file_exists($final_file)) {
+			return false;
+		}
+		
+		$real_final = realpath($final_file);
+		$real_temp = realpath($this->temp_path);
+		if ($real_final === false || $real_temp === false || strpos($real_final, $real_temp) !== 0) {
 			return false;
 		}
 		
@@ -839,7 +856,7 @@ class Resumable_upload {
 			'original_filename' => isset($metadata['original_filename']) ? $metadata['original_filename'] : $metadata['filename'],
 			'file_extension' => $file_extension,
 			'file_type' => $file_extension,
-			'file_size' => filesize($final_file),
+			'file_size' => filesize($real_final),
 			'total_size' => $metadata['total_size'],
 			'created_at' => $metadata['created_at'],
 			'updated_at' => $metadata['updated_at'],
