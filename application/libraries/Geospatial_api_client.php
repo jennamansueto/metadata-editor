@@ -284,7 +284,7 @@ class Geospatial_api_client {
     {
         try {
             // Validate endpoint to prevent path traversal and URL manipulation
-            if (preg_match('#(\.\.[\/\\]|[\r\n])#', $endpoint)) {
+            if (preg_match('#(\.\.[/\\\\]|[\r\n])#', $endpoint)) {
                 throw new Exception('Invalid API endpoint: path traversal not allowed');
             }
 
