@@ -2396,18 +2396,7 @@ abstract class REST_Controller extends CI_Controller {
         // If we want to allow any domain to access the API
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            // Reflect the requesting origin instead of using a wildcard to
-            // avoid exposing the API to arbitrary cross-origin requests.
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin !== NULL && $origin !== '')
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
-            }
-            else
-            {
-                header('Access-Control-Allow-Origin: *');
-            }
+            header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
