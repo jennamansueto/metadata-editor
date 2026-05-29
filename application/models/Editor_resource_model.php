@@ -284,16 +284,12 @@ class Editor_resource_model extends ci_model {
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
-		// Validate that final path stays within the expected project folder
+		// Strip directory components to prevent path traversal via crafted filenames
 		$real_dest_dir = realpath($survey_folder_type);
 		if ($real_dest_dir === false) {
 			throw new Exception('INVALID_DESTINATION: Destination directory does not exist');
 		}
-		$canonical_final = $real_dest_dir . '/' . basename($final_filename);
-		if (strpos($canonical_final, $real_dest_dir) !== 0) {
-			throw new Exception('PATH_TRAVERSAL_DETECTED: Final file path escapes the project folder');
-		}
-		$final_file_path = $canonical_final;
+		$final_file_path = $real_dest_dir . '/' . basename($final_filename);
 		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {

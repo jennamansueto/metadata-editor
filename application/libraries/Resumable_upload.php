@@ -147,6 +147,10 @@ class Resumable_upload {
 	 */
 	public function get_upload_metadata($upload_id)
 	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			return false;
+		}
+
 		$metadata_path = $this->get_metadata_path($upload_id);
 		
 		if (!file_exists($metadata_path)) {
@@ -681,6 +685,17 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Check whether an upload ID is safe for use in file paths.
+	 * 
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return !empty($upload_id) && preg_match('/^[a-fA-F0-9\-]+$/', $upload_id);
+	}
+
+	/**
 	 * Validate upload ID to prevent path traversal
 	 * 
 	 * @param string $upload_id
@@ -688,7 +703,7 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (empty($upload_id) || !preg_match('/^[a-fA-F0-9\-]+$/', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception('INVALID_UPLOAD_ID: Upload ID contains invalid characters');
 		}
 	}
