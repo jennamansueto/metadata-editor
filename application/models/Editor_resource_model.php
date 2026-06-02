@@ -290,7 +290,7 @@ class Editor_resource_model extends ci_model {
 			throw new Exception('INVALID_DESTINATION_PATH: Destination folder does not exist');
 		}
 		$real_final_path = realpath(dirname($final_file_path));
-		if ($real_final_path === false || strpos($real_final_path, $real_survey_folder) !== 0) {
+		if ($real_final_path === false || ($real_final_path !== $real_survey_folder && strpos($real_final_path, $real_survey_folder . '/') !== 0)) {
 			throw new Exception('PATH_TRAVERSAL_DENIED: File path escapes the project folder');
 		}
 		
