@@ -712,6 +712,13 @@ class Resumable_upload {
 			return true;
 		}
 		
+		// Verify the resolved path is within the temp upload directory
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp . '/') !== 0) {
+			return false;
+		}
+		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
 		}
@@ -743,6 +750,17 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate that an upload ID is a well-formed UUID to prevent path traversal.
+	 * 
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $upload_id);
+	}
+	
+	/**
 	 * Get upload directory path
 	 * 
 	 * @param string $upload_id
@@ -750,6 +768,9 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		if (!$this->validate_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID: Upload ID contains invalid characters");
+		}
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
