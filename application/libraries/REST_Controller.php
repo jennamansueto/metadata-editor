@@ -2420,8 +2420,10 @@ abstract class REST_Controller extends CI_Controller {
             header('Access-Control-Allow-Origin: '.$origin);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
-            header('Vary: Origin');
         }
+        // Vary: Origin must be on ALL responses (not just allowed ones)
+        // to prevent caches from serving a non-CORS response to a CORS request
+        header('Vary: Origin');
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
         if ($this->input->method() === 'options')
