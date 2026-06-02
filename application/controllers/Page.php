@@ -47,14 +47,22 @@ class Page extends MY_Controller {
 			$destination=site_home();
 			
 			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
+				$raw_destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
-
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
+				// Reject absolute URLs, protocol-relative URLs, and data/javascript URIs
+				if (preg_match('#^(https?://|//|[a-z]+:)#i', $raw_destination)) {
 					$destination=site_home();
+				} else {
+					// Strip path traversal sequences and null bytes
+					$sanitized=str_replace(array('..', "\0"), '', $raw_destination);
+					$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
+					$destination_parts=explode("/",$sanitized);
+
+					if (in_array($destination_parts[0],$valid_redirects)){
+						// Reconstruct URL from validated parts only
+						$clean_parts=array_filter($destination_parts, function($p) { return $p !== ''; });
+						$destination=implode('/', $clean_parts);
+					}
 				}
 			}
 			
