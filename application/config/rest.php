@@ -596,6 +596,8 @@ $config['allowed_cors_methods'] = [
 | source domain
 |
 */
+// SECURITY: When TRUE, any origin is allowed (reflected back instead of wildcard '*').
+// For production, set to FALSE and populate 'allowed_cors_origins' below with your domains.
 $config['allow_any_cors_domain'] = TRUE;
 
 /*
