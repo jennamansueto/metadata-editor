@@ -2393,30 +2393,34 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // If we want to allow any domain to access the API
+        // Store the HTTP Origin header
+        $origin = $this->input->server('HTTP_ORIGIN');
+        if ($origin === NULL)
+        {
+            $origin = '';
+        }
+
+        // Check if origin is allowed (either via allowlist or allow-any flag)
+        $allowed_origins = $this->config->item('allowed_cors_origins');
+        $origin_allowed = false;
+
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            header('Access-Control-Allow-Origin: *');
+            // Even with allow-any, reflect the specific requesting origin
+            // instead of using a wildcard to enable credentials and tighter control
+            $origin_allowed = ($origin !== '');
+        }
+        else if (is_array($allowed_origins) && in_array($origin, $allowed_origins))
+        {
+            $origin_allowed = true;
+        }
+
+        if ($origin_allowed)
+        {
+            header('Access-Control-Allow-Origin: '.$origin);
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
-        }
-        else
-        {
-            // We're going to allow only certain domains access
-            // Store the HTTP Origin header
-            $origin = $this->input->server('HTTP_ORIGIN');
-            if ($origin === NULL)
-            {
-                $origin = '';
-            }
-
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
-            {
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Access-Control-Allow-Headers: '.$allowed_headers);
-                header('Access-Control-Allow-Methods: '.$allowed_methods);
-            }
+            header('Vary: Origin');
         }
 
         // If the request HTTP method is 'OPTIONS', kill the response and send it to the client
