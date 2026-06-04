@@ -211,6 +211,8 @@ class Geospatial_api_client {
         );
 
         try {
+            // Sanitize job_id to prevent URL path injection
+            $job_id = $this->sanitize_path_segment($job_id);
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -270,16 +272,34 @@ class Geospatial_api_client {
     }
 
     /**
-     * Make HTTP request to external API using Guzzle
-     * 
-     * @param string $method HTTP method (GET, POST, etc.)
-     * @param string $endpoint API endpoint
-     * @param array $data Request data
-     * @return array API response
+     * Sanitize a single URL path segment to prevent path injection
+     *
+     * @param string $segment
+     * @return string
+     * @throws Exception if segment contains disallowed characters
      */
+    private function sanitize_path_segment($segment)
+    {
+        if (empty($segment) || !is_string($segment)) {
+            throw new Exception('Invalid path segment');
+        }
+
+        // Only allow alphanumeric, dashes, and underscores
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $segment)) {
+            throw new Exception('Path segment contains invalid characters');
+        }
+
+        return $segment;
+    }
+
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate endpoint starts with / and does not contain path traversal
+            if (strpos($endpoint, '..') !== false) {
+                throw new Exception('Invalid API endpoint: path traversal detected');
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
