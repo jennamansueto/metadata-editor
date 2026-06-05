@@ -196,6 +196,21 @@ class Geospatial_api_client {
     }
 
     /**
+     * Validate that a job_id is a safe alphanumeric/UUID string.
+     * Rejects any value containing path separators or non-alphanumeric characters
+     * (except hyphens and underscores) to prevent URL path injection.
+     *
+     * @param string $job_id
+     * @throws Exception if the job_id is invalid
+     */
+    private function validate_job_id($job_id)
+    {
+        if (empty($job_id) || !preg_match('/^[a-zA-Z0-9_-]+$/', $job_id)) {
+            throw new Exception("INVALID_JOB_ID: Job ID contains invalid characters");
+        }
+    }
+
+    /**
      * Get job status for a job
      * 
      * @param string $job_id Job ID from analyze_files response
@@ -211,6 +226,7 @@ class Geospatial_api_client {
         );
 
         try {
+            $this->validate_job_id($job_id);
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -280,6 +296,11 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate that the endpoint is a safe relative path (no scheme, host, or path traversal)
+            if (preg_match('#(://|\.\./)#', $endpoint)) {
+                throw new Exception("INVALID_ENDPOINT: Endpoint contains disallowed characters");
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
@@ -330,6 +351,7 @@ class Geospatial_api_client {
      */
     public function wait_for_job_completion($job_id, $poll_interval = 5, $max_wait_time = 300)
     {
+        $this->validate_job_id($job_id);
         $start_time = time();
         $result = array(
             'success' => false,
