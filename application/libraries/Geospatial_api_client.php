@@ -196,6 +196,21 @@ class Geospatial_api_client {
     }
 
     /**
+     * Validate that a job_id is a safe alphanumeric/UUID string.
+     * Rejects any value containing path separators or non-alphanumeric characters
+     * (except hyphens and underscores) to prevent URL path injection.
+     *
+     * @param string $job_id
+     * @throws Exception if the job_id is invalid
+     */
+    private function validate_job_id($job_id)
+    {
+        if (empty($job_id) || !preg_match('/^[a-zA-Z0-9_-]+$/', $job_id)) {
+            throw new Exception("INVALID_JOB_ID: Job ID contains invalid characters");
+        }
+    }
+
+    /**
      * Get job status for a job
      * 
      * @param string $job_id Job ID from analyze_files response
@@ -211,6 +226,7 @@ class Geospatial_api_client {
         );
 
         try {
+            $this->validate_job_id($job_id);
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
             if ($response['success']) {
@@ -280,6 +296,11 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate that the endpoint is a safe relative path (no scheme, host, or path traversal)
+            if (preg_match('#(://|\.\./)#', $endpoint)) {
+                throw new Exception("INVALID_ENDPOINT: Endpoint contains disallowed characters");
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
@@ -338,6 +359,15 @@ class Geospatial_api_client {
             'errors' => array(),
             'message' => 'Job monitoring timed out'
         );
+
+        try {
+            $this->validate_job_id($job_id);
+        } catch (Exception $e) {
+            $result['errors'][] = $e->getMessage();
+            $result['status'] = 'error';
+            $result['message'] = 'Invalid job ID';
+            return $result;
+        }
 
         while ((time() - $start_time) < $max_wait_time) {
             $status = $this->get_processing_status($job_id);
