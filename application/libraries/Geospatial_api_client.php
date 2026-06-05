@@ -351,7 +351,6 @@ class Geospatial_api_client {
      */
     public function wait_for_job_completion($job_id, $poll_interval = 5, $max_wait_time = 300)
     {
-        $this->validate_job_id($job_id);
         $start_time = time();
         $result = array(
             'success' => false,
@@ -360,6 +359,15 @@ class Geospatial_api_client {
             'errors' => array(),
             'message' => 'Job monitoring timed out'
         );
+
+        try {
+            $this->validate_job_id($job_id);
+        } catch (Exception $e) {
+            $result['errors'][] = $e->getMessage();
+            $result['status'] = 'error';
+            $result['message'] = 'Invalid job ID';
+            return $result;
+        }
 
         while ((time() - $start_time) < $max_wait_time) {
             $status = $this->get_processing_status($job_id);
