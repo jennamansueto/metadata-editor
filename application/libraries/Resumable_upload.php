@@ -148,9 +148,20 @@ class Resumable_upload {
 	 */
 	private function validate_upload_id($upload_id)
 	{
-		if (empty($upload_id) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $upload_id)) {
+		if (!$this->is_valid_upload_id($upload_id)) {
 			throw new Exception("INVALID_UPLOAD_ID");
 		}
+	}
+
+	/**
+	 * Check whether an upload_id is a valid UUID v4 string (non-throwing).
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return !empty($upload_id) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $upload_id);
 	}
 
 	/**
@@ -537,6 +548,11 @@ class Resumable_upload {
 				continue;
 			}
 			
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -608,6 +624,11 @@ class Resumable_upload {
 			}
 			
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -683,6 +704,11 @@ class Resumable_upload {
 		
 		foreach ($dirs as $dir) {
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
