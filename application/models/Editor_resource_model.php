@@ -284,6 +284,22 @@ class Editor_resource_model extends ci_model {
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
+		// Validate that the destination path stays within the expected project folder
+		$real_survey_folder = realpath($survey_folder_type);
+		if ($real_survey_folder === false) {
+			throw new Exception('DESTINATION_FOLDER_NOT_FOUND: ' . $survey_folder_type);
+		}
+		$real_survey_folder = rtrim($real_survey_folder, '/') . '/';
+		$real_dest_parent = realpath(dirname($final_file_path));
+		if ($real_dest_parent === false || strpos($real_dest_parent . '/', $real_survey_folder) !== 0) {
+			throw new Exception('PATH_OUTSIDE_ALLOWED_DIRECTORY: Destination path escapes project folder');
+		}
+
+		// Validate that the source temp file path is within the expected temp upload directory
+		if (!file_exists($temp_file_path)) {
+			throw new Exception('SOURCE_FILE_NOT_FOUND: ' . $temp_file_path);
+		}
+
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);

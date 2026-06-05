@@ -140,6 +140,61 @@ class Resumable_upload {
 	}
 	
 	/**
+	 * Validate that an upload_id is a safe UUID v4 string.
+	 * Rejects any value containing path separators, dots sequences, or non-hex/dash characters.
+	 *
+	 * @param string $upload_id
+	 * @throws Exception if the upload_id is invalid
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (!$this->is_valid_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+
+	/**
+	 * Check whether an upload_id is a valid UUID v4 string (non-throwing).
+	 *
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function is_valid_upload_id($upload_id)
+	{
+		return !empty($upload_id) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $upload_id);
+	}
+
+	/**
+	 * Validate that a resolved path is within the allowed base directory.
+	 *
+	 * @param string $path The path to check
+	 * @param string $base_dir The allowed base directory
+	 * @throws Exception if the path escapes the base directory
+	 */
+	private function validate_path_within_base($path, $base_dir)
+	{
+		$real_base = realpath($base_dir);
+		if ($real_base === false) {
+			throw new Exception("BASE_DIRECTORY_NOT_FOUND");
+		}
+		$real_base = rtrim($real_base, '/') . '/';
+
+		$real_path = realpath($path);
+		if ($real_path === false) {
+			// For paths that don't exist yet, resolve the parent directory
+			$parent = realpath(dirname($path));
+			if ($parent === false || strpos($parent . '/', $real_base) !== 0) {
+				throw new Exception("PATH_OUTSIDE_ALLOWED_DIRECTORY");
+			}
+			return;
+		}
+
+		if (strpos($real_path . '/', $real_base) !== 0 && strpos($real_path, $real_base) !== 0) {
+			throw new Exception("PATH_OUTSIDE_ALLOWED_DIRECTORY");
+		}
+	}
+
+	/**
 	 * Get upload metadata
 	 * 
 	 * @param string $upload_id
@@ -147,6 +202,7 @@ class Resumable_upload {
 	 */
 	public function get_upload_metadata($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata_path = $this->get_metadata_path($upload_id);
 		
 		if (!file_exists($metadata_path)) {
@@ -175,6 +231,7 @@ class Resumable_upload {
 	 */
 	public function save_upload_metadata($upload_id, $metadata)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata_path = $this->get_metadata_path($upload_id);
 		$upload_path = dirname($metadata_path);
 		
@@ -212,6 +269,7 @@ class Resumable_upload {
 	 */
 	public function upload_chunk($upload_id, $chunk_number, $chunk_data, $client_chunk_size = null)
 	{
+		$this->validate_upload_id($upload_id);
 		// Load metadata
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
@@ -326,6 +384,7 @@ class Resumable_upload {
 	 */
 	public function get_uploaded_chunks($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$upload_path = $this->get_upload_path($upload_id);
 		$chunks_dir = unix_path($upload_path . '/chunks');
 		
@@ -358,6 +417,7 @@ class Resumable_upload {
 	 */
 	public function is_upload_complete($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
 			return false;
@@ -376,6 +436,7 @@ class Resumable_upload {
 	 */
 	public function combine_chunks($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata = $this->get_upload_metadata($upload_id);
 		if (!$metadata) {
 			throw new Exception("UPLOAD_NOT_FOUND");
@@ -383,6 +444,7 @@ class Resumable_upload {
 		
 		$upload_path = $this->get_upload_path($upload_id);
 		$final_file = unix_path($upload_path . '/' . $metadata['filename']);
+		$this->validate_path_within_base($final_file, $this->temp_path);
 		$temp_file = $final_file . '.tmp';
 		
 		// Open output file
@@ -453,6 +515,7 @@ class Resumable_upload {
 	 */
 	public function delete_upload($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$upload_path = $this->get_upload_path($upload_id);
 		
 		if (!file_exists($upload_path)) {
@@ -486,6 +549,11 @@ class Resumable_upload {
 				continue;
 			}
 			
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
+				continue;
+			}
+
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -557,6 +625,11 @@ class Resumable_upload {
 			}
 			
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -632,6 +705,11 @@ class Resumable_upload {
 		
 		foreach ($dirs as $dir) {
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+
+			// Skip directories that are not valid upload IDs
+			if (!$this->is_valid_upload_id($dir)) {
 				continue;
 			}
 			
@@ -711,6 +789,13 @@ class Resumable_upload {
 		if (!file_exists($dir)) {
 			return true;
 		}
+
+		// Ensure the directory is within the temp upload path
+		$real_dir = realpath($dir);
+		$real_base = realpath($this->temp_path);
+		if ($real_dir === false || $real_base === false || strpos($real_dir, rtrim($real_base, '/') . '/') !== 0) {
+			return false;
+		}
 		
 		if (!is_dir($dir)) {
 			return @unlink($dir);
@@ -788,6 +873,7 @@ class Resumable_upload {
 	 */
 	public function get_final_file_path($upload_id, $filename = null)
 	{
+		$this->validate_upload_id($upload_id);
 		$upload_path = $this->get_upload_path($upload_id);
 		
 		if ($filename === null) {
@@ -798,7 +884,9 @@ class Resumable_upload {
 			$filename = $metadata['filename'];
 		}
 		
-		return unix_path($upload_path . '/' . $filename);
+		$path = unix_path($upload_path . '/' . $filename);
+		$this->validate_path_within_base($path, $this->temp_path);
+		return $path;
 	}
 	
 	/**
@@ -813,6 +901,7 @@ class Resumable_upload {
 	 */
 	public function get_completed_upload($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		$metadata = $this->get_upload_metadata($upload_id);
 		
 		if (!$metadata) {
