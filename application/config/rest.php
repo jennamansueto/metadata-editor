@@ -596,7 +596,7 @@ $config['allowed_cors_methods'] = [
 | source domain
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -609,4 +609,10 @@ $config['allow_any_cors_domain'] = TRUE;
 | e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
-$config['allowed_cors_origins'] = [];
+// Set allowed origins via the ALLOWED_CORS_ORIGINS environment variable
+// (comma-separated list, e.g. "https://example.com,https://app.example.com").
+// Falls back to allowing the application's own base_url when the env var is not set.
+$cors_origins_env = getenv('ALLOWED_CORS_ORIGINS');
+$config['allowed_cors_origins'] = $cors_origins_env
+    ? array_map('trim', explode(',', $cors_origins_env))
+    : [rtrim(config_item('base_url'), '/')];
