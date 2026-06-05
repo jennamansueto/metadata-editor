@@ -613,6 +613,15 @@ $config['allow_any_cors_domain'] = FALSE;
 // (comma-separated list, e.g. "https://example.com,https://app.example.com").
 // Falls back to allowing the application's own base_url when the env var is not set.
 $cors_origins_env = getenv('ALLOWED_CORS_ORIGINS');
-$config['allowed_cors_origins'] = $cors_origins_env
-    ? array_map('trim', explode(',', $cors_origins_env))
-    : [rtrim(config_item('base_url'), '/')];
+if ($cors_origins_env) {
+    $config['allowed_cors_origins'] = array_map('trim', explode(',', $cors_origins_env));
+} else {
+    // Extract origin (scheme + host + port) from base_url.
+    // Origin headers never include a path, so we must strip it.
+    $parsed = parse_url(config_item('base_url'));
+    $origin_fallback = ($parsed['scheme'] ?? 'http') . '://' . ($parsed['host'] ?? 'localhost');
+    if (!empty($parsed['port'])) {
+        $origin_fallback .= ':' . $parsed['port'];
+    }
+    $config['allowed_cors_origins'] = [$origin_fallback];
+}
