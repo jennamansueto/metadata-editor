@@ -444,6 +444,7 @@ class Resumable_upload {
 		
 		$upload_path = $this->get_upload_path($upload_id);
 		$final_file = unix_path($upload_path . '/' . $metadata['filename']);
+		$this->validate_path_within_base($final_file, $this->temp_path);
 		$temp_file = $final_file . '.tmp';
 		
 		// Open output file
@@ -883,7 +884,9 @@ class Resumable_upload {
 			$filename = $metadata['filename'];
 		}
 		
-		return unix_path($upload_path . '/' . $filename);
+		$path = unix_path($upload_path . '/' . $filename);
+		$this->validate_path_within_base($path, $this->temp_path);
+		return $path;
 	}
 	
 	/**
