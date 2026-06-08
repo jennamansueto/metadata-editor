@@ -210,6 +210,12 @@ class Geospatial_api_client {
             'message' => ''
         );
 
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $job_id)) {
+            $result['errors'][] = 'Invalid job ID format';
+            $result['message'] = 'Job ID contains invalid characters';
+            return $result;
+        }
+
         try {
             $response = $this->make_api_request('GET', "/jobs/{$job_id}");
             
