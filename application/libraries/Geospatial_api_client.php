@@ -279,6 +279,11 @@ class Geospatial_api_client {
      */
     private function make_api_request($method, $endpoint, $data = null)
     {
+        // Validate endpoint to prevent SSRF via path manipulation
+        if (!preg_match('#^/[a-zA-Z0-9/_-]+$#', $endpoint)) {
+            throw new Exception("Invalid API endpoint path");
+        }
+
         try {
             $client = new Client([
                 'base_uri' => $this->api_base_url,
