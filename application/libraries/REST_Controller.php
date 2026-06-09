@@ -2396,6 +2396,12 @@ abstract class REST_Controller extends CI_Controller {
         // If we want to allow any domain to access the API
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
+            // NOTE: Wildcard '*' is intentional here — per the CORS spec,
+            // browsers refuse to send credentials (cookies, auth headers)
+            // when Allow-Origin is '*', even if Allow-Credentials is set.
+            // Reflecting the Origin header would remove that safety net.
+            // For tighter security, set allow_any_cors_domain=FALSE and
+            // populate allowed_cors_origins with specific domains.
             header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
@@ -2414,6 +2420,7 @@ abstract class REST_Controller extends CI_Controller {
             if (in_array($origin, $this->config->item('allowed_cors_origins')))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
+                header('Vary: Origin', false);
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
