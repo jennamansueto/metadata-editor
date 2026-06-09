@@ -345,7 +345,7 @@ class Geospatial_api_client {
         );
 
         while ((time() - $start_time) < $max_wait_time) {
-            $status = $this->get_processing_status($job_id);
+            $status = $this->get_job_status($job_id);
             
             if (!$status['success']) {
                 $result['errors'] = $status['errors'];
