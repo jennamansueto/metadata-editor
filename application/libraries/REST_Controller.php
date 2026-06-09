@@ -2420,7 +2420,7 @@ abstract class REST_Controller extends CI_Controller {
             if (in_array($origin, $this->config->item('allowed_cors_origins')))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
+                header('Vary: Origin', false);
                 header('Access-Control-Allow-Headers: '.$allowed_headers);
                 header('Access-Control-Allow-Methods: '.$allowed_methods);
             }
