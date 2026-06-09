@@ -353,18 +353,21 @@ class Geospatial_api_client {
                 break;
             }
 
-            if ($status['status'] === 'completed') {
+            $job_data = $status['data'];
+            $job_status = isset($job_data['status']) ? $job_data['status'] : null;
+
+            if ($job_status === 'done' || $job_status === 'completed') {
                 $result['success'] = true;
                 $result['status'] = 'completed';
-                $result['layers'] = $status['layers'];
+                $result['layers'] = isset($job_data['layers']) ? $job_data['layers'] : array();
                 $result['message'] = 'Job completed successfully';
                 break;
             }
 
-            if ($status['status'] === 'failed') {
+            if ($job_status === 'failed') {
                 $result['status'] = 'failed';
-                $result['errors'] = $status['errors'];
-                $result['message'] = 'Job failed: ' . implode(', ', $status['errors']);
+                $result['errors'] = isset($job_data['errors']) ? $job_data['errors'] : $status['errors'];
+                $result['message'] = 'Job failed: ' . implode(', ', $result['errors']);
                 break;
             }
 
