@@ -279,6 +279,11 @@ class Geospatial_api_client {
      */
     private function make_api_request($method, $endpoint, $data = null)
     {
+        // Validate endpoint to prevent SSRF via path manipulation
+        if (!preg_match('#^/[a-zA-Z0-9/_-]+$#', $endpoint)) {
+            throw new Exception("Invalid API endpoint path");
+        }
+
         try {
             $client = new Client([
                 'base_uri' => $this->api_base_url,
@@ -340,7 +345,7 @@ class Geospatial_api_client {
         );
 
         while ((time() - $start_time) < $max_wait_time) {
-            $status = $this->get_processing_status($job_id);
+            $status = $this->get_job_status($job_id);
             
             if (!$status['success']) {
                 $result['errors'] = $status['errors'];
@@ -348,18 +353,21 @@ class Geospatial_api_client {
                 break;
             }
 
-            if ($status['status'] === 'completed') {
+            $job_data = $status['data'];
+            $job_status = isset($job_data['status']) ? $job_data['status'] : null;
+
+            if ($job_status === 'done' || $job_status === 'completed') {
                 $result['success'] = true;
                 $result['status'] = 'completed';
-                $result['layers'] = $status['layers'];
+                $result['layers'] = isset($job_data['layers']) ? $job_data['layers'] : array();
                 $result['message'] = 'Job completed successfully';
                 break;
             }
 
-            if ($status['status'] === 'failed') {
+            if ($job_status === 'failed') {
                 $result['status'] = 'failed';
-                $result['errors'] = $status['errors'];
-                $result['message'] = 'Job failed: ' . implode(', ', $status['errors']);
+                $result['errors'] = isset($job_data['errors']) ? $job_data['errors'] : $status['errors'];
+                $result['message'] = 'Job failed: ' . implode(', ', $result['errors']);
                 break;
             }
 
