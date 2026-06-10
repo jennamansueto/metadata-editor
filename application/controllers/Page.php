@@ -51,9 +51,18 @@ class Page extends MY_Controller {
 
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
+				// Sanitize: strip protocol/host to prevent open redirects to external sites
+				$destination = preg_replace('#^https?://[^/]+#i', '', $destination);
+				// Remove leading slashes to prevent protocol-relative URLs (//evil.com)
+				$destination = ltrim($destination, '/');
+				// Remove path traversal sequences and null bytes (loop to handle nested sequences like '..../')
+				do {
+					$destination = str_replace(array('../', '..\\', "\0"), '', $destination, $count);
+				} while ($count > 0);
+
 				$destination_parts=explode("/",$destination);
 
-				if (!in_array($destination_parts[0],$valid_redirects)){
+				if (empty($destination_parts[0]) || !in_array($destination_parts[0],$valid_redirects)){
 					$destination=site_home();
 				}
 			}
