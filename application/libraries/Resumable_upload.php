@@ -149,11 +149,14 @@ class Resumable_upload {
 	{
 		$metadata_path = $this->get_metadata_path($upload_id);
 		
-		if (!file_exists($metadata_path)) {
+		// Canonical path validation: ensure resolved path is within temp directory
+		$real_metadata = realpath($metadata_path);
+		$real_temp = realpath($this->temp_path);
+		if ($real_metadata === false || $real_temp === false || strpos($real_metadata, $real_temp . '/') !== 0) {
 			return false;
 		}
 		
-		$metadata_json = @file_get_contents($metadata_path);
+		$metadata_json = @file_get_contents($real_metadata);
 		if ($metadata_json === false) {
 			return false;
 		}
@@ -708,15 +711,18 @@ class Resumable_upload {
 	 */
 	private function delete_directory($dir)
 	{
-		if (!file_exists($dir)) {
-			return true;
+		// Canonical path validation: ensure directory is within temp path
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp . '/') !== 0) {
+			return false;
 		}
 		
-		if (!is_dir($dir)) {
-			return @unlink($dir);
+		if (!is_dir($real_dir)) {
+			return @unlink($real_dir);
 		}
 		
-		$files = @scandir($dir);
+		$files = @scandir($real_dir);
 		if ($files === false) {
 			return false;
 		}
@@ -726,7 +732,7 @@ class Resumable_upload {
 				continue;
 			}
 			
-			$file_path = unix_path($dir . '/' . $file);
+			$file_path = unix_path($real_dir . '/' . $file);
 			
 			if (is_dir($file_path)) {
 				if (!$this->delete_directory($file_path)) {
@@ -739,7 +745,22 @@ class Resumable_upload {
 			}
 		}
 		
-		return @rmdir($dir);
+		return @rmdir($real_dir);
+	}
+	
+	/**
+	 * Validate upload ID to prevent path traversal
+	 * 
+	 * @param string $upload_id
+	 * @return bool
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !is_string($upload_id)) {
+			return false;
+		}
+		// Upload IDs are UUID v4 format: only alphanumeric and hyphens
+		return (bool) preg_match('/^[a-zA-Z0-9\-]+$/', $upload_id);
 	}
 	
 	/**
@@ -750,6 +771,9 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		if (!$this->validate_upload_id($upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -832,14 +856,21 @@ class Resumable_upload {
 		
 		$file_extension = strtolower(pathinfo($metadata['filename'], PATHINFO_EXTENSION));
 		
+		// Canonical path validation: ensure file is within temp directory
+		$real_file = realpath($final_file);
+		$real_temp = realpath($this->temp_path);
+		if ($real_file === false || $real_temp === false || strpos($real_file, $real_temp . '/') !== 0) {
+			return false;
+		}
+		
 		$file_info = array(
 			'upload_id' => $upload_id,
-			'file_path' => $final_file,
+			'file_path' => $real_file,
 			'filename' => $metadata['filename'],
 			'original_filename' => isset($metadata['original_filename']) ? $metadata['original_filename'] : $metadata['filename'],
 			'file_extension' => $file_extension,
 			'file_type' => $file_extension,
-			'file_size' => filesize($final_file),
+			'file_size' => filesize($real_file),
 			'total_size' => $metadata['total_size'],
 			'created_at' => $metadata['created_at'],
 			'updated_at' => $metadata['updated_at'],
