@@ -211,7 +211,9 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            // Sanitize job_id: allow only alphanumeric, hyphens, and underscores
+            $safe_job_id = preg_replace('/[^a-zA-Z0-9_\-]/', '', $job_id);
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -280,6 +282,11 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate endpoint to prevent URL path injection / SSRF
+            if (!preg_match('#^/[a-zA-Z0-9/_\-]+$#', $endpoint)) {
+                throw new Exception("Invalid API endpoint: endpoint contains disallowed characters");
+            }
+
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
