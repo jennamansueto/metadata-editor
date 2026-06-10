@@ -55,8 +55,10 @@ class Page extends MY_Controller {
 				$destination = preg_replace('#^https?://[^/]+#i', '', $destination);
 				// Remove leading slashes to prevent protocol-relative URLs (//evil.com)
 				$destination = ltrim($destination, '/');
-				// Remove path traversal sequences and null bytes
-				$destination = str_replace(array('../', '..\\', "\0"), '', $destination);
+				// Remove path traversal sequences and null bytes (loop to handle nested sequences like '..../')
+				do {
+					$destination = str_replace(array('../', '..\\', "\0"), '', $destination, $count);
+				} while ($count > 0);
 
 				$destination_parts=explode("/",$destination);
 
