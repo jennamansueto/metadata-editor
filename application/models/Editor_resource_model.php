@@ -285,8 +285,8 @@ class Editor_resource_model extends ci_model {
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
 		// Canonical path validation: ensure source file is within expected temp directory
-		$real_temp_file = realpath($temp_file_path);
-		$real_survey_folder = realpath($survey_folder_type);
+		$real_temp_file = unix_realpath($temp_file_path);
+		$real_survey_folder = unix_realpath($survey_folder_type);
 		if ($real_temp_file === false) {
 			throw new Exception('INVALID_TEMP_FILE_PATH: Source file does not exist at ' . $temp_file_path);
 		}

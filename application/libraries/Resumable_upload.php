@@ -150,8 +150,8 @@ class Resumable_upload {
 		$metadata_path = $this->get_metadata_path($upload_id);
 		
 		// Canonical path validation: ensure resolved path is within temp directory
-		$real_metadata = realpath($metadata_path);
-		$real_temp = realpath($this->temp_path);
+		$real_metadata = unix_realpath($metadata_path);
+		$real_temp = unix_realpath($this->temp_path);
 		if ($real_metadata === false || $real_temp === false || strpos($real_metadata, $real_temp . '/') !== 0) {
 			return false;
 		}
@@ -729,8 +729,8 @@ class Resumable_upload {
 	private function delete_directory($dir)
 	{
 		// Canonical path validation: ensure directory is within temp path
-		$real_dir = realpath($dir);
-		$real_temp = realpath($this->temp_path);
+		$real_dir = unix_realpath($dir);
+		$real_temp = unix_realpath($this->temp_path);
 		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp . '/') !== 0) {
 			return false;
 		}
@@ -874,8 +874,8 @@ class Resumable_upload {
 		$file_extension = strtolower(pathinfo($metadata['filename'], PATHINFO_EXTENSION));
 		
 		// Canonical path validation: ensure file is within temp directory
-		$real_file = realpath($final_file);
-		$real_temp = realpath($this->temp_path);
+		$real_file = unix_realpath($final_file);
+		$real_temp = unix_realpath($this->temp_path);
 		if ($real_file === false || $real_temp === false || strpos($real_file, $real_temp . '/') !== 0) {
 			return false;
 		}
