@@ -2419,6 +2419,10 @@ abstract class REST_Controller extends CI_Controller {
                 // For credentials support, set allow_any_cors_domain=FALSE and
                 // configure allowed_cors_origins with specific trusted domains.
                 header('Access-Control-Allow-Origin: *');
+                if (!empty($allowed_origins))
+                {
+                    header('Vary: Origin');
+                }
             }
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
