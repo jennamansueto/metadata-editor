@@ -489,6 +489,11 @@ class Resumable_upload {
 				continue;
 			}
 			
+			// Skip non-UUID directory names to avoid exceptions in get_upload_path
+			if (!$this->validate_upload_id($dir)) {
+				continue;
+			}
+			
 			$upload_path = unix_path($this->temp_path . '/' . $dir);
 			if (!is_dir($upload_path)) {
 				continue;
@@ -553,59 +558,66 @@ class Resumable_upload {
 		}
 		
 		// Read entries one at a time using stream-based approach
-		while (($dir = readdir($handle)) !== false) {
-			// Stop if we've deleted enough
-			if ($stats['deleted'] >= $max_deletions) {
-				break;
-			}
-			
-			if ($dir == '.' || $dir == '..') {
-				continue;
-			}
-			
-			$upload_path = unix_path($this->temp_path . '/' . $dir);
-			
-			if (!is_dir($upload_path)) {
-				continue;
-			}
-			
-			$stats['checked']++;
-			
-			// Check metadata
-			$metadata_path = unix_path($upload_path . '/metadata.json');
-			if (!file_exists($metadata_path)) {
-				// No metadata, delete if old enough
-				if (@filemtime($upload_path) < $expiry_time) {
-					if ($this->delete_directory($upload_path)) {
+		try {
+			while (($dir = readdir($handle)) !== false) {
+				// Stop if we've deleted enough
+				if ($stats['deleted'] >= $max_deletions) {
+					break;
+				}
+				
+				if ($dir == '.' || $dir == '..') {
+					continue;
+				}
+				
+				// Skip non-UUID directory names to avoid exceptions in get_upload_path
+				if (!$this->validate_upload_id($dir)) {
+					continue;
+				}
+				
+				$upload_path = unix_path($this->temp_path . '/' . $dir);
+				
+				if (!is_dir($upload_path)) {
+					continue;
+				}
+				
+				$stats['checked']++;
+				
+				// Check metadata
+				$metadata_path = unix_path($upload_path . '/metadata.json');
+				if (!file_exists($metadata_path)) {
+					// No metadata, delete if old enough
+					if (@filemtime($upload_path) < $expiry_time) {
+						if ($this->delete_directory($upload_path)) {
+							$stats['deleted']++;
+						} else {
+							$stats['errors']++;
+						}
+					}
+					continue;
+				}
+				
+				$metadata = $this->get_upload_metadata($dir);
+				if (!$metadata) {
+					continue;
+				}
+				
+				// Delete expired uploads (complete or incomplete)
+				// For completed uploads, use completed_at if available, otherwise updated_at
+				$check_time = ($metadata['status'] == 'completed' && isset($metadata['completed_at'])) 
+					? $metadata['completed_at'] 
+					: $metadata['updated_at'];
+				
+				if ($check_time < $expiry_time) {
+					if ($this->delete_upload($dir)) {
 						$stats['deleted']++;
 					} else {
 						$stats['errors']++;
 					}
 				}
-				continue;
 			}
-			
-			$metadata = $this->get_upload_metadata($dir);
-			if (!$metadata) {
-				continue;
-			}
-			
-			// Delete expired uploads (complete or incomplete)
-			// For completed uploads, use completed_at if available, otherwise updated_at
-			$check_time = ($metadata['status'] == 'completed' && isset($metadata['completed_at'])) 
-				? $metadata['completed_at'] 
-				: $metadata['updated_at'];
-			
-			if ($check_time < $expiry_time) {
-				if ($this->delete_upload($dir)) {
-					$stats['deleted']++;
-				} else {
-					$stats['errors']++;
-				}
-			}
+		} finally {
+			closedir($handle);
 		}
-		
-		closedir($handle);
 		return $stats;
 	}
 	
@@ -635,6 +647,11 @@ class Resumable_upload {
 		
 		foreach ($dirs as $dir) {
 			if ($dir == '.' || $dir == '..') {
+				continue;
+			}
+			
+			// Skip non-UUID directory names to avoid exceptions in get_upload_path
+			if (!$this->validate_upload_id($dir)) {
 				continue;
 			}
 			
