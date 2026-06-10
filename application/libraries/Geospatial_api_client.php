@@ -213,6 +213,9 @@ class Geospatial_api_client {
         try {
             // Sanitize job_id: allow only alphanumeric, hyphens, and underscores
             $safe_job_id = preg_replace('/[^a-zA-Z0-9_\-]/', '', $job_id);
+            if (empty($safe_job_id)) {
+                throw new Exception("Invalid job ID: {$job_id}");
+            }
             $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
