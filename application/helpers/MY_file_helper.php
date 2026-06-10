@@ -57,7 +57,11 @@ if ( ! function_exists('unix_realpath'))
 	function unix_realpath($file_path)
 	{
 		$file_path=unix_path($file_path);
-		return unix_path(realpath($file_path));
+		$real = realpath($file_path);
+		if ($real === false) {
+			return false;
+		}
+		return unix_path($real);
 	}
 }
 
