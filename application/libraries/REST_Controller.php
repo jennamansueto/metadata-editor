@@ -2400,23 +2400,33 @@ abstract class REST_Controller extends CI_Controller {
             $origin = '';
         }
 
+        // Get configured allowed origins list
+        $allowed_origins = $this->config->item('allowed_cors_origins');
+
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            // Reflect the requesting origin instead of using a wildcard '*'
-            // to avoid overly permissive CORS while preserving credentials support.
-            // Configure allowed_cors_origins for stricter control in production.
-            if ($origin !== '')
+            // If specific origins are configured, prefer the allowlist over wildcard.
+            // This enables credentials support while restricting to trusted domains.
+            if (!empty($allowed_origins) && $origin !== '' && in_array($origin, $allowed_origins))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
+            }
+            else
+            {
+                // Fallback: use wildcard for backward compatibility.
+                // NOTE: Wildcard '*' blocks credentialed requests by browser policy.
+                // For credentials support, set allow_any_cors_domain=FALSE and
+                // configure allowed_cors_origins with specific trusted domains.
+                header('Access-Control-Allow-Origin: *');
             }
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
         else
         {
-            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
-            if (in_array($origin, $this->config->item('allowed_cors_origins')))
+            // Only allow specifically listed domains
+            if (in_array($origin, $allowed_origins))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
