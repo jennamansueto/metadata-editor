@@ -284,7 +284,7 @@ class Editor_resource_model extends ci_model {
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
 		
-		// Canonical path validation: ensure source file is within expected temp directory
+		// Canonical path validation: resolve and verify both paths exist
 		$real_temp_file = unix_realpath($temp_file_path);
 		$real_survey_folder = unix_realpath($survey_folder_type);
 		if ($real_temp_file === false) {
@@ -292,6 +292,13 @@ class Editor_resource_model extends ci_model {
 		}
 		if ($real_survey_folder === false) {
 			throw new Exception('INVALID_DESTINATION_PATH: Destination folder does not exist at ' . $survey_folder_type);
+		}
+		
+		// Containment check: ensure destination is within the project storage path
+		$storage_path = $this->Editor_model->get_storage_path();
+		$real_storage = unix_realpath($storage_path);
+		if ($real_storage !== false && strpos($real_survey_folder, $real_storage . '/') !== 0) {
+			throw new Exception('INVALID_DESTINATION_PATH: Destination is outside the project storage directory');
 		}
 		
 		// Move file from temp location to final location
