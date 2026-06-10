@@ -297,7 +297,7 @@ class Editor_resource_model extends ci_model {
 		// Containment check: ensure destination is within the project storage path
 		$storage_path = $this->Editor_model->get_storage_path();
 		$real_storage = unix_realpath($storage_path);
-		if ($real_storage !== false && strpos($real_survey_folder, $real_storage . '/') !== 0) {
+		if ($real_storage === false || strpos($real_survey_folder, $real_storage . '/') !== 0) {
 			throw new Exception('INVALID_DESTINATION_PATH: Destination is outside the project storage directory');
 		}
 		
