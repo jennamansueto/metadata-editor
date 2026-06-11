@@ -281,12 +281,33 @@ class Editor_resource_model extends ci_model {
 		
 		// Use the sanitized filename; for data files force extension to lowercase (e.g. .CSV -> .csv)
 		$final_filename = ($file_type === 'data') ? $this->filename_with_lowercase_extension($sanitized_filename) : $sanitized_filename;
+		
+		// Strip any remaining path separators from filename as defense-in-depth
+		$final_filename = basename($final_filename);
 
 		$final_file_path = $survey_folder_type . '/' . $final_filename;
+		
+		// Verify the destination path is within the expected project folder
+		$real_dest_dir = realpath($survey_folder_type);
+		if ($real_dest_dir === false) {
+			throw new Exception('INVALID_DESTINATION: Destination directory does not exist');
+		}
+		$expected_real_path = $real_dest_dir . DIRECTORY_SEPARATOR . $final_filename;
+		// Ensure no path traversal via filename components
+		if (dirname($expected_real_path) !== $real_dest_dir) {
+			throw new Exception('PATH_TRAVERSAL_DETECTED: Filename resolves outside allowed directory');
+		}
 		
 		// Move file from temp location to final location
 		if (!@copy($temp_file_path, $final_file_path)) {
 			throw new Exception('FAILED_TO_MOVE_FILE: Could not move file from ' . $temp_file_path . ' to ' . $final_file_path);
+		}
+		
+		// Verify the copied file is actually within the expected directory
+		$real_final_path = realpath($final_file_path);
+		if ($real_final_path === false || strpos($real_final_path, $real_dest_dir . DIRECTORY_SEPARATOR) !== 0) {
+			@unlink($final_file_path);
+			throw new Exception('PATH_TRAVERSAL_DETECTED: File was written outside allowed directory');
 		}
 		
 		// Delete the temp upload (cleanup)
