@@ -49,12 +49,22 @@ class Page extends MY_Controller {
 			if ($this->input->get("destination")){
 				$destination=$this->input->get("destination");
 
-				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
-
-				$destination_parts=explode("/",$destination);
-
-				if (!in_array($destination_parts[0],$valid_redirects)){
+				// Reject absolute URLs, protocol-relative URLs, and scheme-based redirects
+				if (preg_match('#^(https?://|//|[a-z][a-z0-9+.\-]*:)#i', $destination)) {
 					$destination=site_home();
+				} else {
+					$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
+
+					// Strip leading slash for path validation
+					$clean_destination = ltrim($destination, '/');
+					$destination_parts=explode("/",$clean_destination);
+
+					if (empty($destination_parts[0]) || !in_array($destination_parts[0],$valid_redirects)){
+						$destination=site_home();
+					} else {
+						// Reconstruct as a safe relative path
+						$destination = $clean_destination;
+					}
 				}
 			}
 			
