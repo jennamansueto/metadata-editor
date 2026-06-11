@@ -596,7 +596,7 @@ $config['allowed_cors_methods'] = [
 | source domain
 |
 */
-$config['allow_any_cors_domain'] = TRUE;
+$config['allow_any_cors_domain'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -608,5 +608,12 @@ $config['allow_any_cors_domain'] = TRUE;
 |
 | e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
+| Add your application's domain(s) here. For local development, you may
+| include http://localhost and http://localhost:8080.
+|
 */
-$config['allowed_cors_origins'] = [];
+$config['allowed_cors_origins'] = [
+    'http://localhost',
+    'http://localhost:8080',
+    'https://localhost',
+];
