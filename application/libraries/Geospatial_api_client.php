@@ -211,7 +211,9 @@ class Geospatial_api_client {
         );
 
         try {
-            $response = $this->make_api_request('GET', "/jobs/{$job_id}");
+            // Sanitize job_id to prevent URL path traversal/injection
+            $safe_job_id = $this->sanitize_path_segment($job_id);
+            $response = $this->make_api_request('GET', "/jobs/{$safe_job_id}");
             
             if ($response['success']) {
                 $result['success'] = true;
@@ -280,6 +282,11 @@ class Geospatial_api_client {
     private function make_api_request($method, $endpoint, $data = null)
     {
         try {
+            // Validate endpoint to prevent path traversal and injection
+            if (preg_match('#(\.\.[\\/]|[\x00-\x1f])#', $endpoint)) {
+                throw new Exception("Invalid API endpoint: path traversal or control characters detected");
+            }
+            
             $client = new Client([
                 'base_uri' => $this->api_base_url,
                 'timeout' => $this->timeout,
@@ -464,5 +471,29 @@ class Geospatial_api_client {
         }
 
         return $result;
+    }
+
+    /**
+     * Sanitize a value for safe use in a URL path segment
+     * 
+     * Strips path separators, traversal sequences, and control characters
+     * to prevent URL path injection.
+     * 
+     * @param string $segment Raw path segment value (e.g. job_id)
+     * @return string Sanitized value safe for URL path interpolation
+     */
+    private function sanitize_path_segment($segment)
+    {
+        // Remove null bytes
+        $segment = str_replace("\0", '', $segment);
+        
+        // Only allow alphanumeric, hyphens, and underscores in path segments
+        $sanitized = preg_replace('/[^a-zA-Z0-9_\-]/', '', $segment);
+        
+        if (empty($sanitized)) {
+            throw new Exception("Invalid path segment: value is empty after sanitization");
+        }
+        
+        return $sanitized;
     }
 }
