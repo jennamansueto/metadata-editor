@@ -287,7 +287,7 @@ class Editor_resource_model extends ci_model {
 		// Validate destination path stays within the project folder
 		$real_dest = realpath(dirname($final_file_path));
 		$real_survey = realpath($survey_folder);
-		if ($real_dest === false || $real_survey === false || strpos($real_dest, $real_survey) !== 0) {
+		if ($real_dest === false || $real_survey === false || strpos($real_dest, $real_survey . '/') !== 0) {
 			throw new Exception('INVALID_FILE_PATH: Destination path is outside the project folder');
 		}
 		
