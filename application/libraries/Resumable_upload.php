@@ -148,12 +148,14 @@ class Resumable_upload {
 	public function get_upload_metadata($upload_id)
 	{
 		$metadata_path = $this->get_metadata_path($upload_id);
+		$real_path = realpath($metadata_path);
+		$real_temp = realpath($this->temp_path);
 		
-		if (!file_exists($metadata_path)) {
+		if ($real_path === false || $real_temp === false || strpos($real_path, $real_temp . '/') !== 0) {
 			return false;
 		}
 		
-		$metadata_json = @file_get_contents($metadata_path);
+		$metadata_json = @file_get_contents($real_path);
 		if ($metadata_json === false) {
 			return false;
 		}
@@ -708,40 +710,60 @@ class Resumable_upload {
 	 */
 	private function delete_directory($dir)
 	{
-		if (!file_exists($dir)) {
-			return true;
+		$real_dir = realpath($dir);
+		$real_temp = realpath($this->temp_path);
+		if ($real_dir === false || $real_temp === false || strpos($real_dir, $real_temp . '/') !== 0) {
+			return false;
+		}
+
+		if (!is_dir($real_dir)) {
+			return @unlink($real_dir);
 		}
 		
-		if (!is_dir($dir)) {
-			return @unlink($dir);
-		}
-		
-		$files = @scandir($dir);
+		$files = @scandir($real_dir);
 		if ($files === false) {
 			return false;
 		}
 		
 		foreach ($files as $file) {
-			if ($file == '.' || $file == '..') {
+			if ($file === '.' || $file === '..') {
 				continue;
 			}
 			
-			$file_path = unix_path($dir . '/' . $file);
+			$file_path = $real_dir . '/' . $file;
+			$real_file = realpath($file_path);
+			if ($real_file === false || strpos($real_file, $real_temp . '/') !== 0) {
+				continue;
+			}
 			
-			if (is_dir($file_path)) {
-				if (!$this->delete_directory($file_path)) {
+			if (is_dir($real_file)) {
+				if (!$this->delete_directory($real_file)) {
 					return false;
 				}
 			} else {
-				if (!@unlink($file_path)) {
+				if (!@unlink($real_file)) {
 					return false;
 				}
 			}
 		}
 		
-		return @rmdir($dir);
+		return @rmdir($real_dir);
 	}
 	
+	/**
+	 * Validate that an upload ID contains only safe characters.
+	 *
+	 * @param string $upload_id
+	 * @return void
+	 * @throws Exception If the upload ID is invalid
+	 */
+	private function validate_upload_id($upload_id)
+	{
+		if (empty($upload_id) || !preg_match('/^[a-zA-Z0-9_-]+$/', $upload_id)) {
+			throw new Exception("INVALID_UPLOAD_ID");
+		}
+	}
+
 	/**
 	 * Get upload directory path
 	 * 
@@ -750,6 +772,7 @@ class Resumable_upload {
 	 */
 	private function get_upload_path($upload_id)
 	{
+		$this->validate_upload_id($upload_id);
 		return unix_path($this->temp_path . '/' . $upload_id);
 	}
 	
@@ -825,8 +848,10 @@ class Resumable_upload {
 		
 		$final_file = $this->get_final_file_path($upload_id);
 		
-		// Verify file actually exists
-		if (!file_exists($final_file)) {
+		// Validate the resolved path stays within the temp directory
+		$real_final = realpath($final_file);
+		$real_temp = realpath($this->temp_path);
+		if ($real_final === false || $real_temp === false || strpos($real_final, $real_temp . '/') !== 0) {
 			return false;
 		}
 		
@@ -834,7 +859,7 @@ class Resumable_upload {
 		
 		$file_info = array(
 			'upload_id' => $upload_id,
-			'file_path' => $final_file,
+			'file_path' => $real_final,
 			'filename' => $metadata['filename'],
 			'original_filename' => isset($metadata['original_filename']) ? $metadata['original_filename'] : $metadata['filename'],
 			'file_extension' => $file_extension,
