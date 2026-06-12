@@ -47,14 +47,24 @@ class Page extends MY_Controller {
 			$destination=site_home();
 			
 			if ($this->input->get("destination")){
-				$destination=$this->input->get("destination");
+				$raw_destination=$this->input->get("destination");
 
 				$valid_redirects=array('admin','editor','collections', 'projects', 'home', 'about', 'auth');
 
-				$destination_parts=explode("/",$destination);
+				// Strip leading slashes, backslashes, and whitespace to prevent protocol-relative URLs
+				$sanitized=ltrim($raw_destination, " \t\n\r\0\x0B/\\");
 
-				if (!in_array($destination_parts[0],$valid_redirects)){
-					$destination=site_home();
+				// Reject if it contains scheme-like patterns (e.g. http:, javascript:)
+				if (!preg_match('/^[a-zA-Z]+:/', $sanitized)) {
+					$destination_parts=explode("/",$sanitized);
+
+					if (in_array($destination_parts[0],$valid_redirects)){
+						// Reconstruct from validated segments only
+						$safe_parts=array_filter($destination_parts, function($part) {
+							return $part !== '' && $part !== '.' && $part !== '..';
+						});
+						$destination=implode('/', $safe_parts);
+					}
 				}
 			}
 			
