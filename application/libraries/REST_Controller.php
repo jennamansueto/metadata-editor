@@ -2393,43 +2393,25 @@ abstract class REST_Controller extends CI_Controller {
         $allowed_headers = implode(', ', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(', ', $this->config->item('allowed_cors_methods'));
 
-        // Store the HTTP Origin header
-        $origin = $this->input->server('HTTP_ORIGIN');
-        if ($origin === NULL)
-        {
-            $origin = '';
-        }
-
-        // Determine allowed origins from config
-        $allowed_origins = $this->config->item('allowed_cors_origins');
-        if (!is_array($allowed_origins))
-        {
-            $allowed_origins = array();
-        }
-
+        // If we want to allow any domain to access the API
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {
-            if ($origin !== '' && !empty($allowed_origins) && in_array($origin, $allowed_origins))
-            {
-                // Origin is in the explicit allowlist — reflect it so credentialed requests work
-                header('Access-Control-Allow-Origin: '.$origin);
-                header('Vary: Origin');
-            }
-            else
-            {
-                // No allowlist configured or origin not in list — use wildcard
-                // NOSONAR: wildcard is intentional here; browsers prevent credentialed
-                // cross-origin requests when Access-Control-Allow-Origin is *, which is
-                // the desired security behavior for a public API.
-                header('Access-Control-Allow-Origin: *'); // NOSONAR
-            }
+            header('Access-Control-Allow-Origin: *'); // NOSONAR — wildcard is intentional; browsers block credentialed requests with *
             header('Access-Control-Allow-Headers: '.$allowed_headers);
             header('Access-Control-Allow-Methods: '.$allowed_methods);
         }
         else
         {
-            // Only allow origins explicitly listed in allowed_cors_origins
-            if (in_array($origin, $allowed_origins))
+            // We're going to allow only certain domains access
+            // Store the HTTP Origin header
+            $origin = $this->input->server('HTTP_ORIGIN');
+            if ($origin === NULL)
+            {
+                $origin = '';
+            }
+
+            // If the origin domain is in the allowed_cors_origins list, then add the Access Control headers
+            if (in_array($origin, $this->config->item('allowed_cors_origins')))
             {
                 header('Access-Control-Allow-Origin: '.$origin);
                 header('Vary: Origin');
